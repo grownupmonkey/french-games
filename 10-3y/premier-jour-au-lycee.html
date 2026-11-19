@@ -1,0 +1,1406 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Le premier jour au lycée</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+/* Pâte à modeler: one deliberate daylight look (single theme). Layout: a Paris rooftop band, then the café diorama + mission list on the left and the conversation on the right; stacks on phones. */
+:root {
+  color-scheme: light;
+  --page: #DCEEF6; --sky: #BEDDEB; --sky-deep: #A9C7D6; --sand: #EDCB97; --sand-deep: #C79B63;
+  --paper: #FFFFFF; --ink: #2A2440; --muted: #5D5873; --soft: #EEF1F6; --soft-deep: #C9CEDA;
+  --tomato: #E2463C; --tomato-deep: #A9271F; --navy: #2B4A9B; --navy-deep: #1C3270;
+  --sun: #FFC94A; --sun-deep: #E0A21E; --mint: #6CC6A6; --mint-deep: #3E9C7C;
+  --ok-bg: #DDF3EA; --ok-fg: #1E6B50; --warn-bg: #FFF1D6; --warn-fg: #7A4E00; --err-bg: #FDE3E0; --err-fg: #9E241D; --info-bg: #E3F0F8; --info-fg: #1C4F6E;
+  --font-display: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+body { background: var(--page); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+.band { height: 120px; overflow: hidden; }
+.band svg { display: block; width: 100%; height: 100%; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; display: flex; flex-direction: column; gap: 22px; }
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.eyebrow { margin: 0 0 4px; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--tomato-deep); }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5vw, 52px); line-height: 1; text-wrap: balance; }
+.lede { margin: 10px 0 0; color: var(--muted); max-width: 60ch; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--paper); box-shadow: 0 4px 0 var(--sky-deep); font-size: 14px; font-weight: 700; cursor: pointer; user-select: none; }
+.pill input { accent-color: var(--tomato); width: 16px; height: 16px; margin: 0; }
+.pill:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--sky-deep); }
+
+.card { background: var(--paper); border-radius: 26px; box-shadow: 0 7px 0 var(--sky-deep); }
+.card h3 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.game { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 880px) { .game { grid-template-columns: 1fr; } }
+.side { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.stage { overflow: hidden; }
+.stage svg { display: block; width: 100%; height: auto; }
+.stagecap { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 16px 14px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagecap b { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--ink); }
+
+.missions { padding: 18px; }
+.missions ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.missions li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; padding: 6px 8px; border-radius: 14px; color: var(--muted); font-weight: 700; }
+.missions li .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 14px; transition: background .3s; }
+.missions li small { display: block; font-weight: 600; font-size: 13px; color: var(--muted); }
+.missions li.current { background: var(--warn-bg); color: var(--ink); }
+.missions li.current .n { background: var(--tomato); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--tomato-deep); }
+.missions li.done { color: var(--ink); }
+.missions li.done .n { background: var(--mint); color: #13372A; box-shadow: inset 0 -3px 0 var(--mint-deep); }
+.missions li.done .n svg { width: 15px; height: 15px; }
+
+.help { padding: 18px; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; margin: 0; font-size: 14px; }
+.keys dd { margin: 0; color: var(--muted); }
+kbd { font-family: var(--font-body); font-weight: 800; font-size: 13px; padding: 1px 7px; border-radius: 7px; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); color: var(--ink); }
+
+.chat { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.chathead { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.chathead .face { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--sky); flex: none; }
+.chathead .face svg { width: 100%; height: 100%; display: block; }
+.chathead b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 1.1; }
+.chathead span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.log { padding: 20px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; max-height: 560px; overflow-y: auto; scroll-behavior: smooth; }
+@media (max-width: 880px) { .log { max-height: 62vh; min-height: 300px; } }
+@media (prefers-reduced-motion: reduce) { .log { scroll-behavior: auto; } }
+.row { display: flex; gap: 10px; align-items: end; max-width: 88%; }
+.row.npc { align-self: flex-start; }
+.row.me { align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 6px; }
+.row.me .line { display: flex; gap: 10px; align-items: end; }
+.mini { width: 36px; height: 36px; flex: none; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.mini svg { width: 100%; height: 100%; display: block; }
+.bubble { padding: 11px 16px; border-radius: 20px; font-size: 17px; line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }
+.npc .bubble { background: var(--soft); border-bottom-left-radius: 6px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
+.me .bubble { background: var(--navy); color: #FFFFFF; border-bottom-right-radius: 6px; font-weight: 700; box-shadow: 0 3px 0 var(--navy-deep); }
+.speak { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--paper); box-shadow: 0 2px 0 var(--soft-deep); display: grid; place-items: center; cursor: pointer; color: var(--mint-deep); }
+.speak svg { width: 17px; height: 17px; }
+.no-tts .speak, .no-tts .tts-only { display: none !important; }
+.appear { animation: appear .25s ease-out both; }
+@keyframes appear { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+.typing span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); margin: 0 2px; animation: blink 1s infinite; }
+.typing span:nth-child(2) { animation-delay: .15s; } .typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .appear, .typing span { animation: none; } }
+
+.fb { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; max-width: 100%; }
+.chip { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 14px; padding: 7px 12px; border-radius: 14px; max-width: 100%; font-weight: 600; }
+.chip b { font-weight: 800; }
+.chip.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.chip.warn { background: var(--warn-bg); color: var(--warn-fg); }
+.chip.err { background: var(--err-bg); color: var(--err-fg); }
+.chip.info { background: var(--info-bg); color: var(--info-fg); }
+.chip .fix s { opacity: .75; }
+.chip .note { color: var(--ink); }
+@keyframes pop { 0% { transform: scale(.7); opacity: 0 } 60% { transform: scale(1.06); opacity: 1 } 100% { transform: scale(1) } }
+.chip.ok { animation: pop .35s cubic-bezier(.2, .9, .3, 1.3) both; }
+
+.composer { border-top: 2px solid var(--soft); padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.hint { display: flex; gap: 10px; align-items: baseline; padding: 9px 14px; border-radius: 14px; background: var(--warn-bg); font-size: 15px; font-weight: 700; }
+.hint .lbl { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--warn-fg); flex: none; }
+.accentbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.accentbar button { min-width: 38px; height: 38px; padding: 0 8px; border-radius: 12px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); font-weight: 800; font-size: 18px; cursor: pointer; transition: background .2s; }
+.accentbar button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--soft-deep); }
+.accentbar button.flash { background: var(--sun); box-shadow: 0 3px 0 var(--sun-deep); }
+.accentbar .caps { font-size: 13px; color: var(--muted); margin-left: 4px; font-weight: 600; }
+.inputrow { display: flex; gap: 10px; }
+.inputrow input { flex: 1; min-width: 0; height: 54px; border-radius: 999px; border: 3px solid var(--soft); background: #F8F9FC; padding: 0 20px; font-size: 18px; font-weight: 700; }
+.inputrow input:focus { outline: none; border-color: var(--navy); }
+.btn { border: 0; border-radius: 999px; padding: 0 20px; min-height: 54px; font-weight: 800; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn svg { width: 19px; height: 19px; }
+.btn.primary { background: var(--tomato); color: #FFFFFF; box-shadow: 0 5px 0 var(--tomato-deep); font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.btn.hintb { background: var(--sun); color: var(--ink); box-shadow: 0 5px 0 var(--sun-deep); }
+.btn:active { transform: translateY(3px); box-shadow: none; }
+.btn:disabled { opacity: .5; cursor: default; transform: none; }
+@media (max-width: 520px) { .inputrow { flex-wrap: wrap; } .inputrow input { flex-basis: 100%; } .inputrow .btn { flex: 1; } }
+
+.summary { border-top: 2px solid var(--soft); padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+.summary h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.1; }
+.summary h3 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { padding: 12px; border-radius: 18px; background: var(--soft); }
+.stat .v { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 800; background: var(--sun); color: var(--ink); box-shadow: 0 3px 0 var(--sun-deep); animation: pop .45s cubic-bezier(.2, .9, .3, 1.3) both; }
+.badge:nth-child(2) { animation-delay: .1s } .badge:nth-child(3) { animation-delay: .2s } .badge:nth-child(4) { animation-delay: .3s }
+.badge.off { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 2px var(--soft-deep); font-weight: 600; animation: none; }
+@media (prefers-reduced-motion: reduce) { .chip.ok, .badge { animation: none; } }
+.wrote { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; }
+.outcomes { margin: 0; font-size: 14px; color: var(--muted); }
+
+details.teacher { background: var(--paper); border-radius: 22px; padding: 16px 20px; box-shadow: 0 5px 0 var(--sky-deep); }
+details.teacher summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+details.teacher ul { margin: 12px 0 4px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---- shared scene pieces (scenes 2–6) ---- */
+.game.wide { grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr); }
+@media (max-width: 900px) { .game.wide { grid-template-columns: 1fr; } }
+.stagehead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; padding: 12px 18px; border-bottom: 2px solid var(--soft); font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagehead .place { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); }
+.viewport { position: relative; background: var(--sky); }
+.viewport > svg { display: block; width: 100%; height: auto; }
+.intro { position: absolute; inset: 0; z-index: 6; display: flex; overflow-y: auto; padding: 16px; background: rgba(190, 221, 235, .72); }
+.intro .box { margin: auto; max-width: 470px; background: var(--paper); border-radius: 26px; padding: 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 0 var(--sky-deep); }
+.intro h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; }
+.intro p { margin: 0; color: var(--muted); font-weight: 600; }
+.intro ul { margin: 0; padding-left: 20px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 560px) { .intro { position: static; background: none; } }
+.panel { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.panelhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.panelhead h3 { margin: 0; }
+.task { margin: 0; font-size: 16px; font-weight: 600; }
+.btn.small { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.btn.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 4px 0 var(--soft-deep); }
+.btn.go { background: var(--mint); color: #13372A; box-shadow: 0 5px 0 var(--mint-deep); }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice { text-align: left; padding: 11px 16px; border-radius: 16px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-size: 16px; font-weight: 700; }
+.choice:hover { background: #E3EAF4; }
+.choice:active { transform: translateY(2px); box-shadow: none; }
+.choice:disabled { opacity: .5; cursor: default; transform: none; }
+.opt { padding: 9px 16px; border-radius: 14px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-weight: 800; font-size: 15px; }
+.opt:active { transform: translateY(2px); box-shadow: none; }
+.fbs { display: flex; flex-direction: column; gap: 6px; }
+.fbs .chip { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.fbs .chip span { font-weight: 600; color: var(--ink); }
+
+.feedcard { display: flex; flex-direction: column; overflow: hidden; }
+.feedhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.feedhead h3 { margin: 0; }
+.mini-switch { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.mini-switch input { accent-color: var(--tomato); margin: 0; }
+.feed { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; max-height: 340px; min-height: 120px; overflow-y: auto; }
+.feed .empty { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+.msg { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
+.msg .av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.msg .av svg { width: 100%; height: 100%; display: block; }
+.mhead { display: flex; gap: 8px; align-items: baseline; font-size: 14px; }
+.mhead b { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.mhead .time { color: var(--muted); font-size: 12px; font-weight: 700; }
+.mtext { margin: 2px 0 6px; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.mtext.masked { color: var(--muted); font-style: italic; }
+.mctl { display: flex; gap: 6px; flex-wrap: wrap; }
+.mctl button { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 800; padding: 5px 12px; border-radius: 999px; border: 0; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); cursor: pointer; }
+.mctl button svg { width: 14px; height: 14px; }
+.mctl .play { color: var(--mint-deep); }
+.msg.me { grid-template-columns: minmax(0, 1fr); justify-items: end; }
+.msg.me .bubble { background: var(--navy); color: #FFFFFF; padding: 9px 14px; border-radius: 18px 18px 6px 18px; max-width: 90%; overflow-wrap: anywhere; font-weight: 700; }
+.msg.me .fbrow { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-top: 6px; max-width: 95%; }
+.msg.me .fbrow .chip { flex-direction: column; align-items: flex-end; text-align: right; }
+
+.missions .stars { margin-left: auto; color: var(--sun-deep); font-size: 14px; letter-spacing: 1px; flex: none; }
+.missions li .t { min-width: 0; }
+.missions.compact li { grid-template-columns: 30px minmax(0, 1fr) auto; }
+.mrows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .mrows { grid-template-columns: 1fr; } }
+.mrow { display: flex; justify-content: space-between; gap: 8px; padding: 9px 14px; border-radius: 14px; background: var(--soft); font-size: 14px; font-weight: 700; }
+.mrow .stars { color: var(--sun-deep); }
+.transcript { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; max-width: 80ch; }
+.tablewrap { overflow-x: auto; border-radius: 16px; background: var(--soft); }
+table.tbl { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tbl th, .tbl td { padding: 7px 10px; text-align: left; white-space: nowrap; }
+.tbl th { font-family: var(--font-display); font-weight: 600; font-size: 13px; background: var(--soft-deep); }
+.tbl tr + tr td { border-top: 2px solid var(--paper); }
+.hud { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 14px; font-weight: 700; color: var(--ink); }
+.hud .num { font-family: var(--font-display); font-weight: 700; font-size: 19px; font-variant-numeric: tabular-nums; }
+.hearts { display: inline-flex; gap: 3px; }
+.hearts svg { width: 20px; height: 20px; }
+.keyhelp { margin: 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.nolabels .lbl, .nolabels .itemlbl { display: none; }
+svg text { font-family: var(--font-body); }
+.svgbtn { cursor: pointer; }
+.svgbtn:focus { outline: none; }
+.svgbtn .ring { fill: none; stroke: var(--tomato); stroke-width: 4; opacity: 0; transition: opacity .15s; }
+.svgbtn:hover .ring, .svgbtn:focus-visible .ring, .svgbtn.sel .ring { opacity: 1; }
+
+/* ---- scene ---- */
+.hall { position: relative; overflow: hidden; background: #F6DCC0; }
+.hall > svg { display: block; width: 100%; height: auto; }
+.enterbar { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; border-radius: 999px; background: var(--paper); box-shadow: 0 5px 0 var(--sky-deep); font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.walkbar { padding: 14px 18px 16px; border-top: 2px solid var(--soft); display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.walkbar .pad { display: flex; gap: 8px; }
+.walkbar .ctl { border: 0; border-radius: 16px; background: var(--soft); box-shadow: 0 4px 0 var(--soft-deep); min-height: 50px; min-width: 120px; font-size: 15px; font-weight: 800; cursor: pointer; touch-action: none; user-select: none; }
+.walkbar .ctl:active { transform: translateY(3px); box-shadow: none; }
+.classview { padding: 18px; display: flex; flex-direction: column; gap: 14px; min-height: 420px; background: #FBE3C2; }
+.board { background: #2F5A46; color: #F2F5EE; border: 10px solid #8A5527; border-radius: 14px; padding: 16px 20px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: center; }
+.board .av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #BEDDEB; }
+.board .av svg { width: 100%; height: 100%; display: block; }
+.board .who { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.board .say { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 3vw, 28px); margin-top: 2px; min-height: 1.3em; }
+.board .say.masked { font-weight: 500; opacity: .75; font-style: italic; }
+.board .ctl2 { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.board .ctl2 button { font-size: 13px; font-weight: 800; padding: 5px 14px; border-radius: 999px; border: 0; background: rgba(255,255,255,.16); color: #F2F5EE; cursor: pointer; }
+.desk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 560px) { .desk { grid-template-columns: 1fr; } }
+.zone { border-radius: 18px; padding: 12px; min-height: 140px; }
+.zone h4 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 600; font-size: 14px; }
+.zone.top { background: #E2B98A; }
+.zone.bag { background: #BFE3D3; }
+.zone .things { display: flex; flex-wrap: wrap; gap: 8px; }
+.thing { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 82px; padding: 8px; border-radius: 14px; border: 0; background: var(--paper); box-shadow: 0 3px 0 rgba(0,0,0,.12); cursor: pointer; font-weight: 800; font-size: 12px; }
+.thing svg { width: 40px; height: 40px; }
+.thing.sel { outline: 4px solid var(--tomato); }
+.thing .st { font-size: 11px; color: var(--muted); font-weight: 700; }
+.verbs { display: flex; flex-wrap: wrap; gap: 8px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.cardbtn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px; border-radius: 18px; border: 0; background: var(--paper); box-shadow: 0 4px 0 var(--soft-deep); cursor: pointer; font-weight: 800; }
+.cardbtn svg { width: 64px; height: 64px; }
+.nolabels .cardbtn .l { display: none; }
+.cardbtn:disabled { opacity: .5; cursor: default; }
+.cardbtn:not(:disabled):active { transform: translateY(3px); box-shadow: none; }
+.epsbar { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; font-weight: 800; font-size: 14px; }
+.epslvl { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--tomato-deep); }
+.epscount { color: var(--muted); }
+.epssecs { margin-left: auto; font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+.timer { height: 16px; border-radius: 8px; background: var(--paper); box-shadow: inset 0 2px 0 rgba(0,0,0,.08); overflow: hidden; }
+.timer i { display: block; height: 100%; width: 100%; border-radius: 8px; background: var(--mint); }
+.timer i.mid { background: var(--sun); }
+.timer i.low { background: var(--tomato); }
+.epsend { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 18px; background: var(--paper); }
+.epsbtns { display: flex; flex-wrap: wrap; gap: 10px; }
+.dict { display: flex; gap: 10px; flex-wrap: wrap; }
+.dict .n { min-width: 60px; padding: 8px 10px; border-radius: 14px; background: var(--paper); box-shadow: inset 0 0 0 3px var(--soft-deep); text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+.dict .n.ok { box-shadow: inset 0 0 0 3px var(--mint-deep); color: var(--ok-fg); }
+.dict .n.bad { box-shadow: inset 0 0 0 3px var(--tomato); color: var(--err-fg); }
+.tbl tr.now td { background: var(--warn-bg); font-weight: 800; }
+.tbl tr.past td { color: var(--muted); }
+#hl { animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { #hl { animation: none; } }
+</style>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="cStripes" width="12" height="16" patternUnits="userSpaceOnUse"><rect width="12" height="16" fill="#FFF8EE"/><rect width="12" height="8" fill="#2B4A9B"/></pattern>
+    <radialGradient id="cSkin" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFDCC2"/><stop offset=".55" stop-color="#F2B98F"/><stop offset="1" stop-color="#D38E66"/></radialGradient>
+    <radialGradient id="cRed" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FF8573"/><stop offset=".5" stop-color="#E2463C"/><stop offset="1" stop-color="#A9271F"/></radialGradient>
+    <radialGradient id="cDenim" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#6683CF"/><stop offset=".6" stop-color="#34509A"/><stop offset="1" stop-color="#22386E"/></radialGradient>
+    <radialGradient id="cBoot" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C98A50"/><stop offset=".6" stop-color="#8A5527"/><stop offset="1" stop-color="#5E3618"/></radialGradient>
+    <radialGradient id="cHair" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#9A6640"/><stop offset="1" stop-color="#5A361C"/></radialGradient>
+    <radialGradient id="cMust" cx=".5" cy=".2" r=".8"><stop offset="0" stop-color="#8A5A34"/><stop offset="1" stop-color="#47290F"/></radialGradient>
+    <radialGradient id="cNose" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFC2B0"/><stop offset="1" stop-color="#E07A64"/></radialGradient>
+    <radialGradient id="cShade" cx=".35" cy=".25" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".35"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#1A1440" stop-opacity=".32"/></radialGradient>
+    <radialGradient id="cBand" cx=".4" cy=".2" r=".9"><stop offset="0" stop-color="#5776D0"/><stop offset="1" stop-color="#1E3577"/></radialGradient>
+    <radialGradient id="cCamSkin" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#E7AE86"/><stop offset=".6" stop-color="#C98B62"/><stop offset="1" stop-color="#A86C46"/></radialGradient>
+    <radialGradient id="cCamHair" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C9693E"/><stop offset="1" stop-color="#7E3A1E"/></radialGradient>
+    <radialGradient id="cHoodie" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#9BE0C6"/><stop offset=".6" stop-color="#5DB894"/><stop offset="1" stop-color="#3A8B6B"/></radialGradient>
+    <radialGradient id="cTable" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9DDE6"/></radialGradient>
+    <radialGradient id="cCup" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#7FA8F0"/><stop offset="1" stop-color="#2B4A9B"/></radialGradient>
+    <radialGradient id="cCloud" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E3F0F6"/></radialGradient>
+    <path id="cStar" d="M0 -3.4 L1 -1 L3.4 -1 L1.4 .5 L2.1 2.9 L0 1.5 L-2.1 2.9 L-1.4 .5 L-3.4 -1 L-1 -1 Z"/>
+  </defs>
+  <symbol id="hero" viewBox="0 0 220 420">
+    <ellipse cx="110" cy="414" rx="82" ry="9" fill="#9C7446" opacity=".45"/>
+    <path d="M66 70 C 50 82 50 114 62 130 L 72 122 C 66 108 68 92 78 80 Z" fill="url(#cHair)"/>
+    <path d="M154 70 C 170 82 170 114 158 130 L 148 122 C 154 108 152 92 142 80 Z" fill="url(#cHair)"/>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M70 180 L 36 224 L 58 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M70 180 L 36 224 L 58 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M45 236 L 58 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M45 236 L 58 254" stroke="#F2B98F" stroke-width="13"/>
+      <path d="M175 236 L 162 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M175 236 L 162 254" stroke="#E7A87E" stroke-width="13"/>
+    </g>
+    <rect x="97" y="140" width="26" height="28" rx="8" fill="#D38E66"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cStripes)"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cShade)"/>
+    <path d="M58 272 L 162 272 L 156 384 C 146 388 126 388 116 384 L 111 302 L 109 302 L 104 384 C 94 388 74 388 64 384 Z" fill="url(#cDenim)"/>
+    <rect x="60" y="368" width="48" height="19" rx="9" fill="#D3D7E0"/>
+    <rect x="112" y="368" width="48" height="19" rx="9" fill="#BCC1CD"/>
+    <path d="M62 386 L 106 386 L 108 400 C 108 408 104 413 97 413 L 50 413 C 40 413 38 403 46 397 C 52 393 58 392 62 386 Z" fill="url(#cBoot)"/>
+    <path d="M158 386 L 114 386 L 112 400 C 112 408 116 413 123 413 L 170 413 C 180 413 182 403 174 397 C 168 393 162 392 158 386 Z" fill="url(#cBoot)"/>
+    <rect x="58" y="259" width="104" height="14" rx="6" fill="#7A4524"/>
+    <rect x="100" y="256" width="20" height="20" rx="5" fill="#FFC94A"/>
+    <rect x="105" y="261" width="10" height="10" rx="2" fill="#7A4524"/>
+    <path d="M88 166 L 84 262 M132 166 L 136 262" fill="none" stroke="#2E2A38" stroke-width="8" stroke-linecap="round"/>
+    <rect x="78" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <rect x="130" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <circle cx="58" cy="256" r="12" fill="url(#cSkin)"/>
+    <circle cx="162" cy="256" r="12" fill="url(#cSkin)"/>
+    <path d="M90 154 C 100 163 120 163 130 154 L 136 166 C 120 175 100 175 84 166 Z" fill="url(#cBand)"/>
+    <path d="M84 164 C 100 172 120 172 136 164 L 112 202 Z" fill="url(#cBand)"/>
+    <path d="M100.2 186 L 122.1 186 L 112 202 Z" fill="url(#cRed)"/>
+    <path d="M138 172 L 154 192 L 144 194 Z M134 172 L 140 196 L 131 194 Z" fill="url(#cRed)"/>
+    <ellipse cx="136" cy="168" rx="9" ry="7" fill="url(#cRed)"/>
+    <g fill="#FFFFFF"><use href="#cStar" x="96" y="171"/><use href="#cStar" x="110" y="177"/><use href="#cStar" x="124" y="171"/><use href="#cStar" x="104" y="182"/><use href="#cStar" x="117" y="182"/></g>
+    <circle cx="72" cy="106" r="9" fill="url(#cSkin)"/>
+    <circle cx="148" cy="106" r="9" fill="url(#cSkin)"/>
+    <path d="M72 86 C 72 56 148 56 148 86 C 150 116 142 146 128 154 C 120 159 100 159 92 154 C 78 146 70 116 72 86 Z" fill="url(#cSkin)"/>
+    <path d="M86 84 C 92 77 102 77 106 82 M114 82 C 118 77 128 77 134 84" fill="none" stroke="#4A2C16" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="97" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <ellipse cx="123" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <circle cx="99.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="125.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="84" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <circle cx="136" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <path d="M103 143 Q110 148 117 143" fill="none" stroke="#8A3A2E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M110 124 C 100 116 84 116 76 124 C 70 130 60 128 58 120 C 56 132 68 138 80 136 C 92 134 102 132 110 130 C 118 132 128 134 140 136 C 152 138 164 132 162 120 C 160 128 150 130 144 124 C 136 116 120 116 110 124 Z" fill="url(#cMust)"/>
+    <ellipse cx="110" cy="113" rx="13" ry="12" fill="url(#cNose)"/>
+    <ellipse cx="105" cy="108" rx="4" ry="3" fill="#FFFFFF" opacity=".6"/>
+    <path d="M58 72 C 50 46 80 26 112 26 C 148 26 172 44 164 68 C 150 78 72 82 58 72 Z" fill="url(#cRed)"/>
+    <path d="M60 72 C 74 82 150 78 164 68" fill="none" stroke="#A9271F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M80 44 C 90 36 104 32 118 32" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+    <circle cx="112" cy="27" r="4.5" fill="url(#cRed)"/>
+  </symbol>
+  <symbol id="camilleBase" viewBox="0 0 200 240">
+    <path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="url(#cCamHair)"/>
+    <rect x="88" y="140" width="24" height="34" rx="8" fill="#A86C46"/>
+    <path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#cHoodie)"/>
+    <path d="M70 174 Q100 198 130 174" fill="none" stroke="#3A8B6B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M92 190 L 90 214 M108 190 L 110 214" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="104" r="46" fill="url(#cCamSkin)"/>
+    <path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="url(#cCamHair)"/>
+    <path d="M74 64 C 84 54 98 50 110 52" fill="none" stroke="#E38A5E" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <circle cx="86" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="118" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="56" cy="126" r="4.5" fill="#FFC94A"/>
+    <circle cx="144" cy="126" r="4.5" fill="#FFC94A"/>
+  </symbol>
+</svg>
+<div class="band" aria-hidden="true">
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice">
+    <rect width="1440" height="120" fill="#BEDDEB"/>
+    <ellipse cx="180" cy="34" rx="56" ry="20" fill="url(#cCloud)"/><ellipse cx="216" cy="24" rx="34" ry="22" fill="url(#cCloud)"/>
+    <ellipse cx="760" cy="28" rx="46" ry="16" fill="url(#cCloud)"/><ellipse cx="790" cy="20" rx="28" ry="18" fill="url(#cCloud)"/>
+    <g fill="#9C8B7C">
+      <path d="M1148 96 C 1158 70 1166 44 1172 6 L 1176 6 C 1182 44 1190 70 1200 96 L 1190 96 C 1184 84 1180 80 1174 80 C 1168 80 1164 84 1158 96 Z"/>
+      <rect x="1156" y="62" width="36" height="6" rx="3"/><rect x="1162" y="36" width="24" height="5" rx="2.5"/>
+    </g>
+    <g fill="#8E9AAE">
+      <path d="M0 120 V84 Q20 70 40 84 V76 H110 Q130 62 150 76 V88 H230 V72 Q260 58 290 72 V86 H360 V78 Q385 64 410 78 V90 H470 V70 H560 Q585 56 610 70 V86 H690 V80 Q720 66 750 80 V92 H830 V74 Q855 60 880 74 V84 H960 V76 H1040 Q1065 62 1090 76 V92 H1140 V100 H1220 V78 Q1245 64 1270 78 V88 H1350 V74 Q1395 60 1440 74 V120 Z"/>
+    </g>
+    <g fill="#C46A4A"><rect x="64" y="64" width="10" height="16" rx="3"/><rect x="250" y="58" width="10" height="16" rx="3"/><rect x="520" y="58" width="10" height="16" rx="3"/><rect x="842" y="62" width="10" height="16" rx="3"/><rect x="1300" y="62" width="10" height="16" rx="3"/></g>
+    <g fill="#F7EFE2" opacity=".85"><rect x="90" y="94" width="10" height="14" rx="3"/><rect x="300" y="96" width="10" height="14" rx="3"/><rect x="600" y="96" width="10" height="14" rx="3"/><rect x="920" y="98" width="10" height="14" rx="3"/><rect x="1380" y="96" width="10" height="14" rx="3"/></g>
+  </svg>
+</div>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Français 10-3Y · Scène 6</p>
+      <h1>Le premier jour au lycée</h1>
+      <p class="lede">It’s your first day at Camille’s lycée in Paris. When the bell rings, read your timetable and find your classroom. Then follow your teachers’ instructions.</p>
+    </div>
+    <div class="toggles">
+      <label class="pill"><input type="checkbox" id="sfxOn" checked> Effets sonores</label>
+      <label class="pill tts-only"><input type="checkbox" id="challenge"> Défi : audio seulement</label>
+      <label class="pill"><input type="checkbox" id="labels" checked> Noms</label>
+      <button class="pill" id="restart" type="button">Recommencer</button>
+    </div>
+  </header>
+
+  <div class="game wide">
+    <section class="card stage" aria-label="Le lycée">
+      <div class="stagehead"><span class="place">Lycée Victor-Hugo · Paris 3<sup>e</sup></span><span id="clockLbl">Lundi</span></div>
+      <div class="viewport hall" id="hallWrap">
+        <svg id="hall" viewBox="0 0 760 320" role="img" aria-label="Le couloir du lycée"></svg>
+        <div class="enterbar" id="enterBar" hidden><button class="btn primary small" id="enterBtn" type="button">Entrer</button><span id="enterLbl">ou appuie sur <kbd>E</kbd></span></div>
+        <div class="intro" id="intro">
+          <div class="box">
+            <p class="eyebrow">Scène 6</p>
+            <h2>Le premier jour au lycée</h2>
+            <p>Every game has a different timetable and different classroom instructions.</p>
+            <ul>
+              <li>When the bell rings, read the time and check your timetable. Then walk down the hallway, read the door signs and go in the right door.</li>
+              <li>In class, do what the teacher says: write the numbers you hear, take things out of your bag, follow the coach.</li>
+              <li>At recess, tell Camille about your favourite subject.</li>
+            </ul>
+            <div><button class="btn primary" id="startBtn" type="button">Commencer</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="classview" id="classView" hidden></div>
+      <div class="walkbar" id="walkBar">
+        <div class="pad">
+          <button class="ctl" type="button" data-k="-1"><span aria-hidden="true">←</span> Marche</button>
+          <button class="ctl" type="button" data-k="1">Marche <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="keyhelp">Clavier : <kbd>←</kbd> <kbd>→</kbd> marcher · <kbd>E</kbd> entrer. Hold a button to keep walking.</p>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="card panel">
+        <h3>Mon emploi du temps · lundi</h3>
+        <div class="tablewrap"><table class="tbl"><thead><tr><th>Heure</th><th>Cours</th><th>Salle</th></tr></thead><tbody id="horaire"></tbody></table></div>
+      </div>
+      <div class="card feedcard">
+        <div class="feedhead"><h3>Messages</h3><label class="mini-switch tts-only"><input type="checkbox" id="autoplay" checked> Audio automatique</label></div>
+        <div class="feed" id="feed" aria-live="polite"><p class="empty">Announcements and messages will appear here.</p></div>
+      </div>
+      <div class="card panel">
+        <div class="panelhead"><h3>Ta tâche</h3><button class="btn ghost small" id="hintBtn" type="button">Indice</button></div>
+        <p class="task" id="task">Press Commencer to begin.</p>
+        <div id="writeBox" hidden style="display:flex;flex-direction:column;gap:8px">
+          <div class="accentbar" id="accentBar"></div>
+          <form class="inputrow" id="writeForm" autocomplete="off">
+            <label for="write" class="sr">Ta réponse</label>
+            <input id="write" type="text" placeholder="Ma matière préférée, c’est…" spellcheck="false">
+            <button class="btn primary" type="submit">Envoyer</button>
+          </form>
+        </div>
+        <div class="fbs" id="fbs" aria-live="polite"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card summary" id="summary" hidden></section>
+
+  <details class="teacher">
+    <summary>Pour le prof : how this scene works</summary>
+    <ul>
+      <li>Students walk a side-view hallway with the arrow keys or the on-screen buttons, read the room number above each door, and press <b>Entrer</b> at the door.</li>
+      <li>Each game builds a new timetable with maths, PE and two other subjects, and new room numbers. The bell gives the time in words (<i>Il est neuf heures vingt-cinq</i>) while the timetable uses digits, so students convert between the two to find the class.</li>
+      <li><b>Les maths</b> is a number dictation by ear, always including the 70s, 80s and 90s (<i>soixante-quatorze, quatre-vingt-trois, quatre-vingt-dix-sept</i>). Without a French voice, the numbers are shown in words instead. <b>L’EPS</b> is a coach giving <i>vous</i> commands (<i>Sautez ! Courez ! Touchez vos pieds !</i>) against a timer: ten seconds per command in the first round. After each round the coach asks <i>Vous voulez recommencer plus vite ?</i> Students can go faster (6.5, 4.5, then 3 seconds, with more commands each time), retry at the same speed, or stop. Only the first round counts toward the stars; finishing a faster round with every command on time earns the <b>Éclair</b> badge. Other classes use desk commands (<i>Sortez votre cahier, Ouvrez votre livre, Rangez vos ciseaux, Levez la main</i>): students pick the object, then the matching verb in the <b>je</b> form.</li>
+      <li>At recess, students write about their favourite subject with <i>parce que</i>. The checker looks for a subject and a reason, and nudges agreement: <i>ma matière préférée</i>, <i>la classe est intéressante</i>.</li>
+      <li>A first wrong room gets “Regarde ton emploi du temps”; a second gets the answer and the door glows. Mistakes and hints are counted per period.</li>
+      <li>Outcomes practised: 10 C 2.1 (classroom supplies), 10 C 2.2 (course schedules), 10 C 2.3 (routine classroom interactions), 10 C 2.4 (areas of the school), 10 R 2.1e (<i>votre, vos</i>), 10 R 2.8a (classroom commands), 10 R 2.12 (agreement), 10 R 2.17 (<i>parce que</i>).</li>
+      <li>Audio uses one French voice from this computer: <b id="vozName">checking…</b>. Nothing is saved or sent anywhere.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ===================== Sound design (Web Audio, no files) ===================== */
+const SFX = (() => {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  let ctx = null, out = null, muted = false, last = { t: 0, p: -1 }, noiseBuf = null;
+  try { muted = localStorage.getItem('jeu-fr-sfx-off') === '1'; } catch (e) {}
+  const N = m => 440 * Math.pow(2, (m - 69) / 12);
+  function init() {
+    if (!AC) return null;
+    if (!ctx) {
+      try {
+        ctx = new AC();
+        const comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -18; comp.ratio.value = 4;
+        out = ctx.createGain(); out.gain.value = 0.42;
+        out.connect(comp); comp.connect(ctx.destination);
+      } catch (e) { ctx = null; return null; }
+    }
+    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+    return ctx;
+  }
+  function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function tone(f, t, { type = 'sine', a = 0.006, d = 0.3, v = 0.2, to = 0, pan = 0 } = {}) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + a + d);
+    env(g, t, a, v, d);
+    let node = g;
+    if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = pan; g.connect(p); node = p; }
+    o.connect(g); node.connect(out); o.start(t); o.stop(t + a + d + 0.05);
+  }
+  function mallet(f, t, v = 0.2, d = 0.45, pan = 0) {
+    tone(f, t, { v, d, pan });
+    tone(f * 4, t, { v: v * 0.16, d: d * 0.22, pan });
+    tone(f * 2.01, t, { type: 'triangle', v: v * 0.1, d: d * 0.5, pan });
+  }
+  function sparkle(t, n = 5, base = 88) {
+    const steps = [0, 4, 7, 12, 16, 19, 24];
+    for (let k = 0; k < n; k++) tone(N(base + steps[k % 7]), t + k * 0.045, { v: 0.05, d: 0.28, pan: k % 2 ? 0.45 : -0.45 });
+  }
+  function noise(t, { d = 0.3, v = 0.12, type = 'bandpass', f = 1200, to = 0, q = 0.8 } = {}) {
+    if (!noiseBuf) {
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const ch = noiseBuf.getChannelData(0);
+      for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    }
+    const s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+    s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t);
+    if (to) fl.frequency.exponentialRampToValueAtTime(to, t + d);
+    fl.Q.value = q; env(g, t, 0.01, v, d);
+    s.connect(fl); fl.connect(g); g.connect(out); s.start(t); s.stop(t + d + 0.05);
+  }
+  const SOUNDS = {
+    tap: [0, t => tone(1320, t, { v: 0.04, d: 0.035 })],
+    soft: [1, t => mallet(N(76), t, 0.07, 0.2)],
+    step: [0, t => { noise(t, { d: 0.05, v: 0.07, type: 'lowpass', f: 520 }); noise(t + 0.17, { d: 0.05, v: 0.05, type: 'lowpass', f: 460 }); }],
+    turn: [0, t => noise(t, { d: 0.12, v: 0.035, f: 900, to: 1800, q: 1.2 })],
+    star: [4, t => sparkle(t, 6, 88)],
+    door: [3, t => { noise(t, { d: 0.45, v: 0.08, type: 'highpass', f: 2600 }); mallet(N(76), t + 0.08, 0.11, 0.5); mallet(N(72), t + 0.34, 0.11, 0.7); }],
+    bell: [3, t => { [79, 76, 72, 79].forEach((m, k) => mallet(N(m), t + k * 0.26, 0.14, 0.8)); }],
+    mission: [5, t => { [72, 76, 79, 84].forEach((m, k) => mallet(N(m), t + k * 0.085, 0.16, 0.6, (k - 1.5) * 0.2)); sparkle(t + 0.38, 5, 96); }],
+    message: [1, t => { tone(N(81), t, { v: 0.08, d: 0.12 }); tone(N(88), t + 0.07, { v: 0.07, d: 0.2 }); }],
+    whoosh: [1, t => noise(t, { d: 0.5, v: 0.08, f: 300, to: 2600, q: 0.9 })],
+    hint: [2, t => { mallet(N(79), t, 0.09, 0.5); mallet(N(86), t + 0.12, 0.07, 0.6); }],
+    wrong: [2, t => { tone(N(57), t, { type: 'triangle', v: 0.13, d: 0.2, to: N(53) }); tone(N(53), t + 0.11, { type: 'triangle', v: 0.09, d: 0.28, to: N(48) }); }],
+    correct: [3, t => { mallet(N(76), t, 0.17); mallet(N(83), t + 0.09, 0.17, 0.6); }],
+    perfect: [4, t => { mallet(N(76), t, 0.15); mallet(N(79), t + 0.08, 0.15); mallet(N(84), t + 0.16, 0.17, 0.7); sparkle(t + 0.24, 4, 91); }],
+    fanfare: [6, t => {
+      [[67, 0, .14], [72, .14, .14], [76, .28, .14], [79, .42, .28], [76, .7, .14], [79, .84, .5]].forEach(([m, dt, d]) => {
+        mallet(N(m), t + dt, 0.17, d + 0.4);
+        tone(N(m), t + dt, { type: 'triangle', v: 0.045, d: d + 0.2 });
+      });
+      [48, 55, 64, 67, 72].forEach(m => tone(N(m), t + 0.84, { type: 'triangle', v: 0.04, a: 0.1, d: 1.6 }));
+      sparkle(t + 1.0, 7, 96);
+    }],
+    badge: [5, t => { mallet(N(91), t, 0.09, 0.4); sparkle(t + 0.05, 3, 96); }]
+  };
+  function play(name, { force = false } = {}) {
+    if (muted) return;
+    const s = SOUNDS[name];
+    if (!s || !init()) return;
+    const now = ctx.currentTime, [p, fn] = s;
+    if (!force && now - last.t < 0.22 && p < last.p) return;
+    last = { t: now, p };
+    try { fn(now + 0.01); } catch (e) {}
+  }
+  const later = (ms, f) => setTimeout(() => { if (!muted && init()) { try { f(ctx.currentTime + 0.01); } catch (e) {} } }, ms);
+  return {
+    play,
+    mission(st = 0, delayMs = 0) {
+      later(delayMs, t => { last = { t, p: 5 }; SOUNDS.mission[1](t); });
+      for (let k = 0; k < st; k++) later(delayMs + 560 + k * 170, t => { mallet(N(88 + k * 4), t, 0.1, 0.5); sparkle(t, 2, 96 + k * 3); });
+    },
+    celebrate(badges = 0) {
+      later(0, t => { last = { t, p: 6 }; SOUNDS.fanfare[1](t); });
+      for (let k = 0; k < Math.min(badges, 6); k++) later(1700 + k * 260, t => SOUNDS.badge[1](t));
+    },
+    muted: () => muted,
+    setMuted(m) { muted = m; try { localStorage.setItem('jeu-fr-sfx-off', m ? '1' : '0'); } catch (e) {} }
+  };
+})();
+
+const $ = id => document.getElementById(id);
+const NB = ' '; // French thin space before ? ! ; :
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+
+/* ================= 1. TEXT HELPERS ================= */
+const stripMarks = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+// accents stripped, apostrophes and hyphens become spaces: "J'ai dix-sept ans" -> "j ai dix sept ans"
+const norm = s => stripMarks(s.toLowerCase()).replace(/œ/g, 'oe').replace(/[’‘`´'\-]/g, ' ').replace(/[?!.,;:"“”«»()]/g, ' ').replace(/\s+/g, ' ').trim();
+const words = s => s.match(/[A-Za-zÀ-ÖØ-öø-ÿœŒ]+/g) || [];
+const key = w => stripMarks(w.toLowerCase()).replace(/œ/g, 'oe');
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+const isUpper = s => s[0] !== s[0].toLowerCase();
+const findSeq = (toks, seq) => {
+  for (let i = 0; i <= toks.length - seq.length; i++) if (seq.every((s, j) => toks[i + j] === s)) return i + seq.length;
+  return -1;
+};
+
+/* ================= 2. ACCENT INPUT: bar + typing shortcuts ================= */
+const ACUTE = { e: 'é', E: 'É' };
+const GRAVE = { a: 'à', e: 'è', u: 'ù', A: 'À', E: 'È', U: 'Ù' };
+const CIRC = { a: 'â', e: 'ê', i: 'î', o: 'ô', u: 'û', A: 'Â', E: 'Ê', I: 'Î', O: 'Ô', U: 'Û' };
+const DEFER = { 'c,': 'ç', 'C,': 'Ç', 'e:': 'ë', 'i:': 'ï', 'E:': 'Ë', 'I:': 'Ï' }; // converted only when a letter follows, so "avec, je" stays as typed
+
+function attachAccentInput(input, bar) {
+  const flash = ch => {
+    const b = bar.querySelector(`[data-ch="${ch.toLowerCase()}"]`);
+    if (!b) return;
+    b.classList.add('flash');
+    setTimeout(() => b.classList.remove('flash'), 350);
+  };
+  input.addEventListener('input', e => {
+    if (!e.inputType || !e.inputType.startsWith('insertText')) return;
+    const pos = input.selectionStart, v = input.value;
+    const last = v[pos - 1], prev = v[pos - 2];
+    let rep = null;
+    if ((last === "'" || last === '’' || last === '´') && ACUTE[prev]) rep = ACUTE[prev];
+    else if (last === '`' && GRAVE[prev]) rep = GRAVE[prev];
+    else if (last === '^' && CIRC[prev]) rep = CIRC[prev];
+    else if ((last === '<' && prev === '<') || (last === '>' && prev === '>')) rep = last === '<' ? '«' : '»';
+    if (rep) {
+      input.value = v.slice(0, pos - 2) + rep + v.slice(pos);
+      input.setSelectionRange(pos - 1, pos - 1);
+      flash(rep);
+      return;
+    }
+    if (/\p{L}/u.test(last || '') && pos >= 3) {
+      const pair = v.slice(pos - 3, pos - 1);
+      if (DEFER[pair]) {
+        const r = DEFER[pair];
+        input.value = v.slice(0, pos - 3) + r + v.slice(pos - 1);
+        input.setSelectionRange(pos - 1, pos - 1);
+        flash(r);
+      }
+    }
+  });
+  bar.querySelectorAll('button').forEach(b => {
+    b.addEventListener('pointerdown', e => e.preventDefault());
+    b.addEventListener('click', e => {
+      const ch = e.shiftKey ? b.dataset.ch.toUpperCase() : b.dataset.ch;
+      const s = input.selectionStart ?? input.value.length, en = input.selectionEnd ?? s;
+      input.value = input.value.slice(0, s) + ch + input.value.slice(en);
+      input.focus();
+      input.setSelectionRange(s + ch.length, s + ch.length);
+    });
+  });
+}
+
+/* ================= 3. REVIEW: accents, elision, spelling; never blocks a reply ================= */
+const ACCENT_WORDS = {
+  ca: 'ça', tres: 'très', francais: 'français', francaise: 'française', eleve: 'élève', eleves: 'élèves', ecole: 'école',
+  age: 'âge', deja: 'déjà', voila: 'voilà', frere: 'frère', freres: 'frères', mere: 'mère', pere: 'père',
+  cafe: 'café', enchante: 'enchanté', enchantee: 'enchantée', desole: 'désolé', desolee: 'désolée', bientot: 'bientôt',
+  apres: 'après', quebec: 'Québec', montreal: 'Montréal', etats: 'États', etes: 'êtes', meme: 'même', preferee: 'préférée',
+  noel: 'Noël', theatre: 'théâtre', musee: 'musée', numero: 'numéro', telephone: 'téléphone', television: 'télévision',
+  etudiant: 'étudiant', etudiante: 'étudiante', ete: 'été', chloe: 'Chloé', helene: 'Hélène', zoe: 'Zoé', jerome: 'Jérôme', theo: 'Théo', leo: 'Léo'
+};
+const SPELLING = { apelle: 'appelle', apelles: 'appelles', appele: 'appelle', apele: 'appelle', bonjours: 'bonjour', mercie: 'merci' };
+const NOTES = {
+  a: 'à = to / at, a = has.',
+  ou: 'où = where, ou = or.',
+  ca: 'The ç keeps the c soft: ça.'
+};
+const A_BEFORE = new Set(['habite', 'habites', 'vis', 'vais', 'suis', 'bienvenue', 'vit', 'habitons']);
+const A_AFTER = new Set(['bientot', 'demain', 'plus', 'la', 'paris', 'lethbridge', 'calgary', 'edmonton', 'toronto', 'vancouver', 'montreal', 'quebec', 'moi', 'toi', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche', 'l', 'pied']);
+const OU_AFTER = new Set(['habites', 'habite', 'vas', 'est', 'es', 'viens', 'vis', 'sont', 'etes', 'habitez']);
+const NO_ELIDE = new Set(['huit', 'onze', 'hockey', 'heros', 'hibou', 'hamburger', 'handball', 'hasard', 'haricot', 'haut', 'hollande', 'yoga', 'yaourt']);
+
+function review(raw) {
+  const issues = []; let correct = 0;
+  const isQ = /[?¿]/.test(raw);
+  const toks = words(raw);
+  toks.forEach((w, i) => {
+    const k = key(w), lw = w.toLowerCase();
+    let target = ACCENT_WORDS[k] || SPELLING[k];
+    const prev = i > 0 ? key(toks[i - 1]) : '', next = key(toks[i + 1] || '');
+    if (k === 'a' && (A_BEFORE.has(prev) || A_AFTER.has(next))) target = 'à';
+    if (k === 'ou' && (prev === 'd' || (isQ && (i === 0 || OU_AFTER.has(next) || i === toks.length - 1)))) target = 'où';
+    if (!target) return;
+    if (lw === target.toLowerCase()) { if (!SPELLING[k]) correct++; return; }
+    const fix = isUpper(w) || isUpper(target) ? target.charAt(0).toUpperCase() + target.slice(1) : target;
+    issues.push({ wrote: w, fix, note: NOTES[k] || (SPELLING[k] ? 'Spelling.' : '') });
+  });
+  // elision: je ai -> j'ai, je habite -> j'habite, de ou -> d'où
+  const re = /\b(je|me|te|se|le|la|ne|de|que)\s+([aeiouyhàâéèêëîïôûœ][\p{L}]*)/giu;
+  let m;
+  while ((m = re.exec(raw))) {
+    const w1 = m[1], w2 = m[2], k2 = key(w2);
+    if (NO_ELIDE.has(k2)) continue;
+    if (w1.toLowerCase() === 'je' && /^ap+el+e?s?$/.test(k2)) {
+      issues.push({ wrote: `${w1} ${w2}`, fix: 'je m’appelle', note: 'The phrase needs the m’: <b>je m’appelle</b> = I call myself.' });
+      continue;
+    }
+    const lead = w1.charAt(0) + (w1.length > 1 && /^qu/i.test(w1) ? 'u' : '');
+    issues.push({ wrote: `${w1} ${w2}`, fix: `${lead}’${w2}`, note: 'Before a vowel sound, the e drops and becomes an apostrophe (elision).' });
+  }
+  return { issues, correct };
+}
+
+const ENGLISH = new Set(['my', 'name', 'is', 'i', 'am', 'im', 'years', 'old', 'hello', 'hi', 'from', 'the', 'what', 'how', 'you', 'are', 'and', 'goodbye', 'bye', 'do', 'like', 'your', 'good', 'thanks', 'fine', 'where', 'live', 'have', 'it', 'its', 'see', 'later']);
+const looksEnglish = n => n.split(' ').filter(w => ENGLISH.has(w)).length >= 2;
+
+/* ---- speech: one French voice for the whole game, never an English one ---- */
+const tts = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+if (!tts) document.body.classList.add('no-tts');
+let VOIX = null;
+function rankVoice(v) {
+  const l = (v.lang || '').replace('_', '-');
+  if (!/^fr(-|$)/i.test(l)) return -1;
+  let s = 0;
+  if (/natural|online|neural/i.test(v.name)) s += 40;
+  if (/google/i.test(v.name)) s += 25;
+  if (/fr-FR/i.test(l)) s += 20; else if (/fr-CA/i.test(l)) s += 12; else s += 6;
+  if (/denise|eloise|vivienne|henri|remy|amelie|julie|thomas/i.test(v.name)) s += 3;
+  return s;
+}
+function pickVoice() {
+  try {
+    const best = speechSynthesis.getVoices().map(v => [rankVoice(v), v]).filter(x => x[0] >= 0).sort((a, b) => b[0] - a[0])[0];
+    VOIX = best ? best[1] : null;
+  } catch (e) { VOIX = null; }
+  document.body.classList.toggle('no-tts', !VOIX);
+  const el = document.getElementById('vozName');
+  if (el) el.textContent = VOIX ? `${VOIX.name} (${VOIX.lang})` : 'none found';
+  return VOIX;
+}
+if (tts) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
+function speak(text, slow = false) {
+  if (!tts || (!VOIX && !pickVoice())) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/ /g, ' '));
+    u.voice = VOIX; u.lang = VOIX.lang; u.rate = slow ? 0.72 : 0.95;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+
+/* ================= Shared helpers for every scene ================= */
+const SPEED = window.__testSpeed || 1;
+const sleep = ms => new Promise(r => setTimeout(r, ms * SPEED));
+const rand = n => Math.floor(Math.random() * n);
+const pick = a => a[rand(a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const capFirst = s => s.charAt(0).toUpperCase() + s.slice(1);
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* French articles: à + le = au, de + le = du, l' before a vowel */
+const au = full => full.startsWith('le ') ? 'au ' + full.slice(3) : full.startsWith('les ') ? 'aux ' + full.slice(4) : 'à ' + full;
+const du = full => full.startsWith('le ') ? 'du ' + full.slice(3) : full.startsWith('les ') ? 'des ' + full.slice(4) : 'de ' + full;
+
+/* French numbers 0–100 (traditional hyphens) */
+const UNITS = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+const TENS = { 2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante' };
+function numWord(n) {
+  if (n < 0) return 'moins ' + numWord(-n);
+  if (n < 20) return UNITS[n];
+  if (n === 100) return 'cent';
+  if (n < 70) { const t = Math.floor(n / 10), u = n % 10; return u === 0 ? TENS[t] : u === 1 ? TENS[t] + ' et un' : TENS[t] + '-' + UNITS[u]; }
+  if (n < 80) return n === 71 ? 'soixante et onze' : 'soixante-' + UNITS[n - 60];
+  if (n === 80) return 'quatre-vingts';
+  return 'quatre-vingt-' + UNITS[n - 80];
+}
+/* time in words, 12-hour as people say it: "neuf heures moins cinq" */
+function timeWords(h, m) {
+  let hh = h, mm = m, suffix = '';
+  if (m > 30) { hh = h + 1; mm = 60 - m; suffix = mm === 15 ? ' moins le quart' : ' moins ' + numWord(mm); }
+  else if (m === 15) suffix = ' et quart';
+  else if (m === 30) suffix = ' et demie';
+  else if (m > 0) suffix = ' ' + numWord(m);
+  const h12 = hh % 24;
+  let base;
+  if (h12 === 12) base = 'midi';
+  else if (h12 === 0) base = 'minuit';
+  else { const k = h12 > 12 ? h12 - 12 : h12; base = k === 1 ? 'une heure' : numWord(k) + ' heures'; }
+  if ((h12 === 12 || h12 === 0) && suffix === ' et demie') suffix = ' et demi';
+  return base + suffix;
+}
+const clock = (h, m) => `${h} h ${String(m).padStart(2, '0')}`;
+
+/* ---- clay people: one generator for the whole cast ---- */
+let gid = 0;
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  const f = c => Math.max(0, Math.min(255, Math.round(c + (amt > 0 ? (255 - c) * amt : c * amt))));
+  return '#' + [f(n >> 16), f((n >> 8) & 255), f(n & 255)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+const grad = (c) => { const id = 'pg' + (++gid); return [id, `<radialGradient id="${id}" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${shade(c, .35)}"/><stop offset=".6" stop-color="${c}"/><stop offset="1" stop-color="${shade(c, -.25)}"/></radialGradient>`]; };
+const MOUTHS = {
+  happy: '<path d="M86 128 Q100 146 114 128 Z" fill="#7A2E2E"/><path d="M90 129 Q100 134 110 129 Z" fill="#FFFFFF"/>',
+  neutral: '<path d="M88 130 Q100 140 112 130" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  think: '<path d="M90 134 Q100 130 110 135" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  oh: '<ellipse cx="100" cy="134" rx="6" ry="8" fill="#7A2E2E"/>'
+};
+/* p: { skin, hair: 'short'|'bob'|'long'|'bun'|'curly'|'bald'|'pony', hairColor, glasses, mustache, shirt, kid, mouth } -> 200×240 svg body */
+function personBody(p) {
+  const [sg, sdef] = grad(p.skin), [hg, hdef] = grad(p.hairColor || '#5A3A22'), [cg, cdef] = grad(p.shirt || '#6CC6A6');
+  const hc = `url(#${hg})`, sk = `url(#${sg})`;
+  const s = p.kid ? .86 : 1;
+  let back = '', front = '';
+  switch (p.hair) {
+    case 'bob': back = `<path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="${hc}"/>`;
+      front = `<path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="${hc}"/>`; break;
+    case 'long': back = `<path d="M44 110 C 36 50 70 26 100 26 C 132 26 166 50 156 110 L 164 200 C 140 210 60 210 36 200 Z" fill="${hc}"/>`;
+      front = `<path d="M56 96 C 58 62 82 50 100 50 C 124 50 144 62 144 96 C 136 76 118 66 96 72 C 80 76 66 84 56 96 Z" fill="${hc}"/>`; break;
+    case 'pony': back = `<path d="M140 70 C 176 70 180 130 160 168 C 170 128 160 96 140 90 Z" fill="${hc}"/>`;
+      front = `<path d="M54 100 C 52 58 80 48 102 48 C 128 48 150 62 148 100 C 136 80 116 72 98 74 C 80 76 64 86 54 100 Z" fill="${hc}"/>`; break;
+    case 'bun': back = `<circle cx="100" cy="46" r="26" fill="${hc}"/>`;
+      front = `<path d="M56 104 C 56 66 80 54 100 54 C 122 54 146 66 144 104 C 132 82 116 76 100 76 C 84 76 68 82 56 104 Z" fill="${hc}"/>`; break;
+    case 'curly': front = [[64, 74], [80, 60], [100, 54], [120, 60], [136, 74], [146, 92], [54, 92]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="18" fill="${hc}"/>`).join(''); break;
+    case 'bald': front = `<path d="M56 116 C 52 96 58 86 64 82 L 66 112 Z M144 116 C 148 96 142 86 136 82 L 134 112 Z" fill="${hc}"/>`; break;
+    default: front = `<path d="M56 100 C 54 62 78 50 100 50 C 124 50 148 62 144 100 C 140 84 128 72 110 70 C 96 76 76 82 56 100 Z" fill="${hc}"/>`;
+  }
+  const glasses = p.glasses ? '<g fill="none" stroke="#2A2440" stroke-width="4"><circle cx="84" cy="110" r="13"/><circle cx="116" cy="110" r="13"/><path d="M97 109 h6"/></g>' : '';
+  const must = p.mustache ? `<path d="M100 122 C 92 116 78 116 72 124 C 80 128 92 128 100 126 C 108 128 120 128 128 124 C 122 116 108 116 100 122 Z" fill="${shade(p.hairColor || '#5A3A22', -.2)}"/>` : '';
+  return `<defs>${sdef}${hdef}${cdef}</defs><g transform="translate(${100 - 100 * s} ${240 - 240 * s}) scale(${s})">${back}`
+    + `<rect x="88" y="140" width="24" height="34" rx="8" fill="${shade(p.skin, -.2)}"/>`
+    + `<path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#${cg})"/>`
+    + `<path d="M76 172 Q100 190 124 172" fill="none" stroke="${shade(p.shirt || '#6CC6A6', -.3)}" stroke-width="4" stroke-linecap="round"/>`
+    + `<circle cx="100" cy="104" r="46" fill="${sk}"/>${front}`
+    + '<ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/><ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/><circle cx="86" cy="108" r="2" fill="#FFFFFF"/><circle cx="118" cy="108" r="2" fill="#FFFFFF"/>'
+    + glasses + '<circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".4"/><circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".4"/>'
+    + must + (MOUTHS[p.mouth] || MOUTHS.happy) + '</g>';
+}
+const CAMILLE_BODY = mood => `<use href="#camilleBase" width="200" height="240"/>${MOUTHS[mood] || MOUTHS.happy}`;
+const CAST = {
+  camille: { name: 'Camille', camille: true },
+  mamie: { name: 'Mamie Jeanne', skin: '#EBC2A0', hair: 'bun', hairColor: '#D9D4E2', glasses: true, shirt: '#B05C8E' },
+  papa: { name: 'Papa', skin: '#E3AE86', hair: 'short', hairColor: '#5A3A22', shirt: '#3E6E9E', mustache: false },
+  maman: { name: 'Maman', skin: '#C98B62', hair: 'long', hairColor: '#2E1E16', shirt: '#E2463C' },
+  hugo: { name: 'Hugo', skin: '#C98B62', hair: 'curly', hairColor: '#7E3A1E', shirt: '#FFC94A', kid: true },
+  bernard: { name: 'M. Bernard', skin: '#D9A27A', hair: 'bald', hairColor: '#C8C2B4', glasses: true, mustache: true, shirt: '#6E8F7A' }
+};
+function personSVG(who, { mood = 'happy', crop = false, label = '' } = {}) {
+  const p = typeof who === 'string' ? CAST[who] : who;
+  const vb = crop ? '40 34 120 120' : '0 0 200 240';
+  const body = p.camille ? CAMILLE_BODY(mood) : personBody({ ...p, mouth: mood });
+  return `<svg viewBox="${vb}" ${label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"'}>${body}</svg>`;
+}
+const HERO_MINI = '<svg viewBox="52 18 116 116" aria-hidden="true"><use href="#hero" width="220" height="420"/></svg>';
+const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* ---- feedback chips ---- */
+function chipEl(kind, fr, en) {
+  const c = document.createElement('div');
+  c.className = 'chip appear ' + kind;
+  c.innerHTML = `<b>${fr}</b>${en ? `<span>${en}</span>` : ''}`;
+  return c;
+}
+function fb(kind, fr, en, append = false, box = $('fbs')) {
+  if (!box) return;
+  const c = chipEl(kind, fr, en);
+  if (append) box.appendChild(c); else box.replaceChildren(c);
+}
+const clearFb = (box = $('fbs')) => box && box.replaceChildren();
+/* review a typed answer and add accent / elision chips; returns counts */
+function reviewChips(raw, box, append = true) {
+  const r = review(raw);
+  const seen = new Set();
+  r.issues.forEach(is => {
+    const tag = is.wrote.toLowerCase();
+    if (seen.has(tag)) return; seen.add(tag);
+    fb('warn', `<span class="fix"><s>${esc(is.wrote)}</s> → ${esc(is.fix)}</span>`, is.note || '', append, box);
+  });
+  return r;
+}
+
+/* ---- message feed (texts and voice notes from the cast) ---- */
+const ENG = { reveals: 0 };
+function feedTime() { const d = ENG.clock || { h: 16, m: 0 }; return clock(d.h, d.m); }
+function addMsg(who, text, { feed = $('feed'), time = '', challenge = $('challenge'), autoplay = $('autoplay') } = {}) {
+  if (!feed) return;
+  const empty = feed.querySelector('.empty'); if (empty) empty.remove();
+  const p = CAST[who] || who;
+  const masked = challenge && challenge.checked && VOIX;
+  const m = document.createElement('div');
+  m.className = 'msg appear';
+  m.innerHTML = `<div class="av">${personSVG(p, { crop: true })}</div><div><div class="mhead"><b>${esc(p.name)}</b><span class="time">${time || feedTime()}</span></div><p class="mtext${masked ? ' masked' : ''}"></p><div class="mctl"><button type="button" class="play tts-only">${SPEAKER} Écouter</button><button type="button" class="slow tts-only">Lentement</button>${masked ? '<button type="button" class="reveal">Voir le texte</button>' : ''}</div></div>`;
+  const t = m.querySelector('.mtext');
+  t.textContent = masked ? 'Message audio : écoute-le.' : text;
+  m.querySelector('.play').addEventListener('click', () => speak(text));
+  m.querySelector('.slow').addEventListener('click', () => speak(text, true));
+  const rv = m.querySelector('.reveal');
+  if (rv) rv.addEventListener('click', () => { t.textContent = text; t.classList.remove('masked'); rv.remove(); ENG.reveals++; });
+  feed.appendChild(m);
+  feed.scrollTop = feed.scrollHeight;
+  SFX.play('message');
+  if ((autoplay && autoplay.checked) || masked) speak(text);
+  return m;
+}
+function addMine(text, feed = $('feed')) {
+  const m = document.createElement('div');
+  m.className = 'msg me appear';
+  m.innerHTML = '<div class="bubble"></div><div class="fbrow"></div>';
+  m.querySelector('.bubble').textContent = text;
+  feed.appendChild(m); feed.scrollTop = feed.scrollHeight;
+  return m.querySelector('.fbrow');
+}
+
+/* ---- mission list with stars ---- */
+function renderMissionList(el, items, cur, starsArr = []) {
+  el.innerHTML = '';
+  items.forEach((it, i) => {
+    const li = document.createElement('li');
+    const done = i < cur;
+    li.className = done ? 'done' : i === cur ? 'current' : '';
+    li.innerHTML = `<span class="n">${done ? CHECK : i + 1}</span><span class="t">${it}</span>${done && starsArr[i] != null ? `<span class="stars" aria-label="${starsArr[i]} étoiles sur 3">${starStr(starsArr[i])}</span>` : ''}`;
+    el.appendChild(li);
+  });
+}
+const starsFor = (mistakes, hints) => Math.max(1, 3 - mistakes - hints);
+
+/* ---- end-of-scene summary ---- */
+function renderSummary(box, { eyebrow, title, stats, badges, blocks = '', outcomes, again = 'Rejouer', onAgain }) {
+  box.innerHTML = `<div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2></div>
+    <div class="stats">${stats.map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('')}</div>
+    <div><h3>Badges</h3><div class="badges">${badges.map(([n, d, on]) => `<span class="badge${on ? '' : ' off'}" title="${esc(d)}">${on ? '★ ' : ''}${n}</span>`).join('')}</div></div>
+    ${blocks}
+    <p class="outcomes">Practised: ${outcomes}</p>
+    <div><button class="btn primary" type="button" id="againBtn">${again}</button></div>`;
+  box.hidden = false;
+  $('againBtn').addEventListener('click', onAgain);
+  SFX.celebrate(badges.filter(b => b[2]).length);
+  box.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' });
+}
+
+/* ---- header toggles shared by every scene ---- */
+function wireCommon(onRestart) {
+  const sfx = $('sfxOn');
+  if (sfx) {
+    sfx.checked = !SFX.muted();
+    sfx.addEventListener('change', () => { SFX.setMuted(!sfx.checked); if (sfx.checked) SFX.play('correct', { force: true }); });
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('button, .choice, .opt'); if (b && !b.disabled) SFX.play('tap'); }, true);
+  const lab = $('labels');
+  if (lab) { const apply = () => document.body.classList.toggle('nolabels', !lab.checked); lab.addEventListener('change', apply); apply(); }
+  const r = $('restart');
+  if (r) r.addEventListener('click', () => { SFX.play('whoosh', { force: true }); onRestart(); });
+}
+const ACCENT_BAR = ['é', 'è', 'ê', 'à', 'â', 'ç', 'î', 'ô', 'ù', 'û', 'ë', 'ï', 'œ'].map(c => `<button type="button" data-ch="${c}">${c}</button>`).join('') + '<span class="caps">Shift + click for capitals</span>';
+function setupAccentBar(barId, inputId) { const bar = $(barId); bar.innerHTML = ACCENT_BAR; attachAccentInput($(inputId), bar); }
+
+/* ================= SCENE ================= */
+const SUBJ = {
+  maths: { name: 'les maths', label: 'Maths', kind: 'maths', teacher: { name: 'Mme Lefèvre', skin: '#F2C29B', hair: 'long', hairColor: '#E0B060', glasses: true, shirt: '#7B4FB0' } },
+  eps: { name: 'l’EPS', label: 'EPS (sport)', kind: 'eps', teacher: { name: 'M. Diallo', skin: '#7A4A2E', hair: 'short', hairColor: '#1E1612', shirt: '#2B4A9B' } },
+  francais: { name: 'le français', label: 'Français', kind: 'desk', teacher: { name: 'M. Petit', skin: '#E3AE86', hair: 'short', hairColor: '#9CA6B8', mustache: true, shirt: '#6E8F7A' } },
+  histoire: { name: 'l’histoire-géo', label: 'Histoire-géo', kind: 'desk', teacher: { name: 'Mme Rossi', skin: '#D9A27A', hair: 'bun', hairColor: '#2E1E16', shirt: '#E2463C' } },
+  anglais: { name: 'l’anglais', label: 'Anglais', kind: 'desk', teacher: { name: 'Mr. Smith', skin: '#F5D0B0', hair: 'short', hairColor: '#C2562A', shirt: '#FFC94A' } },
+  svt: { name: 'les SVT', label: 'SVT (sciences)', kind: 'desk', teacher: { name: 'Mme Nguyen', skin: '#E8B48C', hair: 'bob', hairColor: '#1E1612', glasses: true, shirt: '#3E9C7C' } },
+  arts: { name: 'les arts plastiques', label: 'Arts plastiques', kind: 'desk', teacher: { name: 'M. Moreau', skin: '#C98B62', hair: 'curly', hairColor: '#2E1E16', shirt: '#F08A3C' } }
+};
+const TIMES = [[8, 30], [9, 30], [10, 45], [11, 45]];
+const DOOR_X = k => 200 + k * 250, NDOORS = 8, WORLD = DOOR_X(NDOORS) + 220;
+const S = {};
+const THINGS = {
+  cahier: ['le cahier', 'votre cahier', 1], livre: ['le livre', 'votre livre', 1], stylo: ['le stylo', 'votre stylo', 0], regle: ['la règle', 'votre règle', 0],
+  ciseaux: ['les ciseaux', 'vos ciseaux', 0], calculatrice: ['la calculatrice', 'votre calculatrice', 0], trousse: ['la trousse', 'votre trousse', 1], gomme: ['la gomme', 'votre gomme', 0]
+};
+function thingIcon(id) {
+  const A = {
+    cahier: '<rect x="8" y="6" width="28" height="36" rx="3" fill="#2B4A9B"/><path d="M14 6 V42" stroke="#1C3270" stroke-width="3"/><rect x="18" y="14" width="14" height="6" rx="2" fill="#FFFFFF"/>',
+    livre: '<path d="M6 10 Q16 6 24 10 V40 Q16 36 6 40 Z" fill="#E2463C"/><path d="M42 10 Q32 6 24 10 V40 Q32 36 42 40 Z" fill="#C9302A"/>',
+    stylo: '<rect x="20" y="4" width="8" height="32" rx="3" fill="#2B4A9B"/><path d="M20 36 L24 44 L28 36 Z" fill="#2A2440"/>',
+    regle: '<rect x="4" y="18" width="40" height="12" rx="2" fill="#FFC94A"/><path d="M10 18 v5 M16 18 v7 M22 18 v5 M28 18 v7 M34 18 v5 M40 18 v7" stroke="#2A2440" stroke-width="1.5"/>',
+    ciseaux: '<circle cx="14" cy="34" r="7" fill="none" stroke="#E2463C" stroke-width="4"/><circle cx="32" cy="34" r="7" fill="none" stroke="#E2463C" stroke-width="4"/><path d="M18 28 L32 6 M28 28 L16 6" stroke="#9CA6B8" stroke-width="4" stroke-linecap="round"/>',
+    calculatrice: '<rect x="10" y="4" width="28" height="40" rx="5" fill="#5A5470"/><rect x="14" y="8" width="20" height="9" rx="2" fill="#BFE3D3"/>' + [0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${14 + c * 7}" y="${21 + r * 7}" width="5" height="5" rx="1" fill="#FFFFFF"/>`).join('')).join(''),
+    trousse: '<rect x="4" y="16" width="40" height="22" rx="10" fill="#6CC6A6"/><path d="M8 20 H40" stroke="#3E9C7C" stroke-width="3"/><circle cx="38" cy="20" r="2.5" fill="#FFC94A"/>',
+    gomme: '<rect x="10" y="16" width="28" height="16" rx="4" fill="#F29BB8" transform="rotate(-12 24 24)"/><rect x="10" y="16" width="12" height="16" rx="4" fill="#2B4A9B" transform="rotate(-12 24 24)"/>'
+  };
+  return `<svg viewBox="0 0 48 48" aria-hidden="true">${A[id]}</svg>`;
+}
+const MOVES = [
+  ['Sautez !', 'sauter', '<circle cx="32" cy="12" r="7" fill="#2A2440"/><path d="M32 19 V40 M32 26 L18 16 M32 26 L46 16 M32 40 L22 52 M32 40 L42 52" stroke="#2A2440" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M14 60 H50" stroke="#9CA6B8" stroke-width="3" stroke-dasharray="4 4"/>'],
+  ['Courez !', 'courir', '<circle cx="36" cy="10" r="7" fill="#2A2440"/><path d="M34 17 L28 36 M30 24 L42 30 M30 24 L18 22 M28 36 L40 50 M28 36 L16 46 L10 44" stroke="#2A2440" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'],
+  ['Touchez vos pieds !', 'toucher les pieds', '<circle cx="18" cy="36" r="7" fill="#2A2440"/><path d="M24 32 Q34 20 40 32 M40 32 V58 M40 32 L28 52 M26 40 L36 56" stroke="#2A2440" stroke-width="5" stroke-linecap="round" fill="none"/>'],
+  ['Levez les bras !', 'lever les bras', '<circle cx="32" cy="18" r="7" fill="#2A2440"/><path d="M32 25 V44 M32 30 L22 6 M32 30 L42 6 M32 44 L26 60 M32 44 L38 60" stroke="#2A2440" stroke-width="5" stroke-linecap="round" fill="none"/>'],
+  ['Asseyez-vous !', 's’asseoir', '<circle cx="24" cy="14" r="7" fill="#2A2440"/><path d="M24 21 V40 H42 V58 M24 28 L36 34" stroke="#2A2440" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M14 44 H46" stroke="#8A5527" stroke-width="4"/>'],
+  ['Tournez !', 'tourner', '<circle cx="32" cy="12" r="7" fill="#2A2440"/><path d="M32 19 V42 M32 26 L20 34 M32 26 L44 34 M32 42 L24 58 M32 42 L40 58" stroke="#2A2440" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M12 30 A 22 10 0 1 0 52 30" stroke="#E2463C" stroke-width="3" fill="none"/><path d="M50 24 L53 31 L46 31 Z" fill="#E2463C"/>']
+];
+
+function newGame() {
+  const others = shuffle(['francais', 'histoire', 'anglais', 'svt', 'arts']).slice(0, 2);
+  const order = shuffle(['maths', 'eps', ...others]);
+  const nums = shuffle(Array.from({ length: 24 }, (_, i) => 101 + i)).slice(0, NDOORS);
+  const doorNums = nums.sort((a, b) => a - b);
+  const classDoors = shuffle([...Array(NDOORS).keys()]);
+  const periods = order.map((id, i) => ({ id, s: SUBJ[id], time: TIMES[i], door: id === 'eps' ? NDOORS : classDoors[i], stars: null }));
+  periods.forEach(p => { p.room = p.id === 'eps' ? 'Gymnase' : String(doorNums[p.door]); });
+  Object.assign(S, { periods, doorNums, pi: 0, x: 120, dir: 1, keys: 0, active: false, mode: 'idle', wrongRooms: 0, totalMistakes: 0, totalHints: 0, dictPerfect: true, cmdPerfect: true, epsFast: false, recessClean: false, lines: [] });
+  ENG.clock = { h: 8, m: 25 }; ENG.reveals = 0;
+}
+
+/* ---------------- hallway ---------------- */
+function drawHall() {
+  let w = `<rect x="0" y="0" width="${WORLD}" height="320" fill="#F6E7D3"/><rect x="0" y="236" width="${WORLD}" height="84" fill="#C9B79C"/><rect x="0" y="230" width="${WORLD}" height="8" fill="#8A5527"/>`;
+  for (let x = 0; x < WORLD; x += 60) w += `<rect x="${x}" y="268" width="58" height="4" fill="#B8A486"/>`;
+  for (let k = 0; k <= NDOORS; k++) {
+    const x = DOOR_X(k);
+    if (k < NDOORS) for (let j = 0; j < 3; j++) w += `<rect x="${x + 70 + j * 34}" y="120" width="30" height="110" rx="4" fill="${['#7FB7D6', '#6CC6A6', '#F29BB8'][(k + j) % 3]}"/><rect x="${x + 80 + j * 34}" y="134" width="10" height="4" rx="2" fill="#2A2440" opacity=".4"/>`;
+    if (k === NDOORS) {
+      w += `<rect x="${x - 60}" y="96" width="120" height="136" rx="6" fill="#3E6E9E"/><rect x="${x - 2}" y="96" width="4" height="136" fill="#2B4A9B"/><rect x="${x - 50}" y="60" width="100" height="28" rx="8" fill="#FFFFFF"/><text x="${x}" y="80" text-anchor="middle" font-size="16" font-weight="800" fill="#2A2440">GYMNASE</text>`;
+    } else {
+      w += `<rect x="${x - 34}" y="104" width="68" height="128" rx="6" fill="#B05C2E"/><rect x="${x - 26}" y="112" width="52" height="40" rx="4" fill="#BEDDEB"/><circle cx="${x + 22}" cy="176" r="4" fill="#FFC94A"/>`;
+      w += `<rect x="${x - 40}" y="66" width="80" height="30" rx="8" fill="#2B4A9B"/><text x="${x}" y="87" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">${S.doorNums[k]}</text>`;
+    }
+    w += `<rect id="hl${k}" x="${x - 70}" y="56" width="140" height="180" rx="12" fill="none" stroke="#E2463C" stroke-width="5" visibility="hidden" class="hlr"/>`;
+  }
+  w += `<g class="lbl"><text x="40" y="40" font-size="13" font-weight="800" fill="#5D5873">Couloir · 1er étage</text></g>`;
+  const hero = '<g id="heroG"><ellipse cx="0" cy="234" rx="30" ry="5" fill="#000" opacity=".15"/><g id="heroFlip"><use href="#hero" x="-36" y="96" width="72" height="138"/></g></g>';
+  $('hall').innerHTML = `<g id="world">${w}${hero}</g>`;
+  place();
+}
+function place() {
+  const cam = Math.max(0, Math.min(WORLD - 760, S.x - 380));
+  $('world').setAttribute('transform', `translate(${-cam} 0)`);
+  $('heroG').setAttribute('transform', `translate(${S.x} 0)`);
+  $('heroFlip').setAttribute('transform', S.dir < 0 ? 'scale(-1 1)' : '');
+  const k = nearDoor();
+  $('enterBar').hidden = k < 0 || S.mode !== 'hall';
+  if (k >= 0) $('enterLbl').innerHTML = `${k === NDOORS ? 'Gymnase' : 'Salle ' + S.doorNums[k]} · ou appuie sur <kbd>E</kbd>`;
+}
+const nearDoor = () => { for (let k = 0; k <= NDOORS; k++) if (Math.abs(S.x - DOOR_X(k)) < 46) return k; return -1; };
+let lastT = 0;
+function frame(t) {
+  const dt = Math.min(50, t - (lastT || t)); lastT = t;
+  if (S.mode === 'hall' && S.keys) {
+    S.dir = S.keys; S.x = Math.max(40, Math.min(WORLD - 40, S.x + S.keys * dt * .32));
+    place();
+    if (!frame.st || t - frame.st > 330) { SFX.play('step'); frame.st = t; }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+function hlDoor(k) { document.querySelectorAll('.hlr').forEach(r => r.setAttribute('visibility', 'hidden')); if (k != null) $('hl' + k).setAttribute('visibility', 'visible'); }
+
+/* ---------------- periods ---------------- */
+const P = () => S.periods[S.pi];
+function renderTable() {
+  $('horaire').innerHTML = S.periods.map((p, i) => {
+    const row = `<tr class="${i < S.pi ? 'past' : i === S.pi && S.mode !== 'done' ? 'now' : ''}"><td>${clock(...p.time)}</td><td>${p.s.label}</td><td>${p.room}</td></tr>`;
+    return i === 2 ? `<tr class="${S.pi >= 2 ? 'past' : ''}"><td>${clock(10, 30)}</td><td>Récré</td><td>Cour</td></tr>` + row : row;
+  }).join('');
+}
+function setTask(t) { $('task').innerHTML = t; }
+function bell() {
+  const p = P();
+  S.mistakes = 0; S.hints = 0; S.wrong = 0; S.wait = false; hlDoor(null); clearFb();
+  const [h, m] = p.time;
+  const t = h * 60 + m - 5;
+  ENG.clock = { h: Math.floor(t / 60), m: t % 60 };
+  $('clockLbl').textContent = `Lundi · ${clock(ENG.clock.h, ENG.clock.m)}`;
+  SFX.play('bell');
+  addMsg({ name: 'Annonce du lycée', skin: '#E3E6EE', hair: 'bald', hairColor: '#C9CEDA', shirt: '#2B4A9B' }, `Driiing${NB}! Il est ${timeWords(ENG.clock.h, ENG.clock.m)}. Les cours commencent dans cinq minutes.`);
+  S.mode = 'hall';
+  $('hallWrap').hidden = false; $('classView').hidden = true; $('walkBar').hidden = false; $('writeBox').hidden = true;
+  renderTable(); place();
+  setTask('Read the time in the announcement. Which class starts next? Find its room and go in.');
+}
+function enter() {
+  if (S.mode !== 'hall') return;
+  const k = nearDoor(); if (k < 0) return;
+  const p = P();
+  if (k !== p.door) {
+    S.mistakes++; S.wrong++; S.wrongRooms++; SFX.play('wrong');
+    const lbl = k === NDOORS ? 'le gymnase' : `la salle ${S.doorNums[k]}`;
+    if (S.wrong === 1) fb('err', `C’est ${lbl}. Regarde ton emploi du temps !`, `It is ${timeWords(ENG.clock.h, ENG.clock.m)}. Which class starts at ${clock(...p.time)}?`);
+    else { fb('err', `Tu as ${p.s.name} à ${clock(...p.time)} : ${p.id === 'eps' ? 'au gymnase' : 'salle ' + p.room}.`, 'The door is glowing.'); hlDoor(p.door); }
+    return;
+  }
+  SFX.play('door');
+  fb('ok', p.id === 'eps' ? 'Bienvenue au gymnase !' : `Salle ${p.room} : c’est le bon cours !`, `${capFirst(p.s.name)} avec ${p.s.teacher.name}.`);
+  S.mode = 'class'; hlDoor(null);
+  $('hallWrap').hidden = true; $('walkBar').hidden = true; $('classView').hidden = false;
+  ({ maths: mathsClass, eps: epsClass, desk: deskClass })[p.s.kind](p);
+}
+function board(p, text, extra = '') {
+  const masked = $('challenge').checked && VOIX;
+  const cv = $('classView');
+  cv.innerHTML = `<div class="board"><div class="av">${personSVG(p.s.teacher, { crop: true })}</div><div><div class="who">${p.s.teacher.name} · ${p.s.label}</div><div class="say${masked ? ' masked' : ''}" id="say"></div><div class="ctl2"><button type="button" class="tts-only" id="sayPlay">Écouter</button><button type="button" class="tts-only" id="saySlow">Lentement</button>${masked ? '<button type="button" id="sayShow">Voir le texte</button>' : ''}</div></div></div>${extra}`;
+  sayLine(text, masked);
+}
+function sayLine(text, masked = $('challenge').checked && VOIX) {
+  const say = $('say');
+  say.textContent = masked ? 'Écoute bien…' : text; say.classList.toggle('masked', !!masked);
+  $('sayPlay').onclick = () => speak(text); $('saySlow').onclick = () => speak(text, true);
+  const sh = $('sayShow'); if (sh) sh.onclick = () => { say.textContent = text; say.classList.remove('masked'); ENG.reveals++; };
+  if ($('autoplay').checked || masked) speak(text);
+}
+/* maths: number dictation */
+function mathsClass(p) {
+  const nums = shuffle([70 + rand(10), 80 + rand(10), 90 + rand(10), 21 + rand(48)]);
+  S.dict = { nums, i: 0, ans: [] };
+  const voice = !!VOIX;
+  board(p, `Bonjour${NB}! Dictée de nombres. Écrivez le nombre : ${numWord(nums[0])}.`, `
+    <div class="dict" id="dictRow">${nums.map(() => '<span class="n">?</span>').join('')}</div>
+    <form class="inputrow" id="dictForm" autocomplete="off"><label for="dictIn" class="sr">Le nombre</label><input id="dictIn" type="text" inputmode="numeric" placeholder="Écris le nombre en chiffres" spellcheck="false"><button class="btn primary" type="submit">OK</button></form>
+    ${voice ? '' : '<p class="keyhelp">No French voice on this computer, so the numbers are written in words.</p>'}`);
+  setTask(voice ? 'Listen and write each number in digits.' : 'Read each number in words and write it in digits.');
+  $('dictForm').addEventListener('submit', e => { e.preventDefault(); dictAnswer($('dictIn').value); });
+  $('dictIn').focus();
+}
+function nextPrompt(fn, ms) { S.wait = true; setTimeout(() => { S.wait = false; if (S.mode === 'class') fn(); }, ms * SPEED); }
+function dictAnswer(v) {
+  if (S.wait || S.mode !== 'class') return;
+  const d = S.dict, want = d.nums[d.i];
+  const got = parseInt(String(v).replace(/\D/g, ''), 10);
+  if (isNaN(got)) return;
+  $('dictIn').value = '';
+  const cell = $('dictRow').children[d.i];
+  if (got !== want) {
+    S.mistakes++; S.dictPerfect = false; SFX.play('wrong');
+    cell.textContent = want; cell.className = 'n bad';
+    fb('err', `Non : ${numWord(want)} = ${want}.`, want >= 70 ? (want < 80 ? '70s: soixante + dix, onze, douze… (60 + 10 = 70).' : '80s and 90s: quatre-vingts = 4 × 20. Then add: quatre-vingt-dix = 90.') : '');
+  } else { SFX.play('correct'); cell.textContent = want; cell.className = 'n ok'; fb('ok', `Oui : ${numWord(want)} !`, ''); }
+  d.i++;
+  if (d.i >= d.nums.length) return endClass(`Très bien${NB}! À demain.`);
+  nextPrompt(() => sayLine(`Le nombre suivant : ${numWord(d.nums[d.i])}.`), 500);
+}
+/* EPS: vous commands against the clock. Round 1 is generous; each "plus vite" round is shorter per command and longer overall.
+   Only round 1 counts toward the period's stars, so the faster rounds are a free challenge. */
+const EPS_LEVELS = [
+  { ms: 10000, n: 4, name: 'Normal' },
+  { ms: 6500, n: 5, name: 'Rapide' },
+  { ms: 4500, n: 6, name: 'Très rapide' },
+  { ms: 3000, n: 7, name: 'Éclair' }
+];
+function epsSequence(n) {
+  const out = [];
+  while (out.length < n) { const m = pick(MOVES); if (!out.length || out[out.length - 1] !== m) out.push(m); }
+  return out;
+}
+function epsClass(p) {
+  S.eps = { level: 0, best: -1 };
+  board(p, '', `<div class="epsbar"><span class="epslvl" id="epsLvl"></span><span class="epscount" id="epsCount"></span><span class="epssecs" id="epsSecs" aria-live="off"></span></div>
+    <div class="timer" role="progressbar" aria-label="Temps qui reste" aria-valuemin="0" aria-valuemax="100" id="epsTimer"><i id="epsBar"></i></div>
+    <div class="cards" id="cards">${shuffle(MOVES).map(m => `<button type="button" class="cardbtn" data-c="${esc(m[0])}"><svg viewBox="0 0 64 64" aria-hidden="true">${m[2]}</svg><span class="l">${m[1]}</span></button>`).join('')}</div>
+    <div class="epsend" id="epsEnd" hidden></div>`);
+  $('cards').querySelectorAll('.cardbtn').forEach(b => b.addEventListener('click', () => epsPick(b.dataset.c)));
+  epsRound(`Bonjour tout le monde${NB}! Écoutez bien et faites vite. On commence${NB}!`);
+}
+function epsRound(intro) {
+  const e = S.eps, L = EPS_LEVELS[e.level];
+  Object.assign(e, { cmds: epsSequence(L.n), i: 0, onTime: 0, live: false });
+  $('epsEnd').hidden = true;
+  $('cards').querySelectorAll('.cardbtn').forEach(b => { b.disabled = false; });
+  $('epsLvl').textContent = `Vitesse : ${L.name}`;
+  setTask(`Do what the coach says: click the matching picture before the bar runs out (${Math.round(L.ms / 1000)} seconds each).`);
+  epsTimerShow(1, L.ms);
+  sayLine(intro);
+  nextPrompt(epsCommand, e.level ? 1400 : 2200);
+}
+function epsCommand() {
+  const e = S.eps, L = EPS_LEVELS[e.level];
+  $('epsCount').textContent = `Commande ${e.i + 1}/${e.cmds.length}`;
+  sayLine(e.cmds[e.i][0]);
+  e.live = true;
+  e.start = performance.now();
+  clearInterval(e.iv);
+  e.iv = setInterval(() => {
+    const left = 1 - (performance.now() - e.start) / (L.ms * SPEED);
+    epsTimerShow(left, L.ms);
+    if (left <= 0) epsTimeout();
+  }, 50);
+}
+function epsTimerShow(left, ms) {
+  left = Math.max(0, Math.min(1, left));
+  const bar = $('epsBar'); if (!bar) return;
+  bar.style.width = (left * 100).toFixed(1) + '%';
+  bar.className = left < .25 ? 'low' : left < .5 ? 'mid' : '';
+  $('epsTimer').setAttribute('aria-valuenow', Math.round(left * 100));
+  $('epsSecs').textContent = `${Math.ceil(left * ms / 1000)} s`;
+}
+function epsStop() { const e = S.eps; e.live = false; clearInterval(e.iv); }
+function epsTimeout() {
+  const e = S.eps;
+  if (!e.live) return;
+  epsStop();
+  if (e.level === 0) { S.mistakes++; S.cmdPerfect = false; }
+  SFX.play('wrong');
+  fb('err', 'Trop lent !', `The coach said <b>${e.cmds[e.i][0]}</b>`);
+  epsNext();
+}
+function epsPick(c) {
+  const e = S.eps;
+  if (S.wait || S.mode !== 'class' || !e || !e.live) return;
+  const want = e.cmds[e.i][0];
+  if (c !== want) {
+    if (e.level === 0) { S.mistakes++; S.cmdPerfect = false; }
+    SFX.play('wrong');
+    fb('err', `Ça, c’est « ${c} »`, 'Listen again, quickly! The clock is still running.');
+    return;
+  }
+  epsStop();
+  e.onTime++;
+  const secs = ((performance.now() - e.start) / SPEED / 1000).toFixed(1);
+  SFX.play('correct'); fb('ok', 'Bravo !', `${secs} s`);
+  epsNext();
+}
+function epsNext() {
+  const e = S.eps;
+  e.i++;
+  if (e.i < e.cmds.length) { nextPrompt(epsCommand, 700); return; }
+  // round over
+  const all = e.onTime === e.cmds.length;
+  if (all) e.best = Math.max(e.best, e.level);
+  if (e.level > 0 && all) S.epsFast = true;
+  $('cards').querySelectorAll('.cardbtn').forEach(b => { b.disabled = true; });
+  $('epsCount').textContent = `${e.onTime}/${e.cmds.length} à temps`;
+  const top = e.level >= EPS_LEVELS.length - 1;
+  const msg = all ? (top ? `Incroyable${NB}! Vous êtes des champions${NB}!` : `Super${NB}! Vous voulez recommencer plus vite${NB}?`)
+    : top ? `Pas mal${NB}! C’était très rapide.` : `Pas mal${NB}! Vous voulez réessayer, ou recommencer plus vite${NB}?`;
+  nextPrompt(() => {
+    sayLine(msg);
+    const box = $('epsEnd');
+    const btns = [];
+    if (!top) btns.push(`<button type="button" class="btn primary" id="epsFaster">Oui, plus vite${NB}!</button>`);
+    if (!all) btns.push('<button type="button" class="btn ghost" id="epsSame">Réessayer à cette vitesse</button>');
+    btns.push(`<button type="button" class="btn ghost" id="epsStopBtn">${top ? 'Terminer' : 'Non, merci'}</button>`);
+    box.innerHTML = `<p class="task"><b>${e.onTime}/${e.cmds.length}</b> commands on time at <b>${EPS_LEVELS[e.level].name}</b> speed.</p><div class="epsbtns">${btns.join('')}</div>`;
+    box.hidden = false;
+    setTask(top ? 'You reached the top speed!' : 'Want to try again at a higher speed?');
+    const f = $('epsFaster'), s = $('epsSame');
+    if (f) f.addEventListener('click', () => { e.level++; SFX.play('whoosh', { force: true }); epsRound(`Plus vite maintenant${NB}! Prêts${NB}?`); });
+    if (s) s.addEventListener('click', () => { SFX.play('whoosh', { force: true }); epsRound(`Encore une fois${NB}! Prêts${NB}?`); });
+    $('epsStopBtn').addEventListener('click', () => { box.hidden = true; endClass(`Bravo, la classe${NB}! C’est fini pour aujourd’hui.`); });
+    (f || $('epsStopBtn')).focus();
+  }, 700);
+}
+/* desk commands: object + verb */
+function deskClass(p) {
+  const st = { cahier: 'bag', livre: 'desk', stylo: 'bag', regle: 'bag', ciseaux: 'bag', calculatrice: 'bag', trousse: 'desk', gomme: 'bag' };
+  const open = {};
+  const cmds = [];
+  const sim = { ...st };
+  let raised = false;
+  for (let n = 0; n < 4; n++) {
+    const opts = [];
+    Object.keys(sim).forEach(k => {
+      if (sim[k] === 'bag') opts.push(['sortir', k]);
+      if (sim[k] === 'desk') { opts.push(['ranger', k]); if (THINGS[k][2]) opts.push([open[k] ? 'fermer' : 'ouvrir', k]); }
+    });
+    if (!raised) opts.push(['lever', null]);
+    const c = pick(opts);
+    if (c[0] === 'sortir') sim[c[1]] = 'desk';
+    if (c[0] === 'ranger') { sim[c[1]] = 'bag'; open[c[1]] = false; }
+    if (c[0] === 'ouvrir') open[c[1]] = true;
+    if (c[0] === 'fermer') open[c[1]] = false;
+    if (c[0] === 'lever') raised = true;
+    cmds.push(c);
+  }
+  S.desk = { st, open: {}, cmds, i: 0, sel: null };
+  board(p, `Bonjour${NB}! ${cmdText(cmds[0])}`, `<div class="desk"><div class="zone top"><h4>Sur la table</h4><div class="things" id="zDesk"></div></div><div class="zone bag"><h4>Dans ton sac</h4><div class="things" id="zBag"></div></div></div>
+    <div class="verbs" id="verbs">${[['sortir', 'Je sors'], ['ranger', 'Je range'], ['ouvrir', 'J’ouvre'], ['fermer', 'Je ferme'], ['lever', 'Je lève la main']].map(([v, t]) => `<button type="button" class="opt" data-v="${v}">${t}</button>`).join('')}</div>`);
+  setTask('Do what the teacher says: click the object, then what you do.');
+  renderDesk();
+  $('verbs').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => deskVerb(b.dataset.v)));
+}
+const VERB_FR = { sortir: 'Sortez', ranger: 'Rangez', ouvrir: 'Ouvrez', fermer: 'Fermez' };
+const cmdText = ([v, k]) => v === 'lever' ? `Levez la main${NB}!` : `${VERB_FR[v]} ${THINGS[k][1]}${NB}!`;
+function renderDesk() {
+  const D = S.desk;
+  const btn = k => `<button type="button" class="thing${D.sel === k ? ' sel' : ''}" data-k="${k}">${thingIcon(k)}<span>${THINGS[k][0]}</span>${D.open[k] ? '<span class="st">ouvert</span>' : ''}</button>`;
+  $('zDesk').innerHTML = Object.keys(D.st).filter(k => D.st[k] === 'desk').map(btn).join('');
+  $('zBag').innerHTML = Object.keys(D.st).filter(k => D.st[k] === 'bag').map(btn).join('');
+  document.querySelectorAll('.thing').forEach(b => b.addEventListener('click', () => { D.sel = D.sel === b.dataset.k ? null : b.dataset.k; renderDesk(); }));
+}
+const VERB_EN = { sortir: 'take out', ranger: 'put away', ouvrir: 'open', fermer: 'close', lever: 'raise your hand' };
+function deskVerb(v) {
+  if (S.wait || S.mode !== 'class') return;
+  const D = S.desk, [wv, wk] = D.cmds[D.i];
+  const bad = (a, b) => { S.mistakes++; S.cmdPerfect = false; SFX.play('wrong'); fb('err', a, b); };
+  if (v === 'lever') {
+    if (wv !== 'lever') return bad('Pas maintenant !', `The teacher said <b>${cmdText(D.cmds[D.i])}</b>`);
+  } else {
+    if (!D.sel) { fb('info', 'Choisis un objet d’abord.', 'Click the object, then what you do.'); return; }
+    if (wv === 'lever') return bad('Écoute bien…', 'The teacher didn’t ask about an object.');
+    if (D.sel !== wk) return bad(`Ça, c’est ${THINGS[D.sel][0]}.`, `The teacher said <b>${THINGS[wk][1]}</b>.`);
+    if (v !== wv) return bad(`« ${VERB_FR[wv]} » ≠ ${v === 'sortir' ? 'je sors' : v === 'ranger' ? 'je range' : v === 'ouvrir' ? 'j’ouvre' : 'je ferme'}.`, `<b>${VERB_FR[wv]}</b> = ${VERB_EN[wv]}.`);
+    if (wv === 'sortir') D.st[wk] = 'desk';
+    if (wv === 'ranger') { D.st[wk] = 'bag'; D.open[wk] = false; }
+    if (wv === 'ouvrir') D.open[wk] = true;
+    if (wv === 'fermer') D.open[wk] = false;
+  }
+  SFX.play('correct'); fb('ok', 'Très bien !', '');
+  S.lines.push(cmdText(D.cmds[D.i]));
+  D.sel = null; D.i++; renderDesk();
+  if (D.i >= D.cmds.length) return endClass(`Merci${NB}! Au revoir, à demain.`);
+  nextPrompt(() => sayLine(cmdText(D.cmds[D.i])), 400);
+}
+function endClass(bye) {
+  sayLine(bye);
+  const p = P();
+  p.stars = starsFor(S.mistakes, S.hints);
+  S.totalMistakes += S.mistakes; S.totalHints += S.hints;
+  SFX.mission(p.stars, 500);
+  S.mode = 'between';
+  setTimeout(() => {
+    S.pi++;
+    if (S.pi === 2) return recess();
+    if (S.pi >= S.periods.length) return finish();
+    S.x = Math.min(S.x, WORLD - 60); bell();
+  }, 2200 * SPEED);
+}
+/* recess: favourite subject */
+const SUBJ_RE = /\b(francais|maths?|mathematiques|histoire|geographie|histoire geo|anglais|sciences|svt|eps|sport|arts plastiques|arts|dessin|musique|espagnol|informatique|chimie|physique|biologie)\b/;
+const ADJ = { interessant: 'intéressante', amusant: 'amusante', passionnant: 'passionnante', genial: 'géniale', ennuyeux: 'ennuyeuse', fatigant: 'fatigante', nul: 'nulle', parfait: 'parfaite' };
+function recess() {
+  S.mode = 'recess'; S.recessTries = 0; clearFb();
+  $('classView').hidden = true; $('hallWrap').hidden = false; $('walkBar').hidden = true; $('enterBar').hidden = true;
+  ENG.clock = { h: 10, m: 30 }; $('clockLbl').textContent = 'Lundi · 10 h 30';
+  renderTable();
+  SFX.play('bell');
+  addMsg('camille', `C’est la récré${NB}! Alors, ta première matinée${NB}? Quelle est ta matière préférée${NB}? Pourquoi${NB}?`);
+  setTask('Answer Camille: name your favourite subject and say why, with <b>parce que</b>.');
+  $('writeBox').hidden = false; $('write').value = ''; $('write').focus();
+}
+function recessAnswer(raw) {
+  raw = raw.trim(); if (!raw || S.mode !== 'recess') return;
+  clearFb();
+  const n = norm(raw);
+  const problems = [];
+  if (!SUBJ_RE.test(n)) { S.recessTries++; SFX.play('wrong'); fb('err', 'Quelle matière ?', 'Name a subject: <b>Ma matière préférée, c’est l’histoire…</b>'); return; }
+  if (!/parce qu|\bcar\b/.test(n)) { S.recessTries++; SFX.play('wrong'); fb('err', 'Pourquoi ?', 'Add a reason with <b>parce que</b>: <i>…parce que c’est intéressant.</i>'); return; }
+  if (/\bmon matiere\b/.test(n)) problems.push(['<s>mon matière</s> → ma matière', 'Matière is feminine: <b>ma</b>.']);
+  if (/\bmatiere prefere\b/.test(n)) problems.push(['<s>matière préféré</s> → matière préférée', 'The adjective agrees with a feminine noun: <b>préférée</b>.']);
+  const m = n.match(/\b(la classe|la matiere|ma classe|ma matiere|la prof|l histoire|la geographie|la musique|la biologie|la chimie|la physique)\b(?: preferee)? (?:est|etait) (?:tres |vraiment |super )?([a-z]+)/);
+  if (m && ADJ[m[2]]) problems.push([`<s>${m[1].replace('matiere', 'matière')} est ${m[2]}</s> → ${ADJ[m[2]]}`, 'The noun is feminine, so the adjective agrees: <b>' + ADJ[m[2]] + '</b>. (After <i>c’est</i>, keep it masculine: <i>c’est intéressant</i>.)']);
+  problems.forEach(([a, b]) => fb('warn', a, b, true));
+  const r = reviewChips(raw, $('fbs'));
+  S.recessClean = problems.length === 0 && r.issues.length === 0 && S.recessTries === 0;
+  SFX.play(S.recessClean ? 'perfect' : 'correct');
+  fb('ok', 'Super !', '', true);
+  S.lines.push(`Récré : ${raw}`);
+  addMsg('camille', `Ah, moi aussi j’aime bien ça${NB}! Bon, on retourne en cours. À tout à l’heure${NB}!`);
+  $('writeBox').hidden = true; S.mode = 'between';
+  setTimeout(() => { S.x = 120; bell(); }, 2500 * SPEED);
+}
+function hint() {
+  if (!S.active) return;
+  S.hints++; SFX.play('hint');
+  const p = P();
+  if (S.mode === 'hall') { fb('info', 'Indice', `The bell said ${timeWords(ENG.clock.h, ENG.clock.m)} = ${clock(ENG.clock.h, ENG.clock.m)}. The next class starts at <b>${clock(...p.time)}</b>.`); return; }
+  if (S.mode === 'recess') { fb('info', 'Indice', '<b>Ma matière préférée, c’est la musique parce que c’est amusant.</b>'); return; }
+  if (S.mode !== 'class') return;
+  if (p.s.kind === 'maths') fb('info', 'Indice', 'soixante-dix = 70 · quatre-vingts = 80 · quatre-vingt-dix = 90. Add what comes after: quatre-vingt-<b>treize</b> = 93.');
+  else if (p.s.kind === 'eps') fb('info', 'Indice', 'Sautez = jump · Courez = run · Touchez = touch · Levez = raise · Asseyez-vous = sit down · Tournez = turn.');
+  else fb('info', 'Indice', 'Sortez = take out · Rangez = put away · Ouvrez = open · Fermez = close. Votre = your (one thing), vos = your (several).');
+}
+function finish() {
+  S.mode = 'done'; S.active = false; renderTable();
+  $('classView').hidden = true; $('hallWrap').hidden = false; $('walkBar').hidden = true; $('enterBar').hidden = true;
+  const tot = S.periods.reduce((a, p) => a + (p.stars || 0), 0);
+  renderSummary($('summary'), {
+    eyebrow: 'Scène 6 · fin de la matinée',
+    title: `Premier jour réussi${NB}! ${tot}/12 étoiles`,
+    stats: [[S.wrongRooms, 'Wrong rooms'], [S.totalMistakes, 'Mistakes'], [S.totalHints, 'Hints used'], [ENG.reveals, 'Texts revealed']],
+    badges: [
+      ['À l’heure', 'Never went into the wrong room', S.wrongRooms === 0],
+      ['As des nombres', 'Every number in the dictation right', S.dictPerfect],
+      ['Bon élève', 'Every command right the first time', S.cmdPerfect],
+      ['Accord parfait', 'Recess sentence with no slips', S.recessClean],
+      ['Éclair', 'Every PE command on time in a faster round', S.epsFast]
+    ],
+    blocks: `<div><h3>Les cours</h3><div class="mrows">${S.periods.map(p => `<div class="mrow"><span>${clock(...p.time)} · ${p.s.label}</span><span class="stars">${starStr(p.stars || 1)}</span></div>`).join('')}</div></div>`,
+    outcomes: '10 C 2.1 · 10 C 2.2 · 10 C 2.3 · 10 C 2.4 · 10 R 2.1e · 10 R 2.8a · 10 R 2.12 · 10 R 2.17',
+    again: 'Rejouer', onAgain: start
+  });
+}
+function start() {
+  try { if (tts) speechSynthesis.cancel(); } catch (e) {}
+  if (S.eps) epsStop();
+  S.wait = false;
+  newGame(); S.eps = null; drawHall(); renderTable();
+  $('summary').hidden = true; clearFb(); $('writeBox').hidden = true;
+  $('feed').innerHTML = '<p class="empty">Announcements and messages will appear here.</p>';
+  $('hallWrap').hidden = false; $('classView').hidden = true; $('walkBar').hidden = false;
+  setTask('Press Commencer to begin.');
+  $('intro').hidden = false;
+}
+$('startBtn').addEventListener('click', () => { $('intro').hidden = true; S.active = true; SFX.play('whoosh', { force: true }); bell(); });
+$('enterBtn').addEventListener('click', enter);
+document.querySelectorAll('.walkbar .ctl').forEach(b => {
+  const k = +b.dataset.k;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); S.keys = k; });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => { if (S.keys === k) S.keys = 0; }));
+});
+document.addEventListener('keydown', e => {
+  if (/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (S.mode !== 'hall') return;
+  if (e.key === 'ArrowLeft') { S.keys = -1; e.preventDefault(); }
+  if (e.key === 'ArrowRight') { S.keys = 1; e.preventDefault(); }
+  if (e.key === 'e' || e.key === 'E') { e.preventDefault(); enter(); }
+});
+document.addEventListener('keyup', e => { if ((e.key === 'ArrowLeft' && S.keys < 0) || (e.key === 'ArrowRight' && S.keys > 0)) S.keys = 0; });
+$('writeForm').addEventListener('submit', e => { e.preventDefault(); recessAnswer($('write').value); });
+$('hintBtn').addEventListener('click', hint);
+setupAccentBar('accentBar', 'write');
+wireCommon(start);
+start();
+window.SceneTest = { S, enter, place, dictAnswer, epsPick, deskVerb, recessAnswer, DOOR_X, NDOORS };
+
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,1392 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Un après-midi à Paris</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+/* Pâte à modeler: one deliberate daylight look (single theme). Layout: a Paris rooftop band, then the café diorama + mission list on the left and the conversation on the right; stacks on phones. */
+:root {
+  color-scheme: light;
+  --page: #DCEEF6; --sky: #BEDDEB; --sky-deep: #A9C7D6; --sand: #EDCB97; --sand-deep: #C79B63;
+  --paper: #FFFFFF; --ink: #2A2440; --muted: #5D5873; --soft: #EEF1F6; --soft-deep: #C9CEDA;
+  --tomato: #E2463C; --tomato-deep: #A9271F; --navy: #2B4A9B; --navy-deep: #1C3270;
+  --sun: #FFC94A; --sun-deep: #E0A21E; --mint: #6CC6A6; --mint-deep: #3E9C7C;
+  --ok-bg: #DDF3EA; --ok-fg: #1E6B50; --warn-bg: #FFF1D6; --warn-fg: #7A4E00; --err-bg: #FDE3E0; --err-fg: #9E241D; --info-bg: #E3F0F8; --info-fg: #1C4F6E;
+  --font-display: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+body { background: var(--page); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+.band { height: 120px; overflow: hidden; }
+.band svg { display: block; width: 100%; height: 100%; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; display: flex; flex-direction: column; gap: 22px; }
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.eyebrow { margin: 0 0 4px; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--tomato-deep); }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5vw, 52px); line-height: 1; text-wrap: balance; }
+.lede { margin: 10px 0 0; color: var(--muted); max-width: 60ch; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--paper); box-shadow: 0 4px 0 var(--sky-deep); font-size: 14px; font-weight: 700; cursor: pointer; user-select: none; }
+.pill input { accent-color: var(--tomato); width: 16px; height: 16px; margin: 0; }
+.pill:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--sky-deep); }
+
+.card { background: var(--paper); border-radius: 26px; box-shadow: 0 7px 0 var(--sky-deep); }
+.card h3 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.game { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 880px) { .game { grid-template-columns: 1fr; } }
+.side { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.stage { overflow: hidden; }
+.stage svg { display: block; width: 100%; height: auto; }
+.stagecap { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 16px 14px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagecap b { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--ink); }
+
+.missions { padding: 18px; }
+.missions ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.missions li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; padding: 6px 8px; border-radius: 14px; color: var(--muted); font-weight: 700; }
+.missions li .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 14px; transition: background .3s; }
+.missions li small { display: block; font-weight: 600; font-size: 13px; color: var(--muted); }
+.missions li.current { background: var(--warn-bg); color: var(--ink); }
+.missions li.current .n { background: var(--tomato); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--tomato-deep); }
+.missions li.done { color: var(--ink); }
+.missions li.done .n { background: var(--mint); color: #13372A; box-shadow: inset 0 -3px 0 var(--mint-deep); }
+.missions li.done .n svg { width: 15px; height: 15px; }
+
+.help { padding: 18px; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; margin: 0; font-size: 14px; }
+.keys dd { margin: 0; color: var(--muted); }
+kbd { font-family: var(--font-body); font-weight: 800; font-size: 13px; padding: 1px 7px; border-radius: 7px; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); color: var(--ink); }
+
+.chat { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.chathead { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.chathead .face { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--sky); flex: none; }
+.chathead .face svg { width: 100%; height: 100%; display: block; }
+.chathead b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 1.1; }
+.chathead span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.log { padding: 20px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; max-height: 560px; overflow-y: auto; scroll-behavior: smooth; }
+@media (max-width: 880px) { .log { max-height: 62vh; min-height: 300px; } }
+@media (prefers-reduced-motion: reduce) { .log { scroll-behavior: auto; } }
+.row { display: flex; gap: 10px; align-items: end; max-width: 88%; }
+.row.npc { align-self: flex-start; }
+.row.me { align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 6px; }
+.row.me .line { display: flex; gap: 10px; align-items: end; }
+.mini { width: 36px; height: 36px; flex: none; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.mini svg { width: 100%; height: 100%; display: block; }
+.bubble { padding: 11px 16px; border-radius: 20px; font-size: 17px; line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }
+.npc .bubble { background: var(--soft); border-bottom-left-radius: 6px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
+.me .bubble { background: var(--navy); color: #FFFFFF; border-bottom-right-radius: 6px; font-weight: 700; box-shadow: 0 3px 0 var(--navy-deep); }
+.speak { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--paper); box-shadow: 0 2px 0 var(--soft-deep); display: grid; place-items: center; cursor: pointer; color: var(--mint-deep); }
+.speak svg { width: 17px; height: 17px; }
+.no-tts .speak, .no-tts .tts-only { display: none !important; }
+.appear { animation: appear .25s ease-out both; }
+@keyframes appear { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+.typing span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); margin: 0 2px; animation: blink 1s infinite; }
+.typing span:nth-child(2) { animation-delay: .15s; } .typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .appear, .typing span { animation: none; } }
+
+.fb { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; max-width: 100%; }
+.chip { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 14px; padding: 7px 12px; border-radius: 14px; max-width: 100%; font-weight: 600; }
+.chip b { font-weight: 800; }
+.chip.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.chip.warn { background: var(--warn-bg); color: var(--warn-fg); }
+.chip.err { background: var(--err-bg); color: var(--err-fg); }
+.chip.info { background: var(--info-bg); color: var(--info-fg); }
+.chip .fix s { opacity: .75; }
+.chip .note { color: var(--ink); }
+@keyframes pop { 0% { transform: scale(.7); opacity: 0 } 60% { transform: scale(1.06); opacity: 1 } 100% { transform: scale(1) } }
+.chip.ok { animation: pop .35s cubic-bezier(.2, .9, .3, 1.3) both; }
+
+.composer { border-top: 2px solid var(--soft); padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.hint { display: flex; gap: 10px; align-items: baseline; padding: 9px 14px; border-radius: 14px; background: var(--warn-bg); font-size: 15px; font-weight: 700; }
+.hint .lbl { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--warn-fg); flex: none; }
+.accentbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.accentbar button { min-width: 38px; height: 38px; padding: 0 8px; border-radius: 12px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); font-weight: 800; font-size: 18px; cursor: pointer; transition: background .2s; }
+.accentbar button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--soft-deep); }
+.accentbar button.flash { background: var(--sun); box-shadow: 0 3px 0 var(--sun-deep); }
+.accentbar .caps { font-size: 13px; color: var(--muted); margin-left: 4px; font-weight: 600; }
+.inputrow { display: flex; gap: 10px; }
+.inputrow input { flex: 1; min-width: 0; height: 54px; border-radius: 999px; border: 3px solid var(--soft); background: #F8F9FC; padding: 0 20px; font-size: 18px; font-weight: 700; }
+.inputrow input:focus { outline: none; border-color: var(--navy); }
+.btn { border: 0; border-radius: 999px; padding: 0 20px; min-height: 54px; font-weight: 800; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn svg { width: 19px; height: 19px; }
+.btn.primary { background: var(--tomato); color: #FFFFFF; box-shadow: 0 5px 0 var(--tomato-deep); font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.btn.hintb { background: var(--sun); color: var(--ink); box-shadow: 0 5px 0 var(--sun-deep); }
+.btn:active { transform: translateY(3px); box-shadow: none; }
+.btn:disabled { opacity: .5; cursor: default; transform: none; }
+@media (max-width: 520px) { .inputrow { flex-wrap: wrap; } .inputrow input { flex-basis: 100%; } .inputrow .btn { flex: 1; } }
+
+.summary { border-top: 2px solid var(--soft); padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+.summary h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.1; }
+.summary h3 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { padding: 12px; border-radius: 18px; background: var(--soft); }
+.stat .v { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 800; background: var(--sun); color: var(--ink); box-shadow: 0 3px 0 var(--sun-deep); animation: pop .45s cubic-bezier(.2, .9, .3, 1.3) both; }
+.badge:nth-child(2) { animation-delay: .1s } .badge:nth-child(3) { animation-delay: .2s } .badge:nth-child(4) { animation-delay: .3s }
+.badge.off { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 2px var(--soft-deep); font-weight: 600; animation: none; }
+@media (prefers-reduced-motion: reduce) { .chip.ok, .badge { animation: none; } }
+.wrote { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; }
+.outcomes { margin: 0; font-size: 14px; color: var(--muted); }
+
+details.teacher { background: var(--paper); border-radius: 22px; padding: 16px 20px; box-shadow: 0 5px 0 var(--sky-deep); }
+details.teacher summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+details.teacher ul { margin: 12px 0 4px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---- shared scene pieces (scenes 2–6) ---- */
+.game.wide { grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr); }
+@media (max-width: 900px) { .game.wide { grid-template-columns: 1fr; } }
+.stagehead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; padding: 12px 18px; border-bottom: 2px solid var(--soft); font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagehead .place { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); }
+.viewport { position: relative; background: var(--sky); }
+.viewport > svg { display: block; width: 100%; height: auto; }
+.intro { position: absolute; inset: 0; z-index: 6; display: flex; overflow-y: auto; padding: 16px; background: rgba(190, 221, 235, .72); }
+.intro .box { margin: auto; max-width: 470px; background: var(--paper); border-radius: 26px; padding: 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 0 var(--sky-deep); }
+.intro h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; }
+.intro p { margin: 0; color: var(--muted); font-weight: 600; }
+.intro ul { margin: 0; padding-left: 20px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 560px) { .intro { position: static; background: none; } }
+.panel { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.panelhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.panelhead h3 { margin: 0; }
+.task { margin: 0; font-size: 16px; font-weight: 600; }
+.btn.small { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.btn.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 4px 0 var(--soft-deep); }
+.btn.go { background: var(--mint); color: #13372A; box-shadow: 0 5px 0 var(--mint-deep); }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice { text-align: left; padding: 11px 16px; border-radius: 16px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-size: 16px; font-weight: 700; }
+.choice:hover { background: #E3EAF4; }
+.choice:active { transform: translateY(2px); box-shadow: none; }
+.choice:disabled { opacity: .5; cursor: default; transform: none; }
+.opt { padding: 9px 16px; border-radius: 14px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-weight: 800; font-size: 15px; }
+.opt:active { transform: translateY(2px); box-shadow: none; }
+.fbs { display: flex; flex-direction: column; gap: 6px; }
+.fbs .chip { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.fbs .chip span { font-weight: 600; color: var(--ink); }
+
+.feedcard { display: flex; flex-direction: column; overflow: hidden; }
+.feedhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.feedhead h3 { margin: 0; }
+.mini-switch { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.mini-switch input { accent-color: var(--tomato); margin: 0; }
+.feed { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; max-height: 340px; min-height: 120px; overflow-y: auto; }
+.feed .empty { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+.msg { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
+.msg .av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.msg .av svg { width: 100%; height: 100%; display: block; }
+.mhead { display: flex; gap: 8px; align-items: baseline; font-size: 14px; }
+.mhead b { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.mhead .time { color: var(--muted); font-size: 12px; font-weight: 700; }
+.mtext { margin: 2px 0 6px; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.mtext.masked { color: var(--muted); font-style: italic; }
+.mctl { display: flex; gap: 6px; flex-wrap: wrap; }
+.mctl button { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 800; padding: 5px 12px; border-radius: 999px; border: 0; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); cursor: pointer; }
+.mctl button svg { width: 14px; height: 14px; }
+.mctl .play { color: var(--mint-deep); }
+.msg.me { grid-template-columns: minmax(0, 1fr); justify-items: end; }
+.msg.me .bubble { background: var(--navy); color: #FFFFFF; padding: 9px 14px; border-radius: 18px 18px 6px 18px; max-width: 90%; overflow-wrap: anywhere; font-weight: 700; }
+.msg.me .fbrow { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-top: 6px; max-width: 95%; }
+.msg.me .fbrow .chip { flex-direction: column; align-items: flex-end; text-align: right; }
+
+.missions .stars { margin-left: auto; color: var(--sun-deep); font-size: 14px; letter-spacing: 1px; flex: none; }
+.missions li .t { min-width: 0; }
+.missions.compact li { grid-template-columns: 30px minmax(0, 1fr) auto; }
+.mrows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .mrows { grid-template-columns: 1fr; } }
+.mrow { display: flex; justify-content: space-between; gap: 8px; padding: 9px 14px; border-radius: 14px; background: var(--soft); font-size: 14px; font-weight: 700; }
+.mrow .stars { color: var(--sun-deep); }
+.transcript { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; max-width: 80ch; }
+.tablewrap { overflow-x: auto; border-radius: 16px; background: var(--soft); }
+table.tbl { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tbl th, .tbl td { padding: 7px 10px; text-align: left; white-space: nowrap; }
+.tbl th { font-family: var(--font-display); font-weight: 600; font-size: 13px; background: var(--soft-deep); }
+.tbl tr + tr td { border-top: 2px solid var(--paper); }
+.hud { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 14px; font-weight: 700; color: var(--ink); }
+.hud .num { font-family: var(--font-display); font-weight: 700; font-size: 19px; font-variant-numeric: tabular-nums; }
+.hearts { display: inline-flex; gap: 3px; }
+.hearts svg { width: 20px; height: 20px; }
+.keyhelp { margin: 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.nolabels .lbl, .nolabels .itemlbl { display: none; }
+svg text { font-family: var(--font-body); }
+.svgbtn { cursor: pointer; }
+.svgbtn:focus { outline: none; }
+.svgbtn .ring { fill: none; stroke: var(--tomato); stroke-width: 4; opacity: 0; transition: opacity .15s; }
+.svgbtn:hover .ring, .svgbtn:focus-visible .ring, .svgbtn.sel .ring { opacity: 1; }
+
+/* ---- scene ---- */
+.ctlbar { padding: 14px 18px 18px; border-top: 2px solid var(--soft); display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
+.pad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; flex: 1 1 360px; max-width: 500px; }
+.pad .fwd { grid-column: 2; grid-row: 1; } .pad .left { grid-column: 1; grid-row: 1; } .pad .right { grid-column: 3; grid-row: 1; } .pad .back { grid-column: 2; grid-row: 2; }
+.enter { display: flex; flex-direction: column; gap: 8px; flex: 0 1 220px; }
+.ctl { border: 0; border-radius: 16px; background: var(--soft); box-shadow: 0 4px 0 var(--soft-deep); padding: 8px 10px; min-height: 48px; cursor: pointer; font-size: 14px; font-weight: 800; line-height: 1.2; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
+.ctl.fwd { background: var(--mint); color: #13372A; box-shadow: 0 4px 0 var(--mint-deep); }
+.ctl.door { background: #F6DCC0; box-shadow: 0 4px 0 #C99A6B; }
+.ctl:active { transform: translateY(3px); box-shadow: none; }
+.ctl:disabled { opacity: .45; cursor: default; transform: none; }
+.ctl .arw { font-size: 17px; }
+#avatar { transition: transform .32s ease; }
+#avDir { transition: transform .22s ease; }
+#hl { animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { #avatar, #avDir { transition: none; } #hl { animation: none; } }
+.legend { display: inline-flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 16px; height: 7px; border-radius: 3px; background: #8A5527; vertical-align: middle; margin-right: 4px; }
+.shopline { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; background: var(--soft); }
+.shopline .av { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.shopline .av svg { width: 100%; height: 100%; display: block; }
+.shopline b { display: block; font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--muted); }
+.led { background: #1E1B33; color: var(--sun); border-radius: 16px; padding: 12px 16px; font-weight: 800; display: flex; flex-direction: column; gap: 2px; }
+.led small { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.led span { font-size: 18px; }
+.kid { cursor: pointer; }
+.kid:focus { outline: none; }
+.kid .ring { fill: none; stroke: var(--tomato); stroke-width: 5; opacity: 0; }
+.kid:hover .ring, .kid:focus-visible .ring { opacity: 1; }
+.kid.nope { opacity: .45; }
+</style>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="cStripes" width="12" height="16" patternUnits="userSpaceOnUse"><rect width="12" height="16" fill="#FFF8EE"/><rect width="12" height="8" fill="#2B4A9B"/></pattern>
+    <radialGradient id="cSkin" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFDCC2"/><stop offset=".55" stop-color="#F2B98F"/><stop offset="1" stop-color="#D38E66"/></radialGradient>
+    <radialGradient id="cRed" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FF8573"/><stop offset=".5" stop-color="#E2463C"/><stop offset="1" stop-color="#A9271F"/></radialGradient>
+    <radialGradient id="cDenim" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#6683CF"/><stop offset=".6" stop-color="#34509A"/><stop offset="1" stop-color="#22386E"/></radialGradient>
+    <radialGradient id="cBoot" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C98A50"/><stop offset=".6" stop-color="#8A5527"/><stop offset="1" stop-color="#5E3618"/></radialGradient>
+    <radialGradient id="cHair" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#9A6640"/><stop offset="1" stop-color="#5A361C"/></radialGradient>
+    <radialGradient id="cMust" cx=".5" cy=".2" r=".8"><stop offset="0" stop-color="#8A5A34"/><stop offset="1" stop-color="#47290F"/></radialGradient>
+    <radialGradient id="cNose" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFC2B0"/><stop offset="1" stop-color="#E07A64"/></radialGradient>
+    <radialGradient id="cShade" cx=".35" cy=".25" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".35"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#1A1440" stop-opacity=".32"/></radialGradient>
+    <radialGradient id="cBand" cx=".4" cy=".2" r=".9"><stop offset="0" stop-color="#5776D0"/><stop offset="1" stop-color="#1E3577"/></radialGradient>
+    <radialGradient id="cCamSkin" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#E7AE86"/><stop offset=".6" stop-color="#C98B62"/><stop offset="1" stop-color="#A86C46"/></radialGradient>
+    <radialGradient id="cCamHair" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C9693E"/><stop offset="1" stop-color="#7E3A1E"/></radialGradient>
+    <radialGradient id="cHoodie" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#9BE0C6"/><stop offset=".6" stop-color="#5DB894"/><stop offset="1" stop-color="#3A8B6B"/></radialGradient>
+    <radialGradient id="cTable" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9DDE6"/></radialGradient>
+    <radialGradient id="cCup" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#7FA8F0"/><stop offset="1" stop-color="#2B4A9B"/></radialGradient>
+    <radialGradient id="cCloud" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E3F0F6"/></radialGradient>
+    <path id="cStar" d="M0 -3.4 L1 -1 L3.4 -1 L1.4 .5 L2.1 2.9 L0 1.5 L-2.1 2.9 L-1.4 .5 L-3.4 -1 L-1 -1 Z"/>
+  </defs>
+  <symbol id="hero" viewBox="0 0 220 420">
+    <ellipse cx="110" cy="414" rx="82" ry="9" fill="#9C7446" opacity=".45"/>
+    <path d="M66 70 C 50 82 50 114 62 130 L 72 122 C 66 108 68 92 78 80 Z" fill="url(#cHair)"/>
+    <path d="M154 70 C 170 82 170 114 158 130 L 148 122 C 154 108 152 92 142 80 Z" fill="url(#cHair)"/>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M70 180 L 36 224 L 58 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M70 180 L 36 224 L 58 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M45 236 L 58 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M45 236 L 58 254" stroke="#F2B98F" stroke-width="13"/>
+      <path d="M175 236 L 162 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M175 236 L 162 254" stroke="#E7A87E" stroke-width="13"/>
+    </g>
+    <rect x="97" y="140" width="26" height="28" rx="8" fill="#D38E66"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cStripes)"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cShade)"/>
+    <path d="M58 272 L 162 272 L 156 384 C 146 388 126 388 116 384 L 111 302 L 109 302 L 104 384 C 94 388 74 388 64 384 Z" fill="url(#cDenim)"/>
+    <rect x="60" y="368" width="48" height="19" rx="9" fill="#D3D7E0"/>
+    <rect x="112" y="368" width="48" height="19" rx="9" fill="#BCC1CD"/>
+    <path d="M62 386 L 106 386 L 108 400 C 108 408 104 413 97 413 L 50 413 C 40 413 38 403 46 397 C 52 393 58 392 62 386 Z" fill="url(#cBoot)"/>
+    <path d="M158 386 L 114 386 L 112 400 C 112 408 116 413 123 413 L 170 413 C 180 413 182 403 174 397 C 168 393 162 392 158 386 Z" fill="url(#cBoot)"/>
+    <rect x="58" y="259" width="104" height="14" rx="6" fill="#7A4524"/>
+    <rect x="100" y="256" width="20" height="20" rx="5" fill="#FFC94A"/>
+    <rect x="105" y="261" width="10" height="10" rx="2" fill="#7A4524"/>
+    <path d="M88 166 L 84 262 M132 166 L 136 262" fill="none" stroke="#2E2A38" stroke-width="8" stroke-linecap="round"/>
+    <rect x="78" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <rect x="130" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <circle cx="58" cy="256" r="12" fill="url(#cSkin)"/>
+    <circle cx="162" cy="256" r="12" fill="url(#cSkin)"/>
+    <path d="M90 154 C 100 163 120 163 130 154 L 136 166 C 120 175 100 175 84 166 Z" fill="url(#cBand)"/>
+    <path d="M84 164 C 100 172 120 172 136 164 L 112 202 Z" fill="url(#cBand)"/>
+    <path d="M100.2 186 L 122.1 186 L 112 202 Z" fill="url(#cRed)"/>
+    <path d="M138 172 L 154 192 L 144 194 Z M134 172 L 140 196 L 131 194 Z" fill="url(#cRed)"/>
+    <ellipse cx="136" cy="168" rx="9" ry="7" fill="url(#cRed)"/>
+    <g fill="#FFFFFF"><use href="#cStar" x="96" y="171"/><use href="#cStar" x="110" y="177"/><use href="#cStar" x="124" y="171"/><use href="#cStar" x="104" y="182"/><use href="#cStar" x="117" y="182"/></g>
+    <circle cx="72" cy="106" r="9" fill="url(#cSkin)"/>
+    <circle cx="148" cy="106" r="9" fill="url(#cSkin)"/>
+    <path d="M72 86 C 72 56 148 56 148 86 C 150 116 142 146 128 154 C 120 159 100 159 92 154 C 78 146 70 116 72 86 Z" fill="url(#cSkin)"/>
+    <path d="M86 84 C 92 77 102 77 106 82 M114 82 C 118 77 128 77 134 84" fill="none" stroke="#4A2C16" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="97" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <ellipse cx="123" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <circle cx="99.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="125.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="84" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <circle cx="136" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <path d="M103 143 Q110 148 117 143" fill="none" stroke="#8A3A2E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M110 124 C 100 116 84 116 76 124 C 70 130 60 128 58 120 C 56 132 68 138 80 136 C 92 134 102 132 110 130 C 118 132 128 134 140 136 C 152 138 164 132 162 120 C 160 128 150 130 144 124 C 136 116 120 116 110 124 Z" fill="url(#cMust)"/>
+    <ellipse cx="110" cy="113" rx="13" ry="12" fill="url(#cNose)"/>
+    <ellipse cx="105" cy="108" rx="4" ry="3" fill="#FFFFFF" opacity=".6"/>
+    <path d="M58 72 C 50 46 80 26 112 26 C 148 26 172 44 164 68 C 150 78 72 82 58 72 Z" fill="url(#cRed)"/>
+    <path d="M60 72 C 74 82 150 78 164 68" fill="none" stroke="#A9271F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M80 44 C 90 36 104 32 118 32" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+    <circle cx="112" cy="27" r="4.5" fill="url(#cRed)"/>
+  </symbol>
+  <symbol id="camilleBase" viewBox="0 0 200 240">
+    <path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="url(#cCamHair)"/>
+    <rect x="88" y="140" width="24" height="34" rx="8" fill="#A86C46"/>
+    <path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#cHoodie)"/>
+    <path d="M70 174 Q100 198 130 174" fill="none" stroke="#3A8B6B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M92 190 L 90 214 M108 190 L 110 214" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="104" r="46" fill="url(#cCamSkin)"/>
+    <path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="url(#cCamHair)"/>
+    <path d="M74 64 C 84 54 98 50 110 52" fill="none" stroke="#E38A5E" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <circle cx="86" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="118" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="56" cy="126" r="4.5" fill="#FFC94A"/>
+    <circle cx="144" cy="126" r="4.5" fill="#FFC94A"/>
+  </symbol>
+</svg>
+<div class="band" aria-hidden="true">
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice">
+    <rect width="1440" height="120" fill="#BEDDEB"/>
+    <ellipse cx="180" cy="34" rx="56" ry="20" fill="url(#cCloud)"/><ellipse cx="216" cy="24" rx="34" ry="22" fill="url(#cCloud)"/>
+    <ellipse cx="760" cy="28" rx="46" ry="16" fill="url(#cCloud)"/><ellipse cx="790" cy="20" rx="28" ry="18" fill="url(#cCloud)"/>
+    <g fill="#9C8B7C">
+      <path d="M1148 96 C 1158 70 1166 44 1172 6 L 1176 6 C 1182 44 1190 70 1200 96 L 1190 96 C 1184 84 1180 80 1174 80 C 1168 80 1164 84 1158 96 Z"/>
+      <rect x="1156" y="62" width="36" height="6" rx="3"/><rect x="1162" y="36" width="24" height="5" rx="2.5"/>
+    </g>
+    <g fill="#8E9AAE">
+      <path d="M0 120 V84 Q20 70 40 84 V76 H110 Q130 62 150 76 V88 H230 V72 Q260 58 290 72 V86 H360 V78 Q385 64 410 78 V90 H470 V70 H560 Q585 56 610 70 V86 H690 V80 Q720 66 750 80 V92 H830 V74 Q855 60 880 74 V84 H960 V76 H1040 Q1065 62 1090 76 V92 H1140 V100 H1220 V78 Q1245 64 1270 78 V88 H1350 V74 Q1395 60 1440 74 V120 Z"/>
+    </g>
+    <g fill="#C46A4A"><rect x="64" y="64" width="10" height="16" rx="3"/><rect x="250" y="58" width="10" height="16" rx="3"/><rect x="520" y="58" width="10" height="16" rx="3"/><rect x="842" y="62" width="10" height="16" rx="3"/><rect x="1300" y="62" width="10" height="16" rx="3"/></g>
+    <g fill="#F7EFE2" opacity=".85"><rect x="90" y="94" width="10" height="14" rx="3"/><rect x="300" y="96" width="10" height="14" rx="3"/><rect x="600" y="96" width="10" height="14" rx="3"/><rect x="920" y="98" width="10" height="14" rx="3"/><rect x="1380" y="96" width="10" height="14" rx="3"/></g>
+  </svg>
+</div>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Français 10-3Y · Scène 2</p>
+      <h1>Un après-midi à Paris</h1>
+      <p class="lede">You are staying with Camille’s family. All afternoon, Mamie Jeanne and Camille send you messages. Read or listen to each one, read the map, and find your way around the neighbourhood.</p>
+    </div>
+    <div class="toggles">
+      <label class="pill"><input type="checkbox" id="sfxOn" checked> Effets sonores</label>
+      <label class="pill tts-only"><input type="checkbox" id="challenge"> Défi : audio seulement</label>
+      <label class="pill"><input type="checkbox" id="labels" checked> Noms sur la carte</label>
+      <button class="pill" id="restart" type="button">Recommencer</button>
+    </div>
+  </header>
+
+  <div class="game wide">
+    <section class="card stage" aria-label="Le quartier">
+      <div class="stagehead">
+        <span class="place" id="placeName">Quartier des Lilas · Paris 11<sup>e</sup></span>
+        <span class="legend"><span><i></i>porte</span><span id="facing">Tu regardes vers le nord</span></span>
+      </div>
+      <div class="viewport">
+        <svg id="map" viewBox="0 0 688 448" role="img" aria-label="Plan du quartier"></svg>
+        <svg id="park" viewBox="0 0 688 448" role="group" aria-label="Le parc des Buttes-Chaumont" hidden></svg>
+        <div class="intro" id="intro">
+          <div class="box">
+            <p class="eyebrow">Scène 2</p>
+            <h2>Un après-midi à Paris</h2>
+            <p>Mamie Jeanne and Camille will text you all afternoon. Read, listen, then find your way.</p>
+            <ul>
+              <li>Walk with the buttons or the arrow keys. Directions depend on the way you are facing.</li>
+              <li>Each building has one door (the small brown mark). Walk along the street past the door, then choose <i>Entre à gauche</i> or <i>Entre à droite</i>.</li>
+              <li>Every game has new errands, new routes and a new bus time.</li>
+              <li>Turn on <b>Défi : audio seulement</b> to hide the text of every message.</li>
+            </ul>
+            <div><button class="btn primary" id="startBtn" type="button">Commencer</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="ctlbar" id="walkControls">
+        <div class="pad">
+          <button class="ctl left" data-act="left" type="button"><span class="arw" aria-hidden="true">←</span> Tourne à gauche</button>
+          <button class="ctl fwd" data-act="fwd" type="button"><span class="arw" aria-hidden="true">↑</span> Va tout droit</button>
+          <button class="ctl right" data-act="right" type="button">Tourne à droite <span class="arw" aria-hidden="true">→</span></button>
+          <button class="ctl back" data-act="back" type="button"><span class="arw" aria-hidden="true">↓</span> Fais demi-tour</button>
+        </div>
+        <div class="enter">
+          <button class="ctl door" data-act="enterL" type="button">Entre à gauche</button>
+          <button class="ctl door" data-act="enterR" type="button">Entre à droite</button>
+        </div>
+        <p class="keyhelp">Clavier : <kbd>↑</kbd> va tout droit · <kbd>←</kbd> <kbd>→</kbd> tourne · <kbd>↓</kbd> demi-tour · <kbd>Q</kbd> entre à gauche · <kbd>E</kbd> entre à droite</p>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="card missions compact"><h3>Missions</h3><ol id="missionList"></ol></div>
+      <div class="card feedcard">
+        <div class="feedhead"><h3>Messages</h3><label class="mini-switch tts-only"><input type="checkbox" id="autoplay" checked> Audio automatique</label></div>
+        <div class="feed" id="feed" aria-live="polite"><p class="empty">Messages from Mamie Jeanne and Camille will appear here.</p></div>
+      </div>
+      <div class="card panel">
+        <div class="panelhead"><h3>Ta tâche</h3><button class="btn ghost small" id="hintBtn" type="button">Indice</button></div>
+        <p class="task" id="task">Press Commencer to begin.</p>
+        <div id="actionBody"></div>
+        <div class="fbs" id="fbs" aria-live="polite"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card summary" id="summary" hidden></section>
+
+  <details class="teacher">
+    <summary>Pour le prof : how this scene works</summary>
+    <ul>
+      <li>This scene is mostly interpretation: students read or listen to a message, then act on it. Production is choosing the right sentence in a shop and the right question for a stranger.</li>
+      <li>Directions are relative to the way the student is facing, so <i>tourne à droite</i> has to be understood, not matched to a compass. The dotted trail shows the route they actually took.</li>
+      <li>Every game is different: Mamie’s errand and its location clue (<i>à côté de, entre … et …, près de</i>), Camille’s turn-by-turn route, the place the student asks about, the bus time, and Camille’s outfit and spot in the park.</li>
+      <li>Each building has one door. Standing beside the right building on the wrong street gets a pointer to the door’s street, not a penalty. A wrong building gets a reading response (<i>C’est la banque. Tu cherches la poste.</i>). After two wrong buildings the destination glows.</li>
+      <li>In the shop, students choose <i>Je voudrais …, s’il vous plaît</i> over <i>Je veux …</i>, <i>Tu as … ?</i> and a gender error. With M. Bernard, a stranger, they need <i>Excusez-moi, monsieur</i> and <i>vous</i>, not <i>Salut</i>.</li>
+      <li>The bus time comes in words (<i>cinq heures moins le quart</i>) while the timetable uses digits, with <i>et quart</i> and <i>moins le quart</i> decoys. Hints, mistakes and text reveals are counted, and each mission earns up to three stars.</li>
+      <li>Outcomes practised: 10 C 3.1 (shopping venues), 10 C 3.2 (routine purchases), 10 C 3.4 (community services), 10 A 3–4 (referential and directive functions), 10 R 2.1h (<i>au, du</i>), 10 R 2.9b (<i>je voudrais</i>), 10 R 2.12 (colour agreement), 10 R 2.13a (prepositions of location), 10 R 3.2 (<i>tu</i> or <i>vous</i>). Getting around by bus is a 20-3Y context (20 C 3.3), used here as a stretch. The Parc des Buttes-Chaumont is a real Paris park.</li>
+      <li>Audio uses one French voice from this computer: <b id="vozName">checking…</b>. If it says “none found”, the audio buttons are hidden and the scene works with text only. Nothing is saved or sent anywhere.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ===================== Sound design (Web Audio, no files) ===================== */
+const SFX = (() => {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  let ctx = null, out = null, muted = false, last = { t: 0, p: -1 }, noiseBuf = null;
+  try { muted = localStorage.getItem('jeu-fr-sfx-off') === '1'; } catch (e) {}
+  const N = m => 440 * Math.pow(2, (m - 69) / 12);
+  function init() {
+    if (!AC) return null;
+    if (!ctx) {
+      try {
+        ctx = new AC();
+        const comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -18; comp.ratio.value = 4;
+        out = ctx.createGain(); out.gain.value = 0.42;
+        out.connect(comp); comp.connect(ctx.destination);
+      } catch (e) { ctx = null; return null; }
+    }
+    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+    return ctx;
+  }
+  function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function tone(f, t, { type = 'sine', a = 0.006, d = 0.3, v = 0.2, to = 0, pan = 0 } = {}) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + a + d);
+    env(g, t, a, v, d);
+    let node = g;
+    if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = pan; g.connect(p); node = p; }
+    o.connect(g); node.connect(out); o.start(t); o.stop(t + a + d + 0.05);
+  }
+  function mallet(f, t, v = 0.2, d = 0.45, pan = 0) {
+    tone(f, t, { v, d, pan });
+    tone(f * 4, t, { v: v * 0.16, d: d * 0.22, pan });
+    tone(f * 2.01, t, { type: 'triangle', v: v * 0.1, d: d * 0.5, pan });
+  }
+  function sparkle(t, n = 5, base = 88) {
+    const steps = [0, 4, 7, 12, 16, 19, 24];
+    for (let k = 0; k < n; k++) tone(N(base + steps[k % 7]), t + k * 0.045, { v: 0.05, d: 0.28, pan: k % 2 ? 0.45 : -0.45 });
+  }
+  function noise(t, { d = 0.3, v = 0.12, type = 'bandpass', f = 1200, to = 0, q = 0.8 } = {}) {
+    if (!noiseBuf) {
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const ch = noiseBuf.getChannelData(0);
+      for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    }
+    const s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+    s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t);
+    if (to) fl.frequency.exponentialRampToValueAtTime(to, t + d);
+    fl.Q.value = q; env(g, t, 0.01, v, d);
+    s.connect(fl); fl.connect(g); g.connect(out); s.start(t); s.stop(t + d + 0.05);
+  }
+  const SOUNDS = {
+    tap: [0, t => tone(1320, t, { v: 0.04, d: 0.035 })],
+    soft: [1, t => mallet(N(76), t, 0.07, 0.2)],
+    step: [0, t => { noise(t, { d: 0.05, v: 0.07, type: 'lowpass', f: 520 }); noise(t + 0.17, { d: 0.05, v: 0.05, type: 'lowpass', f: 460 }); }],
+    turn: [0, t => noise(t, { d: 0.12, v: 0.035, f: 900, to: 1800, q: 1.2 })],
+    star: [4, t => sparkle(t, 6, 88)],
+    door: [3, t => { noise(t, { d: 0.45, v: 0.08, type: 'highpass', f: 2600 }); mallet(N(76), t + 0.08, 0.11, 0.5); mallet(N(72), t + 0.34, 0.11, 0.7); }],
+    bell: [3, t => { [79, 76, 72, 79].forEach((m, k) => mallet(N(m), t + k * 0.26, 0.14, 0.8)); }],
+    mission: [5, t => { [72, 76, 79, 84].forEach((m, k) => mallet(N(m), t + k * 0.085, 0.16, 0.6, (k - 1.5) * 0.2)); sparkle(t + 0.38, 5, 96); }],
+    message: [1, t => { tone(N(81), t, { v: 0.08, d: 0.12 }); tone(N(88), t + 0.07, { v: 0.07, d: 0.2 }); }],
+    whoosh: [1, t => noise(t, { d: 0.5, v: 0.08, f: 300, to: 2600, q: 0.9 })],
+    hint: [2, t => { mallet(N(79), t, 0.09, 0.5); mallet(N(86), t + 0.12, 0.07, 0.6); }],
+    wrong: [2, t => { tone(N(57), t, { type: 'triangle', v: 0.13, d: 0.2, to: N(53) }); tone(N(53), t + 0.11, { type: 'triangle', v: 0.09, d: 0.28, to: N(48) }); }],
+    correct: [3, t => { mallet(N(76), t, 0.17); mallet(N(83), t + 0.09, 0.17, 0.6); }],
+    perfect: [4, t => { mallet(N(76), t, 0.15); mallet(N(79), t + 0.08, 0.15); mallet(N(84), t + 0.16, 0.17, 0.7); sparkle(t + 0.24, 4, 91); }],
+    fanfare: [6, t => {
+      [[67, 0, .14], [72, .14, .14], [76, .28, .14], [79, .42, .28], [76, .7, .14], [79, .84, .5]].forEach(([m, dt, d]) => {
+        mallet(N(m), t + dt, 0.17, d + 0.4);
+        tone(N(m), t + dt, { type: 'triangle', v: 0.045, d: d + 0.2 });
+      });
+      [48, 55, 64, 67, 72].forEach(m => tone(N(m), t + 0.84, { type: 'triangle', v: 0.04, a: 0.1, d: 1.6 }));
+      sparkle(t + 1.0, 7, 96);
+    }],
+    badge: [5, t => { mallet(N(91), t, 0.09, 0.4); sparkle(t + 0.05, 3, 96); }]
+  };
+  function play(name, { force = false } = {}) {
+    if (muted) return;
+    const s = SOUNDS[name];
+    if (!s || !init()) return;
+    const now = ctx.currentTime, [p, fn] = s;
+    if (!force && now - last.t < 0.22 && p < last.p) return;
+    last = { t: now, p };
+    try { fn(now + 0.01); } catch (e) {}
+  }
+  const later = (ms, f) => setTimeout(() => { if (!muted && init()) { try { f(ctx.currentTime + 0.01); } catch (e) {} } }, ms);
+  return {
+    play,
+    mission(st = 0, delayMs = 0) {
+      later(delayMs, t => { last = { t, p: 5 }; SOUNDS.mission[1](t); });
+      for (let k = 0; k < st; k++) later(delayMs + 560 + k * 170, t => { mallet(N(88 + k * 4), t, 0.1, 0.5); sparkle(t, 2, 96 + k * 3); });
+    },
+    celebrate(badges = 0) {
+      later(0, t => { last = { t, p: 6 }; SOUNDS.fanfare[1](t); });
+      for (let k = 0; k < Math.min(badges, 6); k++) later(1700 + k * 260, t => SOUNDS.badge[1](t));
+    },
+    muted: () => muted,
+    setMuted(m) { muted = m; try { localStorage.setItem('jeu-fr-sfx-off', m ? '1' : '0'); } catch (e) {} }
+  };
+})();
+
+const $ = id => document.getElementById(id);
+const NB = ' '; // French thin space before ? ! ; :
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+
+/* ================= 1. TEXT HELPERS ================= */
+const stripMarks = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+// accents stripped, apostrophes and hyphens become spaces: "J'ai dix-sept ans" -> "j ai dix sept ans"
+const norm = s => stripMarks(s.toLowerCase()).replace(/œ/g, 'oe').replace(/[’‘`´'\-]/g, ' ').replace(/[?!.,;:"“”«»()]/g, ' ').replace(/\s+/g, ' ').trim();
+const words = s => s.match(/[A-Za-zÀ-ÖØ-öø-ÿœŒ]+/g) || [];
+const key = w => stripMarks(w.toLowerCase()).replace(/œ/g, 'oe');
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+const isUpper = s => s[0] !== s[0].toLowerCase();
+const findSeq = (toks, seq) => {
+  for (let i = 0; i <= toks.length - seq.length; i++) if (seq.every((s, j) => toks[i + j] === s)) return i + seq.length;
+  return -1;
+};
+
+/* ================= 2. ACCENT INPUT: bar + typing shortcuts ================= */
+const ACUTE = { e: 'é', E: 'É' };
+const GRAVE = { a: 'à', e: 'è', u: 'ù', A: 'À', E: 'È', U: 'Ù' };
+const CIRC = { a: 'â', e: 'ê', i: 'î', o: 'ô', u: 'û', A: 'Â', E: 'Ê', I: 'Î', O: 'Ô', U: 'Û' };
+const DEFER = { 'c,': 'ç', 'C,': 'Ç', 'e:': 'ë', 'i:': 'ï', 'E:': 'Ë', 'I:': 'Ï' }; // converted only when a letter follows, so "avec, je" stays as typed
+
+function attachAccentInput(input, bar) {
+  const flash = ch => {
+    const b = bar.querySelector(`[data-ch="${ch.toLowerCase()}"]`);
+    if (!b) return;
+    b.classList.add('flash');
+    setTimeout(() => b.classList.remove('flash'), 350);
+  };
+  input.addEventListener('input', e => {
+    if (!e.inputType || !e.inputType.startsWith('insertText')) return;
+    const pos = input.selectionStart, v = input.value;
+    const last = v[pos - 1], prev = v[pos - 2];
+    let rep = null;
+    if ((last === "'" || last === '’' || last === '´') && ACUTE[prev]) rep = ACUTE[prev];
+    else if (last === '`' && GRAVE[prev]) rep = GRAVE[prev];
+    else if (last === '^' && CIRC[prev]) rep = CIRC[prev];
+    else if ((last === '<' && prev === '<') || (last === '>' && prev === '>')) rep = last === '<' ? '«' : '»';
+    if (rep) {
+      input.value = v.slice(0, pos - 2) + rep + v.slice(pos);
+      input.setSelectionRange(pos - 1, pos - 1);
+      flash(rep);
+      return;
+    }
+    if (/\p{L}/u.test(last || '') && pos >= 3) {
+      const pair = v.slice(pos - 3, pos - 1);
+      if (DEFER[pair]) {
+        const r = DEFER[pair];
+        input.value = v.slice(0, pos - 3) + r + v.slice(pos - 1);
+        input.setSelectionRange(pos - 1, pos - 1);
+        flash(r);
+      }
+    }
+  });
+  bar.querySelectorAll('button').forEach(b => {
+    b.addEventListener('pointerdown', e => e.preventDefault());
+    b.addEventListener('click', e => {
+      const ch = e.shiftKey ? b.dataset.ch.toUpperCase() : b.dataset.ch;
+      const s = input.selectionStart ?? input.value.length, en = input.selectionEnd ?? s;
+      input.value = input.value.slice(0, s) + ch + input.value.slice(en);
+      input.focus();
+      input.setSelectionRange(s + ch.length, s + ch.length);
+    });
+  });
+}
+
+/* ================= 3. REVIEW: accents, elision, spelling; never blocks a reply ================= */
+const ACCENT_WORDS = {
+  ca: 'ça', tres: 'très', francais: 'français', francaise: 'française', eleve: 'élève', eleves: 'élèves', ecole: 'école',
+  age: 'âge', deja: 'déjà', voila: 'voilà', frere: 'frère', freres: 'frères', mere: 'mère', pere: 'père',
+  cafe: 'café', enchante: 'enchanté', enchantee: 'enchantée', desole: 'désolé', desolee: 'désolée', bientot: 'bientôt',
+  apres: 'après', quebec: 'Québec', montreal: 'Montréal', etats: 'États', etes: 'êtes', meme: 'même', preferee: 'préférée',
+  noel: 'Noël', theatre: 'théâtre', musee: 'musée', numero: 'numéro', telephone: 'téléphone', television: 'télévision',
+  etudiant: 'étudiant', etudiante: 'étudiante', ete: 'été', chloe: 'Chloé', helene: 'Hélène', zoe: 'Zoé', jerome: 'Jérôme', theo: 'Théo', leo: 'Léo'
+};
+const SPELLING = { apelle: 'appelle', apelles: 'appelles', appele: 'appelle', apele: 'appelle', bonjours: 'bonjour', mercie: 'merci' };
+const NOTES = {
+  a: 'à = to / at, a = has.',
+  ou: 'où = where, ou = or.',
+  ca: 'The ç keeps the c soft: ça.'
+};
+const A_BEFORE = new Set(['habite', 'habites', 'vis', 'vais', 'suis', 'bienvenue', 'vit', 'habitons']);
+const A_AFTER = new Set(['bientot', 'demain', 'plus', 'la', 'paris', 'lethbridge', 'calgary', 'edmonton', 'toronto', 'vancouver', 'montreal', 'quebec', 'moi', 'toi', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche', 'l', 'pied']);
+const OU_AFTER = new Set(['habites', 'habite', 'vas', 'est', 'es', 'viens', 'vis', 'sont', 'etes', 'habitez']);
+const NO_ELIDE = new Set(['huit', 'onze', 'hockey', 'heros', 'hibou', 'hamburger', 'handball', 'hasard', 'haricot', 'haut', 'hollande', 'yoga', 'yaourt']);
+
+function review(raw) {
+  const issues = []; let correct = 0;
+  const isQ = /[?¿]/.test(raw);
+  const toks = words(raw);
+  toks.forEach((w, i) => {
+    const k = key(w), lw = w.toLowerCase();
+    let target = ACCENT_WORDS[k] || SPELLING[k];
+    const prev = i > 0 ? key(toks[i - 1]) : '', next = key(toks[i + 1] || '');
+    if (k === 'a' && (A_BEFORE.has(prev) || A_AFTER.has(next))) target = 'à';
+    if (k === 'ou' && (prev === 'd' || (isQ && (i === 0 || OU_AFTER.has(next) || i === toks.length - 1)))) target = 'où';
+    if (!target) return;
+    if (lw === target.toLowerCase()) { if (!SPELLING[k]) correct++; return; }
+    const fix = isUpper(w) || isUpper(target) ? target.charAt(0).toUpperCase() + target.slice(1) : target;
+    issues.push({ wrote: w, fix, note: NOTES[k] || (SPELLING[k] ? 'Spelling.' : '') });
+  });
+  // elision: je ai -> j'ai, je habite -> j'habite, de ou -> d'où
+  const re = /\b(je|me|te|se|le|la|ne|de|que)\s+([aeiouyhàâéèêëîïôûœ][\p{L}]*)/giu;
+  let m;
+  while ((m = re.exec(raw))) {
+    const w1 = m[1], w2 = m[2], k2 = key(w2);
+    if (NO_ELIDE.has(k2)) continue;
+    if (w1.toLowerCase() === 'je' && /^ap+el+e?s?$/.test(k2)) {
+      issues.push({ wrote: `${w1} ${w2}`, fix: 'je m’appelle', note: 'The phrase needs the m’: <b>je m’appelle</b> = I call myself.' });
+      continue;
+    }
+    const lead = w1.charAt(0) + (w1.length > 1 && /^qu/i.test(w1) ? 'u' : '');
+    issues.push({ wrote: `${w1} ${w2}`, fix: `${lead}’${w2}`, note: 'Before a vowel sound, the e drops and becomes an apostrophe (elision).' });
+  }
+  return { issues, correct };
+}
+
+const ENGLISH = new Set(['my', 'name', 'is', 'i', 'am', 'im', 'years', 'old', 'hello', 'hi', 'from', 'the', 'what', 'how', 'you', 'are', 'and', 'goodbye', 'bye', 'do', 'like', 'your', 'good', 'thanks', 'fine', 'where', 'live', 'have', 'it', 'its', 'see', 'later']);
+const looksEnglish = n => n.split(' ').filter(w => ENGLISH.has(w)).length >= 2;
+
+/* ---- speech: one French voice for the whole game, never an English one ---- */
+const tts = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+if (!tts) document.body.classList.add('no-tts');
+let VOIX = null;
+function rankVoice(v) {
+  const l = (v.lang || '').replace('_', '-');
+  if (!/^fr(-|$)/i.test(l)) return -1;
+  let s = 0;
+  if (/natural|online|neural/i.test(v.name)) s += 40;
+  if (/google/i.test(v.name)) s += 25;
+  if (/fr-FR/i.test(l)) s += 20; else if (/fr-CA/i.test(l)) s += 12; else s += 6;
+  if (/denise|eloise|vivienne|henri|remy|amelie|julie|thomas/i.test(v.name)) s += 3;
+  return s;
+}
+function pickVoice() {
+  try {
+    const best = speechSynthesis.getVoices().map(v => [rankVoice(v), v]).filter(x => x[0] >= 0).sort((a, b) => b[0] - a[0])[0];
+    VOIX = best ? best[1] : null;
+  } catch (e) { VOIX = null; }
+  document.body.classList.toggle('no-tts', !VOIX);
+  const el = document.getElementById('vozName');
+  if (el) el.textContent = VOIX ? `${VOIX.name} (${VOIX.lang})` : 'none found';
+  return VOIX;
+}
+if (tts) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
+function speak(text, slow = false) {
+  if (!tts || (!VOIX && !pickVoice())) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/ /g, ' '));
+    u.voice = VOIX; u.lang = VOIX.lang; u.rate = slow ? 0.72 : 0.95;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+
+/* ================= Shared helpers for every scene ================= */
+const SPEED = window.__testSpeed || 1;
+const sleep = ms => new Promise(r => setTimeout(r, ms * SPEED));
+const rand = n => Math.floor(Math.random() * n);
+const pick = a => a[rand(a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const capFirst = s => s.charAt(0).toUpperCase() + s.slice(1);
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* French articles: à + le = au, de + le = du, l' before a vowel */
+const au = full => full.startsWith('le ') ? 'au ' + full.slice(3) : full.startsWith('les ') ? 'aux ' + full.slice(4) : 'à ' + full;
+const du = full => full.startsWith('le ') ? 'du ' + full.slice(3) : full.startsWith('les ') ? 'des ' + full.slice(4) : 'de ' + full;
+
+/* French numbers 0–100 (traditional hyphens) */
+const UNITS = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+const TENS = { 2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante' };
+function numWord(n) {
+  if (n < 0) return 'moins ' + numWord(-n);
+  if (n < 20) return UNITS[n];
+  if (n === 100) return 'cent';
+  if (n < 70) { const t = Math.floor(n / 10), u = n % 10; return u === 0 ? TENS[t] : u === 1 ? TENS[t] + ' et un' : TENS[t] + '-' + UNITS[u]; }
+  if (n < 80) return n === 71 ? 'soixante et onze' : 'soixante-' + UNITS[n - 60];
+  if (n === 80) return 'quatre-vingts';
+  return 'quatre-vingt-' + UNITS[n - 80];
+}
+/* time in words, 12-hour as people say it: "neuf heures moins cinq" */
+function timeWords(h, m) {
+  let hh = h, mm = m, suffix = '';
+  if (m > 30) { hh = h + 1; mm = 60 - m; suffix = mm === 15 ? ' moins le quart' : ' moins ' + numWord(mm); }
+  else if (m === 15) suffix = ' et quart';
+  else if (m === 30) suffix = ' et demie';
+  else if (m > 0) suffix = ' ' + numWord(m);
+  const h12 = hh % 24;
+  let base;
+  if (h12 === 12) base = 'midi';
+  else if (h12 === 0) base = 'minuit';
+  else { const k = h12 > 12 ? h12 - 12 : h12; base = k === 1 ? 'une heure' : numWord(k) + ' heures'; }
+  if ((h12 === 12 || h12 === 0) && suffix === ' et demie') suffix = ' et demi';
+  return base + suffix;
+}
+const clock = (h, m) => `${h} h ${String(m).padStart(2, '0')}`;
+
+/* ---- clay people: one generator for the whole cast ---- */
+let gid = 0;
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  const f = c => Math.max(0, Math.min(255, Math.round(c + (amt > 0 ? (255 - c) * amt : c * amt))));
+  return '#' + [f(n >> 16), f((n >> 8) & 255), f(n & 255)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+const grad = (c) => { const id = 'pg' + (++gid); return [id, `<radialGradient id="${id}" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${shade(c, .35)}"/><stop offset=".6" stop-color="${c}"/><stop offset="1" stop-color="${shade(c, -.25)}"/></radialGradient>`]; };
+const MOUTHS = {
+  happy: '<path d="M86 128 Q100 146 114 128 Z" fill="#7A2E2E"/><path d="M90 129 Q100 134 110 129 Z" fill="#FFFFFF"/>',
+  neutral: '<path d="M88 130 Q100 140 112 130" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  think: '<path d="M90 134 Q100 130 110 135" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  oh: '<ellipse cx="100" cy="134" rx="6" ry="8" fill="#7A2E2E"/>'
+};
+/* p: { skin, hair: 'short'|'bob'|'long'|'bun'|'curly'|'bald'|'pony', hairColor, glasses, mustache, shirt, kid, mouth } -> 200×240 svg body */
+function personBody(p) {
+  const [sg, sdef] = grad(p.skin), [hg, hdef] = grad(p.hairColor || '#5A3A22'), [cg, cdef] = grad(p.shirt || '#6CC6A6');
+  const hc = `url(#${hg})`, sk = `url(#${sg})`;
+  const s = p.kid ? .86 : 1;
+  let back = '', front = '';
+  switch (p.hair) {
+    case 'bob': back = `<path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="${hc}"/>`;
+      front = `<path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="${hc}"/>`; break;
+    case 'long': back = `<path d="M44 110 C 36 50 70 26 100 26 C 132 26 166 50 156 110 L 164 200 C 140 210 60 210 36 200 Z" fill="${hc}"/>`;
+      front = `<path d="M56 96 C 58 62 82 50 100 50 C 124 50 144 62 144 96 C 136 76 118 66 96 72 C 80 76 66 84 56 96 Z" fill="${hc}"/>`; break;
+    case 'pony': back = `<path d="M140 70 C 176 70 180 130 160 168 C 170 128 160 96 140 90 Z" fill="${hc}"/>`;
+      front = `<path d="M54 100 C 52 58 80 48 102 48 C 128 48 150 62 148 100 C 136 80 116 72 98 74 C 80 76 64 86 54 100 Z" fill="${hc}"/>`; break;
+    case 'bun': back = `<circle cx="100" cy="46" r="26" fill="${hc}"/>`;
+      front = `<path d="M56 104 C 56 66 80 54 100 54 C 122 54 146 66 144 104 C 132 82 116 76 100 76 C 84 76 68 82 56 104 Z" fill="${hc}"/>`; break;
+    case 'curly': front = [[64, 74], [80, 60], [100, 54], [120, 60], [136, 74], [146, 92], [54, 92]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="18" fill="${hc}"/>`).join(''); break;
+    case 'bald': front = `<path d="M56 116 C 52 96 58 86 64 82 L 66 112 Z M144 116 C 148 96 142 86 136 82 L 134 112 Z" fill="${hc}"/>`; break;
+    default: front = `<path d="M56 100 C 54 62 78 50 100 50 C 124 50 148 62 144 100 C 140 84 128 72 110 70 C 96 76 76 82 56 100 Z" fill="${hc}"/>`;
+  }
+  const glasses = p.glasses ? '<g fill="none" stroke="#2A2440" stroke-width="4"><circle cx="84" cy="110" r="13"/><circle cx="116" cy="110" r="13"/><path d="M97 109 h6"/></g>' : '';
+  const must = p.mustache ? `<path d="M100 122 C 92 116 78 116 72 124 C 80 128 92 128 100 126 C 108 128 120 128 128 124 C 122 116 108 116 100 122 Z" fill="${shade(p.hairColor || '#5A3A22', -.2)}"/>` : '';
+  return `<defs>${sdef}${hdef}${cdef}</defs><g transform="translate(${100 - 100 * s} ${240 - 240 * s}) scale(${s})">${back}`
+    + `<rect x="88" y="140" width="24" height="34" rx="8" fill="${shade(p.skin, -.2)}"/>`
+    + `<path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#${cg})"/>`
+    + `<path d="M76 172 Q100 190 124 172" fill="none" stroke="${shade(p.shirt || '#6CC6A6', -.3)}" stroke-width="4" stroke-linecap="round"/>`
+    + `<circle cx="100" cy="104" r="46" fill="${sk}"/>${front}`
+    + '<ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/><ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/><circle cx="86" cy="108" r="2" fill="#FFFFFF"/><circle cx="118" cy="108" r="2" fill="#FFFFFF"/>'
+    + glasses + '<circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".4"/><circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".4"/>'
+    + must + (MOUTHS[p.mouth] || MOUTHS.happy) + '</g>';
+}
+const CAMILLE_BODY = mood => `<use href="#camilleBase" width="200" height="240"/>${MOUTHS[mood] || MOUTHS.happy}`;
+const CAST = {
+  camille: { name: 'Camille', camille: true },
+  mamie: { name: 'Mamie Jeanne', skin: '#EBC2A0', hair: 'bun', hairColor: '#D9D4E2', glasses: true, shirt: '#B05C8E' },
+  papa: { name: 'Papa', skin: '#E3AE86', hair: 'short', hairColor: '#5A3A22', shirt: '#3E6E9E', mustache: false },
+  maman: { name: 'Maman', skin: '#C98B62', hair: 'long', hairColor: '#2E1E16', shirt: '#E2463C' },
+  hugo: { name: 'Hugo', skin: '#C98B62', hair: 'curly', hairColor: '#7E3A1E', shirt: '#FFC94A', kid: true },
+  bernard: { name: 'M. Bernard', skin: '#D9A27A', hair: 'bald', hairColor: '#C8C2B4', glasses: true, mustache: true, shirt: '#6E8F7A' }
+};
+function personSVG(who, { mood = 'happy', crop = false, label = '' } = {}) {
+  const p = typeof who === 'string' ? CAST[who] : who;
+  const vb = crop ? '40 34 120 120' : '0 0 200 240';
+  const body = p.camille ? CAMILLE_BODY(mood) : personBody({ ...p, mouth: mood });
+  return `<svg viewBox="${vb}" ${label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"'}>${body}</svg>`;
+}
+const HERO_MINI = '<svg viewBox="52 18 116 116" aria-hidden="true"><use href="#hero" width="220" height="420"/></svg>';
+const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* ---- feedback chips ---- */
+function chipEl(kind, fr, en) {
+  const c = document.createElement('div');
+  c.className = 'chip appear ' + kind;
+  c.innerHTML = `<b>${fr}</b>${en ? `<span>${en}</span>` : ''}`;
+  return c;
+}
+function fb(kind, fr, en, append = false, box = $('fbs')) {
+  if (!box) return;
+  const c = chipEl(kind, fr, en);
+  if (append) box.appendChild(c); else box.replaceChildren(c);
+}
+const clearFb = (box = $('fbs')) => box && box.replaceChildren();
+/* review a typed answer and add accent / elision chips; returns counts */
+function reviewChips(raw, box, append = true) {
+  const r = review(raw);
+  const seen = new Set();
+  r.issues.forEach(is => {
+    const tag = is.wrote.toLowerCase();
+    if (seen.has(tag)) return; seen.add(tag);
+    fb('warn', `<span class="fix"><s>${esc(is.wrote)}</s> → ${esc(is.fix)}</span>`, is.note || '', append, box);
+  });
+  return r;
+}
+
+/* ---- message feed (texts and voice notes from the cast) ---- */
+const ENG = { reveals: 0 };
+function feedTime() { const d = ENG.clock || { h: 16, m: 0 }; return clock(d.h, d.m); }
+function addMsg(who, text, { feed = $('feed'), time = '', challenge = $('challenge'), autoplay = $('autoplay') } = {}) {
+  if (!feed) return;
+  const empty = feed.querySelector('.empty'); if (empty) empty.remove();
+  const p = CAST[who] || who;
+  const masked = challenge && challenge.checked && VOIX;
+  const m = document.createElement('div');
+  m.className = 'msg appear';
+  m.innerHTML = `<div class="av">${personSVG(p, { crop: true })}</div><div><div class="mhead"><b>${esc(p.name)}</b><span class="time">${time || feedTime()}</span></div><p class="mtext${masked ? ' masked' : ''}"></p><div class="mctl"><button type="button" class="play tts-only">${SPEAKER} Écouter</button><button type="button" class="slow tts-only">Lentement</button>${masked ? '<button type="button" class="reveal">Voir le texte</button>' : ''}</div></div>`;
+  const t = m.querySelector('.mtext');
+  t.textContent = masked ? 'Message audio : écoute-le.' : text;
+  m.querySelector('.play').addEventListener('click', () => speak(text));
+  m.querySelector('.slow').addEventListener('click', () => speak(text, true));
+  const rv = m.querySelector('.reveal');
+  if (rv) rv.addEventListener('click', () => { t.textContent = text; t.classList.remove('masked'); rv.remove(); ENG.reveals++; });
+  feed.appendChild(m);
+  feed.scrollTop = feed.scrollHeight;
+  SFX.play('message');
+  if ((autoplay && autoplay.checked) || masked) speak(text);
+  return m;
+}
+function addMine(text, feed = $('feed')) {
+  const m = document.createElement('div');
+  m.className = 'msg me appear';
+  m.innerHTML = '<div class="bubble"></div><div class="fbrow"></div>';
+  m.querySelector('.bubble').textContent = text;
+  feed.appendChild(m); feed.scrollTop = feed.scrollHeight;
+  return m.querySelector('.fbrow');
+}
+
+/* ---- mission list with stars ---- */
+function renderMissionList(el, items, cur, starsArr = []) {
+  el.innerHTML = '';
+  items.forEach((it, i) => {
+    const li = document.createElement('li');
+    const done = i < cur;
+    li.className = done ? 'done' : i === cur ? 'current' : '';
+    li.innerHTML = `<span class="n">${done ? CHECK : i + 1}</span><span class="t">${it}</span>${done && starsArr[i] != null ? `<span class="stars" aria-label="${starsArr[i]} étoiles sur 3">${starStr(starsArr[i])}</span>` : ''}`;
+    el.appendChild(li);
+  });
+}
+const starsFor = (mistakes, hints) => Math.max(1, 3 - mistakes - hints);
+
+/* ---- end-of-scene summary ---- */
+function renderSummary(box, { eyebrow, title, stats, badges, blocks = '', outcomes, again = 'Rejouer', onAgain }) {
+  box.innerHTML = `<div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2></div>
+    <div class="stats">${stats.map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('')}</div>
+    <div><h3>Badges</h3><div class="badges">${badges.map(([n, d, on]) => `<span class="badge${on ? '' : ' off'}" title="${esc(d)}">${on ? '★ ' : ''}${n}</span>`).join('')}</div></div>
+    ${blocks}
+    <p class="outcomes">Practised: ${outcomes}</p>
+    <div><button class="btn primary" type="button" id="againBtn">${again}</button></div>`;
+  box.hidden = false;
+  $('againBtn').addEventListener('click', onAgain);
+  SFX.celebrate(badges.filter(b => b[2]).length);
+  box.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' });
+}
+
+/* ---- header toggles shared by every scene ---- */
+function wireCommon(onRestart) {
+  const sfx = $('sfxOn');
+  if (sfx) {
+    sfx.checked = !SFX.muted();
+    sfx.addEventListener('change', () => { SFX.setMuted(!sfx.checked); if (sfx.checked) SFX.play('correct', { force: true }); });
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('button, .choice, .opt'); if (b && !b.disabled) SFX.play('tap'); }, true);
+  const lab = $('labels');
+  if (lab) { const apply = () => document.body.classList.toggle('nolabels', !lab.checked); lab.addEventListener('change', apply); apply(); }
+  const r = $('restart');
+  if (r) r.addEventListener('click', () => { SFX.play('whoosh', { force: true }); onRestart(); });
+}
+const ACCENT_BAR = ['é', 'è', 'ê', 'à', 'â', 'ç', 'î', 'ô', 'ù', 'û', 'ë', 'ï', 'œ'].map(c => `<button type="button" data-ch="${c}">${c}</button>`).join('') + '<span class="caps">Shift + click for capitals</span>';
+function setupAccentBar(barId, inputId) { const bar = $(barId); bar.innerHTML = ACCENT_BAR; attachAccentInput($(inputId), bar); }
+
+/* ================= SCENE ================= */
+/* ---------------- Town data ---------------- */
+const B = 120, P = 44, SW = 30, COLS = 5, ROWS = 3;
+const X = i => P + i * B, Y = j => P + j * B;
+const H_STREETS = ['rue des Lilas', 'rue Victor-Hugo', 'rue Pasteur', 'rue du Moulin'];
+const V_STREETS = ['rue Molière', 'rue Voltaire', 'avenue de la République', 'rue Jean-Jaurès', 'rue Racine', 'rue Colette'];
+const DIRNAME = ['nord', 'est', 'sud', 'ouest'];
+const DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+const COLORS_BLD = ['#FBE3C2', '#F6D2C4', '#DCEBD8', '#E3E0F5', '#FFE9B3'];
+// [bx, by, full name, icon, label, door side]
+const PLACES = [
+  [0, 0, 'la boulangerie', '🥖', 'Boulangerie', 'S'], [1, 0, 'la pharmacie', '💊', 'Pharmacie', 'S'], [2, 0, 'le musée', '🖼️', 'Musée', 'N'],
+  [3, 0, 'la bibliothèque', '📚', 'Bibliothèque', 'S'], [4, 0, 'l’hôpital', '🏥', 'Hôpital', 'W'],
+  [0, 1, 'la poste', '✉️', 'Poste', 'E'], [1, 1, 'le marché', '🧺', 'Marché', 'S'], [2, 1, 'la mairie', '🏛️', 'Mairie', 'S'],
+  [3, 1, 'le cinéma', '🎬', 'Cinéma', 'N'], [4, 1, 'la banque', '🏦', 'Banque', 'E'],
+  [0, 2, 'l’école', '🏫', 'École', 'N'], [1, 2, 'la librairie', '📖', 'Librairie', 'E'], [2, 2, 'le café', '☕', 'Café', 'N'],
+  [3, 2, 'la fromagerie', '🧀', 'Fromagerie', 'S'], [4, 2, 'l’église', '⛪', 'Église', 'W']
+].map(([bx, by, full, icon, label, door], k) => ({ bx, by, full, icon, label, door, key: 'p' + k }));
+const blockAt = (bx, by) => PLACES.find(p => p.bx === bx && p.by === by);
+const byName = n => PLACES.find(p => p.full === n);
+const cap1 = s => capFirst(s);
+function doorSeg(p) {
+  if (p.door === 'N') return `h:${p.bx}:${p.by}`;
+  if (p.door === 'S') return `h:${p.bx}:${p.by + 1}`;
+  if (p.door === 'W') return `v:${p.bx}:${p.by}`;
+  return `v:${p.bx + 1}:${p.by}`;
+}
+const doorStreet = p => (p.door === 'N' || p.door === 'S') ? H_STREETS[p.door === 'N' ? p.by : p.by + 1] : V_STREETS[p.door === 'W' ? p.bx : p.bx + 1];
+function segKey(a, b) {
+  if (a.y === b.y) return `h:${Math.min(a.x, b.x)}:${a.y}`;
+  return `v:${a.x}:${Math.min(a.y, b.y)}`;
+}
+/* the block on the left or right of a walked segment */
+function sideBlock(seg, side) {
+  const { a, b, dir } = seg;
+  if (a.y === b.y) {
+    const bx = Math.min(a.x, b.x), j = a.y;
+    const north = blockAt(bx, j - 1), south = blockAt(bx, j);
+    if (dir === 1) return side === 'L' ? north : south;
+    return side === 'L' ? south : north;
+  }
+  const i = a.x, by = Math.min(a.y, b.y);
+  const west = blockAt(i - 1, by), east = blockAt(i, by);
+  if (dir === 2) return side === 'L' ? east : west;
+  return side === 'L' ? west : east;
+}
+function locClue(p) {
+  const L = blockAt(p.bx - 1, p.by), R = blockAt(p.bx + 1, p.by);
+  if (L && R && Math.random() < .5) return `entre ${L.full} et ${R.full}`;
+  const side = L && R ? pick([L, R]) : (L || R);
+  if (side) return `à côté ${du(side.full)}`;
+  const V = blockAt(p.bx, p.by - 1) || blockAt(p.bx, p.by + 1);
+  return `près ${du(V.full)}`;
+}
+
+/* ---------------- route for Camille's directions ---------------- */
+function planRoute(start, dir, dest) {
+  const goal = doorSeg(dest);
+  const q = [{ x: start.x, y: start.y, d: dir, path: [] }], seen = new Set([`${start.x},${start.y},${dir}`]);
+  while (q.length) {
+    const s = q.shift();
+    for (const act of ['fwd', 'left', 'right']) {
+      const nd = act === 'fwd' ? s.d : act === 'left' ? (s.d + 3) % 4 : (s.d + 1) % 4;
+      const nx = s.x + DX[nd], ny = s.y + DY[nd];
+      if (nx < 0 || ny < 0 || nx > COLS || ny > ROWS) continue;
+      const path = s.path.concat(act);
+      if (segKey({ x: s.x, y: s.y }, { x: nx, y: ny }) === goal) {
+        const side = sideBlock({ a: { x: s.x, y: s.y }, b: { x: nx, y: ny }, dir: nd }, 'L') === dest ? 'gauche' : 'droite';
+        return { path, side };
+      }
+      const k = `${nx},${ny},${nd}`;
+      if (!seen.has(k)) { seen.add(k); q.push({ x: nx, y: ny, d: nd, path }); }
+    }
+  }
+  return null;
+}
+const ACT_FR = { fwd: 'Va tout droit.', left: 'Tourne à gauche.', right: 'Tourne à droite.' };
+
+/* ---------------- shops ---------------- */
+const SHOP = {
+  'la boulangerie': { who: 'La boulangère', item: 'une baguette', wrong: 'un baguette', price: 'un euro vingt', note: 'Baguette is feminine: <b>une</b> baguette.' },
+  'la pharmacie': { who: 'Le pharmacien', item: 'une boîte de pansements', wrong: 'un boîte de pansements', price: 'cinq euros', note: 'Boîte is feminine: <b>une</b> boîte.' },
+  'la fromagerie': { who: 'Le fromager', item: 'un camembert', wrong: 'une camembert', price: 'quatre euros cinquante', note: 'Camembert is masculine: <b>un</b> camembert.' },
+  'la librairie': { who: 'La libraire', item: 'un plan de Paris', wrong: 'une plan de Paris', price: 'sept euros', note: 'Plan is masculine: <b>un</b> plan.' },
+  'la poste': { who: 'Le postier', item: 'trois timbres', wrong: 'trois timbre', price: 'quatre euros vingt', note: 'Three stamps: plural <b>timbres</b>.' },
+  'le marché': { who: 'La marchande', item: 'un kilo de pommes', wrong: 'une kilo de pommes', price: 'deux euros cinquante', note: 'Kilo is masculine: <b>un</b> kilo.' }
+};
+const SHOPKEEPER = { skin: '#E8B48C', hair: 'short', hairColor: '#3A2A26', shirt: '#F4ECD8' };
+
+/* ---------------- park ---------------- */
+const TOPS = [['un pull', 'm'], ['une veste', 'f'], ['un t-shirt', 'm'], ['une chemise', 'f']];
+const HATS = [['une casquette', 'f'], ['un bonnet', 'm']];
+const COLORS = [
+  ['rouge', 'rouge', '#E2463C'], ['bleu', 'bleue', '#2B4A9B'], ['vert', 'verte', '#3E9C7C'], ['jaune', 'jaune', '#FFC94A'],
+  ['noir', 'noire', '#2E2A38'], ['blanc', 'blanche', '#F4F1EA'], ['violet', 'violette', '#7B4FB0'], ['orange', 'orange', '#F08A3C'], ['rose', 'rose', '#F29BB8']
+];
+const colorWord = (c, g) => g === 'f' ? c[1] : c[0];
+// zones: [label, [spot1, spot2]]
+const ZONES = [
+  ['à côté de la fontaine', [[268, 320], [420, 320]]],
+  ['sur le banc', [[560, 360], [628, 360]]],
+  ['sous l’arbre', [[118, 330]]],
+  ['devant le kiosque', [[560, 200]]]
+];
+function figure(o, x, y, idx) {
+  const top = o.top, hat = o.hat;
+  const marks = top[0] === 'une veste' ? '<path d="M100 172 V240" stroke="#2A2440" stroke-width="4"/><path d="M84 172 L100 196 L116 172" fill="none" stroke="#2A2440" stroke-width="4"/>'
+    : top[0] === 'une chemise' ? '<path d="M84 170 L100 186 L116 170" fill="#FFFFFF" stroke="#2A2440" stroke-width="3"/><circle cx="100" cy="204" r="3" fill="#2A2440"/><circle cx="100" cy="222" r="3" fill="#2A2440"/>'
+    : top[0] === 'un t-shirt' ? '<path d="M82 172 Q100 186 118 172" fill="none" stroke="#FFFFFF" stroke-width="5"/>' : '<path d="M60 236 H140" stroke="rgba(0,0,0,.18)" stroke-width="6"/>';
+  const hc = o.hatColor[2];
+  const hatSvg = hat[0] === 'une casquette'
+    ? `<path d="M56 86 C 58 50 142 50 144 86 Z" fill="${hc}"/><path d="M128 84 C 150 82 168 88 172 94 C 156 96 138 94 126 90 Z" fill="${shade(hc, -.25)}"/>`
+    : `<path d="M54 92 C 54 40 146 40 146 92 Z" fill="${hc}"/><rect x="50" y="82" width="100" height="16" rx="8" fill="${shade(hc, -.2)}"/><circle cx="100" cy="42" r="10" fill="${shade(hc, .3)}"/>`;
+  const body = personBody({ skin: o.skin, hair: o.hair, hairColor: o.hairColor, shirt: o.topColor[2] });
+  return `<g class="kid" tabindex="0" role="button" data-i="${idx}" aria-label="Personne ${idx + 1}" transform="translate(${x - 42} ${y - 100}) scale(.42)">`
+    + `<ellipse cx="100" cy="240" rx="80" ry="10" fill="#2E6B4B" opacity=".35"/>${body}`
+    + `<g>${marks}</g>${hatSvg}<rect class="ring" x="10" y="20" width="180" height="230" rx="40"/></g>`;
+}
+
+/* ---------------- state ---------------- */
+const S = {};
+const MISSION_TITLES = () => S.missions.map(m => m.title);
+function newGame() {
+  const shops = shuffle(Object.keys(SHOP));
+  const m1 = byName(shops[0]);
+  const m2 = byName(pick(['le café', 'le cinéma', 'la bibliothèque', 'le musée', 'l’école'].filter(n => n !== m1.full)));
+  const m3 = byName(pick(['la banque', 'l’hôpital', 'l’église', 'la pharmacie', 'la poste', 'la bibliothèque'].filter(n => n !== m1.full && n !== m2.full)));
+  const mairie = byName('la mairie');
+  // bus time and timetable
+  const h = pick([16, 17]);
+  const sched = [[h, 15], [h, 20], [h, 40], [h, 45], [h + 1, 15], [h + 1, 45]];
+  const target = pick([[h, 45], [h + 1, 15], [h, 40], [h, 15]]);
+  // park outfit
+  const spots = [];
+  ZONES.forEach(([lbl, ss], zi) => ss.forEach(s => spots.push({ zone: zi, x: s[0], y: s[1] })));
+  const camZone = pick([0, 1]);
+  const camSpot = pick(spots.filter(s => s.zone === camZone));
+  const top = pick(TOPS), hat = pick(HATS), topColor = pick(COLORS), hatColor = pick(COLORS.filter(c => c !== topColor));
+  const HAIRS = [['bob', '#7E3A1E'], ['long', '#2E1E16'], ['pony', '#C99A3B'], ['short', '#5A3A22'], ['curly', '#2E1E16'], ['bob', '#E0B060']];
+  const SKINS = ['#C98B62', '#F2C29B', '#8A5A3C', '#E3AE86', '#B07752', '#F5D0B0'];
+  const people = spots.map((s, i) => {
+    const [hair, hairColor] = HAIRS[i % HAIRS.length];
+    return { ...s, skin: SKINS[i % SKINS.length], hair, hairColor, top: pick(TOPS), hat: pick(HATS), topColor: pick(COLORS), hatColor: pick(COLORS) };
+  });
+  const cam = people.find(p => p === people[spots.indexOf(camSpot)]);
+  Object.assign(cam, { top, hat, topColor, hatColor, camille: true });
+  // her zone-mate: same items, different top colour; a decoy elsewhere: same outfit
+  const mate = people.find(p => p.zone === camZone && p !== cam);
+  Object.assign(mate, { top, hat, topColor: pick(COLORS.filter(c => c !== topColor)), hatColor });
+  const decoy = pick(people.filter(p => p.zone !== camZone));
+  Object.assign(decoy, { top, hat, topColor, hatColor });
+  Object.assign(S, {
+    mi: 0, done: false, active: false, node: { x: 2, y: 3 }, dir: 0, lastSeg: null, trail: [{ x: 2, y: 3 }], stars: [], mistakes: 0, hints: 0,
+    totalMistakes: 0, totalHints: 0, wrongDoors: 0, politeAll: true, labelsOff: true, busy: false, view: 'map', walking: false, hl: false,
+    sched, target, people, cam, camZone,
+    missions: [
+      { kind: 'shop', dest: m1, title: `Aller ${au(m1.full)}` },
+      { kind: 'route', dest: m2, title: `Retrouver Camille ${au(m2.full)}` },
+      { kind: 'ask', dest: m3, title: 'Demander le chemin' },
+      { kind: 'bus', dest: mairie, title: 'Prendre le bus' },
+      { kind: 'park', title: 'Trouver Camille au parc' }
+    ]
+  });
+  ENG.reveals = 0; ENG.clock = { h: 15, m: 30 };
+}
+const M = () => S.missions[S.mi];
+
+/* ---------------- drawing ---------------- */
+function drawMap() {
+  const W = 2 * P + COLS * B, H = 2 * P + ROWS * B;
+  let s = `<rect width="${W}" height="${H}" fill="#F3E3C8"/>`;
+  for (let j = 0; j <= ROWS; j++) s += `<rect x="${P - SW / 2}" y="${Y(j) - SW / 2}" width="${COLS * B + SW}" height="${SW}" rx="${SW / 2}" fill="#D9DEE8"/>`;
+  for (let i = 0; i <= COLS; i++) s += `<rect x="${X(i) - SW / 2}" y="${P - SW / 2}" width="${SW}" height="${ROWS * B + SW}" rx="${SW / 2}" fill="#D9DEE8"/>`;
+  for (let j = 0; j <= ROWS; j++) s += `<text class="lbl" x="${X(0) + 18}" y="${Y(j) + 4}" font-size="10" font-weight="700" fill="#5D5873">${H_STREETS[j]}</text>`;
+  for (let i = 0; i <= COLS; i++) s += `<text class="lbl" transform="translate(${X(i) + 4} ${Y(ROWS) - 14}) rotate(-90)" font-size="10" font-weight="700" fill="#5D5873">${V_STREETS[i]}</text>`;
+  PLACES.forEach((p, k) => {
+    const x0 = X(p.bx) + SW / 2 + 6, y0 = Y(p.by) + SW / 2 + 6, w = B - SW - 12;
+    s += `<rect x="${x0}" y="${y0 + 4}" width="${w}" height="${w}" rx="16" fill="#C9B79C"/><rect x="${x0}" y="${y0}" width="${w}" height="${w}" rx="16" fill="${COLORS_BLD[k % COLORS_BLD.length]}"/>`;
+    s += `<text x="${x0 + w / 2}" y="${y0 + w / 2 + 2}" text-anchor="middle" font-size="28" style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif">${p.icon}</text>`;
+    s += `<text class="lbl" x="${x0 + w / 2}" y="${y0 + w - 10}" text-anchor="middle" font-size="12" font-weight="800" fill="#2A2440">${p.label}</text>`;
+    const mid = (a, b) => (a + b) / 2;
+    let dx, dy, dw = 26, dh = 9;
+    if (p.door === 'N') { dx = mid(x0, x0 + w) - dw / 2; dy = y0 - 4; }
+    else if (p.door === 'S') { dx = mid(x0, x0 + w) - dw / 2; dy = y0 + w - 5; }
+    else { [dw, dh] = [9, 26]; dy = mid(y0, y0 + w) - dh / 2; dx = p.door === 'W' ? x0 - 4 : x0 + w - 5; }
+    s += `<rect id="door-${p.key}" x="${dx}" y="${dy}" width="${dw}" height="${dh}" rx="3" fill="#8A5527"/>`;
+  });
+  const m = byName('la mairie');
+  s += `<g transform="translate(${X(m.bx) + B / 2 + 22} ${Y(m.by + 1) + 2})"><rect x="-2" y="-30" width="4" height="30" fill="#5A5470"/><rect x="-16" y="-44" width="32" height="16" rx="5" fill="#2B4A9B"/><text x="0" y="-32" text-anchor="middle" font-size="10" font-weight="800" fill="#FFFFFF">BUS 26</text></g>`;
+  s += '<rect id="hl" x="0" y="0" width="0" height="0" rx="18" fill="none" stroke="#E2463C" stroke-width="6" visibility="hidden"/>';
+  s += '<polyline id="trail" fill="none" stroke="#E2463C" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round" opacity=".7"/>';
+  s += '<g id="avatar"><g id="avDir"><path d="M0 -30 L 10 -16 L -10 -16 Z" fill="#E2463C"/></g><circle r="14" fill="#2B4A9B" stroke="#FFFFFF" stroke-width="3"/><path d="M-10 -5 C -10 -15 10 -15 10 -5 Z" fill="#E2463C"/><circle cx="-4" cy="2" r="2" fill="#FFFFFF"/><circle cx="4" cy="2" r="2" fill="#FFFFFF"/></g>';
+  $('map').innerHTML = s;
+  placeAvatar();
+}
+function placeAvatar() {
+  const av = $('avatar');
+  av.style.transform = `translate(${X(S.node.x)}px, ${Y(S.node.y)}px)`;
+  $('avDir').style.transform = `rotate(${S.dirTurns * 90}deg)`;
+  $('trail').setAttribute('points', S.trail.map(n => `${X(n.x)},${Y(n.y)}`).join(' '));
+  $('facing').textContent = `Tu regardes vers le ${DIRNAME[S.dir]}`;
+}
+function highlight(p) {
+  const r = $('hl');
+  if (!p) { r.setAttribute('visibility', 'hidden'); return; }
+  const x0 = X(p.bx) + SW / 2, y0 = Y(p.by) + SW / 2, w = B - SW;
+  r.setAttribute('x', x0); r.setAttribute('y', y0); r.setAttribute('width', w); r.setAttribute('height', w);
+  r.setAttribute('visibility', 'visible');
+}
+
+/* ---------------- walking ---------------- */
+function move(act) {
+  if (S.view !== 'map' || S.busy || !S.active) return;
+  if (act === 'enterL' || act === 'enterR') return enter(act === 'enterL' ? 'L' : 'R');
+  if (act === 'back') {
+    S.dir = (S.dir + 2) % 4; S.dirTurns += 2;
+    if (S.lastSeg) S.lastSeg = { a: S.lastSeg.b, b: S.lastSeg.a, dir: (S.lastSeg.dir + 2) % 4 };
+    SFX.play('turn'); placeAvatar(); return;
+  }
+  if (act === 'left') { S.dir = (S.dir + 3) % 4; S.dirTurns -= 1; }
+  if (act === 'right') { S.dir = (S.dir + 1) % 4; S.dirTurns += 1; }
+  const nx = S.node.x + DX[S.dir], ny = S.node.y + DY[S.dir];
+  if (nx < 0 || ny < 0 || nx > COLS || ny > ROWS) {
+    if (act !== 'fwd') SFX.play('turn');
+    placeAvatar();
+    fb('info', 'Fin du quartier !', 'You can’t go further this way. Turn around or take another street.');
+    return;
+  }
+  const a = { ...S.node }, b = { x: nx, y: ny };
+  S.lastSeg = { a, b, dir: S.dir };
+  S.node = b; S.trail.push(b);
+  if (S.trail.length > 60) S.trail.shift();
+  SFX.play('step'); placeAvatar();
+}
+function enter(side) {
+  const where = side === 'L' ? 'à gauche' : 'à droite';
+  if (!S.lastSeg) { fb('info', 'Marche d’abord !', 'Walk along a street first, past the door, then go in.'); return; }
+  const blk = sideBlock(S.lastSeg, side);
+  if (!blk) { fb('info', `Il n’y a rien ${where}.`, 'There is no building on that side of this street.'); return; }
+  const seg = segKey(S.lastSeg.a, S.lastSeg.b);
+  const m = M();
+  const dest = m && m.dest;
+  if (!dest || !['shop', 'route', 'ask', 'bus'].includes(m.kind) || (m.kind === 'ask' && !S.asked)) {
+    fb('info', `C’est ${blk.full}.`, 'Read your task first.'); return;
+  }
+  if (blk === dest && doorSeg(blk) !== seg) {
+    fb('warn', `C’est bien ${blk.full}, mais la porte est ${doorStreet(blk)}.`, 'Right building, wrong street. Find the brown door.');
+    return;
+  }
+  if (blk !== dest) {
+    S.mistakes++; S.wrongDoors++;
+    SFX.play('wrong');
+    fb('err', `C’est ${blk.full}. Tu cherches ${dest.full}.`, 'Wrong building. Read the message again.');
+    if (S.mistakes >= 2 && !S.hl) { S.hl = true; highlight(dest); fb('info', `${cap1(dest.full)} brille sur le plan.`, '', true); }
+    return;
+  }
+  if (doorSeg(blk) !== seg) return;
+  SFX.play('door');
+  arrive();
+}
+
+/* ---------------- missions ---------------- */
+function setTask(t) { $('task').innerHTML = t; }
+function body(html) { $('actionBody').innerHTML = html; }
+function tick(min) { const t = ENG.clock.h * 60 + ENG.clock.m + min; ENG.clock = { h: Math.floor(t / 60), m: t % 60 }; }
+
+async function startMission() {
+  const m = M();
+  S.mistakes = 0; S.hints = 0; S.hl = false; S.asked = false; highlight(null); clearFb(); body('');
+  renderMissionList($('missionList'), MISSION_TITLES(), S.mi, S.stars);
+  tick(rand(10) + 8);
+  if (m.kind === 'shop') {
+    const shop = SHOP[m.dest.full];
+    addMsg('mamie', `Bonjour${NB}! Tu peux aller ${au(m.dest.full)}, s’il te plaît${NB}? Achète ${shop.item}. ${cap1(m.dest.full)} est ${locClue(m.dest)}.`);
+    setTask('Read Mamie’s message. Find the place on the map and go inside.');
+  } else if (m.kind === 'route') {
+    const r = planRoute(S.node, S.dir, m.dest);
+    m.side = r.side;
+    const steps = r.path.map(a => ACT_FR[a]).join(' ');
+    addMsg('camille', `Coucou${NB}! Retrouve-moi ${au(m.dest.full)}. De là où tu es : ${steps} ${cap1(m.dest.full)} est à ${r.side}.`);
+    setTask('Follow Camille’s directions step by step, from where you are now.');
+  } else if (m.kind === 'ask') {
+    addMsg('mamie', `Oh là là, j’ai oublié quelque chose${NB}! Tu peux aller ${au(m.dest.full)}${NB}? Je ne sais pas où c’est. Demande à quelqu’un${NB}!`);
+    setTask('A man is walking by. Choose the best question to ask him.');
+    const opts = shuffle([
+      [`Excusez-moi, monsieur. Où est ${m.dest.full}, s’il vous plaît${NB}?`, 'ok'],
+      [`Salut${NB}! Où est ${m.dest.full}${NB}?`, 'Salut is for friends. With a stranger, start with <b>Excusez-moi, monsieur</b>.'],
+      [`Excusez-moi, monsieur. Où es ${m.dest.full}, s’il vous plaît${NB}?`, '<i>es</i> goes with <i>tu</i>. For a place, use <b>est</b>: Où <b>est</b> …'],
+      [`Excusez-moi, monsieur. Qui est ${m.dest.full}, s’il vous plaît${NB}?`, '<i>Qui</i> means “who”. To ask where, use <b>où</b>.']
+    ]);
+    body(`<div class="shopline"><div class="av">${personSVG('bernard', { crop: true })}</div><div><b>M. Bernard</b>Un monsieur passe dans la rue.</div></div><div class="choices">${opts.map(([t, v], i) => `<button type="button" class="choice" data-i="${i}">${esc(t)}</button>`).join('')}</div>`);
+    $('actionBody').querySelectorAll('.choice').forEach(btn => btn.addEventListener('click', () => {
+      const [t, v] = opts[+btn.dataset.i];
+      if (v !== 'ok') { S.mistakes++; S.politeAll = false; SFX.play('wrong'); btn.disabled = true; fb('err', 'Hmm…', v); return; }
+      SFX.play('correct'); S.asked = true;
+      fb('ok', 'Très poli !', 'Polite and correct.');
+      const rel = locClue(m.dest);
+      addMsg('bernard', `${cap1(m.dest.full)}${NB}? C’est ${doorStreet(m.dest)}, ${rel}. Bonne journée${NB}!`);
+      body('');
+      setTask('Now find it with M. Bernard’s directions and go inside.');
+    }));
+  } else if (m.kind === 'bus') {
+    const [h, mm] = S.target;
+    addMsg('camille', `Je suis au parc des Buttes-Chaumont avec des amis. Viens${NB}! Prends le bus 26 de ${timeWords(h, mm)}. L’arrêt est devant la mairie.`);
+    setTask('Go to the bus stop: walk past the mairie’s door, then go in.');
+  } else if (m.kind === 'park') {
+    showPark();
+  }
+}
+function arrive() {
+  const m = M();
+  if (m.kind === 'shop') return shopScene(m);
+  if (m.kind === 'bus') return busScene();
+  if (m.kind === 'route') addMsg('camille', `Super, te voilà${NB}! Merci. On se voit plus tard${NB}!`);
+  if (m.kind === 'ask') addMsg('mamie', `Merci beaucoup${NB}! Tu es un ange.`);
+  completeMission();
+}
+function shopScene(m) {
+  S.busy = true;
+  const shop = SHOP[m.dest.full];
+  setTask(`You are in ${m.dest.label.toLowerCase()}. Choose what to say.`);
+  const opts = shuffle([
+    [`Je voudrais ${shop.item}, s’il vous plaît.`, 'ok'],
+    [`Je veux ${shop.item}.`, '<i>Je veux</i> sounds rude in a shop. Use <b>je voudrais</b> and <b>s’il vous plaît</b>.'],
+    [`Tu as ${shop.item}${NB}?`, 'Use <b>vous</b> with a shopkeeper, not <i>tu</i>.'],
+    [`Je voudrais ${shop.wrong}, s’il vous plaît.`, shop.note]
+  ]);
+  body(`<div class="shopline"><div class="av">${personSVG(SHOPKEEPER, { crop: true })}</div><div><b>${shop.who}</b>Bonjour${NB}! Vous désirez${NB}?</div></div><div class="choices">${opts.map(([t], i) => `<button type="button" class="choice" data-i="${i}">${esc(t)}</button>`).join('')}</div>`);
+  $('actionBody').querySelectorAll('.choice').forEach(btn => btn.addEventListener('click', () => {
+    const [, v] = opts[+btn.dataset.i];
+    if (v !== 'ok') { S.mistakes++; S.politeAll = false; SFX.play('wrong'); btn.disabled = true; fb('err', 'Pas tout à fait.', v); return; }
+    $('actionBody').querySelectorAll('.choice').forEach(x => { x.disabled = true; });
+    SFX.play('correct');
+    body(`<div class="shopline"><div class="av">${personSVG(SHOPKEEPER, { crop: true })}</div><div><b>${shop.who}</b>Voilà${NB}! Ça fait ${shop.price}. Merci, au revoir${NB}!</div></div>`);
+    if (VOIX) speak(`Voilà ! Ça fait ${shop.price}. Merci, au revoir !`);
+    setTimeout(() => { S.busy = false; addMsg('mamie', `Merci, mon chou${NB}! À tout à l’heure.`); completeMission(); }, 1600 * SPEED);
+  }));
+}
+function busScene() {
+  S.busy = true;
+  const [h, mm] = S.target;
+  setTask(`Camille said the bus of <b>${timeWords(h, mm)}</b>. Which bus do you take?`);
+  const rows = S.sched.map(([a, b]) => `<tr><td>Bus 26</td><td>Buttes-Chaumont</td><td><b>${clock(a, b)}</b></td></tr>`).join('');
+  body(`<div class="led"><small>Arrêt Mairie du 11<sup>e</sup></small><span>26 → Buttes-Chaumont</span></div>
+    <div class="tablewrap"><table class="tbl"><thead><tr><th>Ligne</th><th>Direction</th><th>Départ</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="choices" style="flex-direction:row;flex-wrap:wrap">${S.sched.map(([a, b], i) => `<button type="button" class="opt" data-i="${i}">${clock(a, b)}</button>`).join('')}</div>`);
+  $('actionBody').querySelectorAll('.opt').forEach(btn => btn.addEventListener('click', () => {
+    const [a, b] = S.sched[+btn.dataset.i];
+    if (a !== h || b !== mm) {
+      S.mistakes++; SFX.play('wrong'); btn.disabled = true;
+      fb('err', `Ce bus part à ${clock(a, b)} : ${timeWords(a, b)}.`, `Camille said <b>${timeWords(h, mm)}</b>.${/moins/.test(timeWords(h, mm)) ? ' <i>Moins</i> means before the hour.' : ''}`);
+      return;
+    }
+    $('actionBody').querySelectorAll('.opt').forEach(x => { x.disabled = true; });
+    SFX.play('correct');
+    fb('ok', `Oui : ${timeWords(h, mm)} = ${clock(h, mm)}.`, 'You’re on the bus to the park.');
+    ENG.clock = { h, m: mm };
+    setTimeout(() => { S.busy = false; completeMission(); }, 1500 * SPEED);
+  }));
+}
+function showPark() {
+  S.view = 'park';
+  // SVG elements have no .hidden property, so toggle the attribute itself
+  $('map').toggleAttribute('hidden', true); $('park').toggleAttribute('hidden', false);
+  $('walkControls').hidden = true;
+  $('placeName').textContent = 'Parc des Buttes-Chaumont · Paris 19e';
+  tick(25);
+  const c = S.cam;
+  const zone = ZONES[S.camZone][0];
+  addMsg('camille', `Je suis là${NB}! Je porte ${c.top[0]} ${colorWord(c.topColor, c.top[1])} et ${c.hat[0]} ${colorWord(c.hatColor, c.hat[1])}. Je suis ${zone}.`);
+  setTask('Find Camille in the park. Click her.');
+  let s = '<rect width="688" height="448" fill="#BEDDEB"/><path d="M0 150 C 200 120 480 130 688 140 V448 H0 Z" fill="#9FD38C"/><path d="M0 230 C 220 210 460 220 688 230 V448 H0 Z" fill="#8BC77A"/>';
+  s += '<path d="M40 448 C 200 330 460 330 660 448 Z" fill="#E8D3A8"/>';
+  s += '<g><rect x="540" y="90" width="80" height="70" rx="6" fill="#FBE3C2"/><path d="M520 96 L580 52 L640 96 Z" fill="#3E9C7C"/><rect x="546" y="104" width="10" height="56" fill="#E2463C"/><rect x="604" y="104" width="10" height="56" fill="#E2463C"/></g>';
+  s += '<g><rect x="96" y="150" width="20" height="150" rx="8" fill="#8A5527"/><circle cx="106" cy="140" r="64" fill="#5DB894"/><circle cx="70" cy="170" r="40" fill="#4FA982"/><circle cx="146" cy="168" r="44" fill="#4FA982"/></g>';
+  s += '<g><ellipse cx="344" cy="320" rx="96" ry="26" fill="#9CA6B8"/><ellipse cx="344" cy="314" rx="86" ry="20" fill="#7FB7D6"/><rect x="334" y="250" width="20" height="64" rx="8" fill="#C9CEDA"/><ellipse cx="344" cy="250" rx="30" ry="9" fill="#C9CEDA"/><path d="M344 246 C 330 220 316 236 312 250 M344 246 C 358 220 372 236 376 250" fill="none" stroke="#B8DDF0" stroke-width="5" stroke-linecap="round"/></g>';
+  s += '<g><rect x="530" y="352" width="128" height="12" rx="6" fill="#8A5527"/><rect x="540" y="364" width="8" height="24" fill="#5A5470"/><rect x="640" y="364" width="8" height="24" fill="#5A5470"/></g>';
+  S.people.slice().sort((a, b) => a.y - b.y).forEach(p => { s += figure(p, p.x, p.y, S.people.indexOf(p)); });
+  s += '<g class="lbl" font-size="12" font-weight="800" fill="#2A2440"><text x="344" y="360" text-anchor="middle">la fontaine</text><text x="106" y="380" text-anchor="middle">l’arbre</text><text x="594" y="404" text-anchor="middle">le banc</text><text x="580" y="78" text-anchor="middle">le kiosque</text></g>';
+  $('park').innerHTML = s;
+  $('park').querySelectorAll('.kid').forEach(k => {
+    const go = () => pickKid(+k.dataset.i, k);
+    k.addEventListener('click', go);
+    k.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+}
+function pickKid(i, el) {
+  if (S.view !== 'park' || S.done) return;
+  const p = S.people[i], c = S.cam;
+  if (p.camille) {
+    SFX.play('perfect'); fb('ok', 'C’est elle !', 'You found Camille.');
+    addMsg('camille', `Te voilà${NB}! Bravo, tu connais bien Paris maintenant${NB}!`);
+    S.done = true; completeMission(); return;
+  }
+  S.mistakes++; SFX.play('wrong'); el.classList.add('nope');
+  const desc = `${p.top[0]} ${colorWord(p.topColor, p.top[1])} et ${p.hat[0]} ${colorWord(p.hatColor, p.hat[1])}`;
+  const camDesc = `${c.top[0]} ${colorWord(c.topColor, c.top[1])} et ${c.hat[0]} ${colorWord(c.hatColor, c.hat[1])}`;
+  const sameClothes = desc === camDesc;
+  fb('err', sameClothes ? `Les vêtements sont bons, mais cette personne est ${ZONES[p.zone][0]}.` : `Cette personne porte ${desc}.`, sameClothes ? `Camille is ${ZONES[S.camZone][0]}.` : `Camille wears ${camDesc}.`);
+}
+function completeMission() {
+  const st = starsFor(S.mistakes, S.hints);
+  S.stars[S.mi] = st; S.totalMistakes += S.mistakes; S.totalHints += S.hints;
+  SFX.mission(st, 300);
+  S.mi++;
+  highlight(null);
+  if (S.mi >= S.missions.length) { renderMissionList($('missionList'), MISSION_TITLES(), S.mi, S.stars); return finish(); }
+  setTimeout(startMission, 1100 * SPEED);
+}
+function hint() {
+  const m = M();
+  if (!m || !S.active || S.done) return;
+  S.hints++; SFX.play('hint');
+  if (m.kind === 'ask' && !S.asked) { fb('info', 'Indice', 'With an adult you don’t know: <b>Excusez-moi</b>, <b>vous</b>, <b>s’il vous plaît</b>. To ask where: <b>Où est …</b>'); return; }
+  if (S.busy && m.kind === 'shop') { fb('info', 'Indice', 'In a shop: <b>Je voudrais …, s’il vous plaît.</b> Check if the word is masculine or feminine.'); return; }
+  if (S.busy && m.kind === 'bus') { fb('info', 'Indice', '<b>et quart</b> = 15 minutes after · <b>moins le quart</b> = 15 minutes before the hour · <b>moins vingt</b> = 20 minutes before.'); return; }
+  if (m.kind === 'park') { fb('info', 'Indice', `Camille is ${ZONES[S.camZone][0]}. Two people are there. Check the colours.`); return; }
+  S.hl = true; highlight(m.dest);
+  fb('info', `${cap1(m.dest.full)} brille sur le plan.`, `Its door is on ${doorStreet(m.dest)}.`);
+}
+function finish() {
+  S.active = false;
+  const tot = S.stars.reduce((a, b) => a + b, 0);
+  renderSummary($('summary'), {
+    eyebrow: 'Scène 2 · terminée',
+    title: `Bravo${NB}! ${tot}/${S.missions.length * 3} étoiles`,
+    stats: [[`${S.missions.length}/${S.missions.length}`, 'Missions'], [S.totalMistakes, 'Mistakes'], [S.totalHints, 'Hints used'], [ENG.reveals, 'Texts revealed']],
+    badges: [
+      ['Sans carte', 'Played with the map names turned off', S.labelsOff],
+      ['Très poli', 'Every polite choice right the first time', S.politeAll],
+      ['Bon guide', 'No wrong buildings', S.wrongDoors === 0],
+      ['Oreille d’or', 'Audio-only challenge with no text revealed', $('challenge').checked && ENG.reveals === 0]
+    ],
+    blocks: `<div><h3>Missions</h3><div class="mrows">${S.missions.map((m, i) => `<div class="mrow"><span>${m.title}</span><span class="stars">${starStr(S.stars[i])}</span></div>`).join('')}</div></div>`,
+    outcomes: '10 C 3.1 · 10 C 3.2 · 10 C 3.4 · 10 A 3–4 · 10 R 2.1h · 10 R 2.9b · 10 R 2.12 · 10 R 2.13a · 10 R 3.2',
+    again: 'Nouvel après-midi', onAgain: start
+  });
+}
+
+function start() {
+  try { if (tts) speechSynthesis.cancel(); } catch (e) {}
+  newGame();
+  S.dirTurns = 0;
+  $('summary').hidden = true;
+  $('feed').innerHTML = '<p class="empty">Messages from Mamie Jeanne and Camille will appear here.</p>';
+  $('map').toggleAttribute('hidden', false); $('park').toggleAttribute('hidden', true); $('walkControls').hidden = false;
+  $('placeName').innerHTML = 'Quartier des Lilas · Paris 11<sup>e</sup>';
+  drawMap();
+  renderMissionList($('missionList'), MISSION_TITLES(), 0, []);
+  clearFb(); body('');
+  setTask('Press Commencer to begin.');
+  $('intro').hidden = false;
+}
+$('startBtn').addEventListener('click', () => {
+  $('intro').hidden = true; S.active = true; SFX.play('whoosh', { force: true });
+  startMission();
+});
+document.querySelectorAll('.ctl').forEach(b => b.addEventListener('click', () => move(b.dataset.act)));
+document.addEventListener('keydown', e => {
+  if (!S.active || S.view !== 'map' || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const k = { ArrowUp: 'fwd', ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'back', q: 'enterL', Q: 'enterL', e: 'enterR', E: 'enterR' }[e.key];
+  if (k) { e.preventDefault(); move(k); }
+});
+$('hintBtn').addEventListener('click', hint);
+$('labels').addEventListener('change', () => { if ($('labels').checked && S.active) S.labelsOff = false; });
+$('startBtn').addEventListener('click', () => { if ($('labels').checked) S.labelsOff = false; });
+wireCommon(start);
+start();
+window.SceneTest = { S, PLACES, planRoute, sideBlock, segKey, doorSeg, move, timeWords, numWord, review };
+
+})();
+</script>
+
+</body></html>

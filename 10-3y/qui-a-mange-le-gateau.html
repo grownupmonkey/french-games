@@ -1,0 +1,1224 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Qui a mangé le gâteau ?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+/* Pâte à modeler: one deliberate daylight look (single theme). Layout: a Paris rooftop band, then the café diorama + mission list on the left and the conversation on the right; stacks on phones. */
+:root {
+  color-scheme: light;
+  --page: #DCEEF6; --sky: #BEDDEB; --sky-deep: #A9C7D6; --sand: #EDCB97; --sand-deep: #C79B63;
+  --paper: #FFFFFF; --ink: #2A2440; --muted: #5D5873; --soft: #EEF1F6; --soft-deep: #C9CEDA;
+  --tomato: #E2463C; --tomato-deep: #A9271F; --navy: #2B4A9B; --navy-deep: #1C3270;
+  --sun: #FFC94A; --sun-deep: #E0A21E; --mint: #6CC6A6; --mint-deep: #3E9C7C;
+  --ok-bg: #DDF3EA; --ok-fg: #1E6B50; --warn-bg: #FFF1D6; --warn-fg: #7A4E00; --err-bg: #FDE3E0; --err-fg: #9E241D; --info-bg: #E3F0F8; --info-fg: #1C4F6E;
+  --font-display: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+body { background: var(--page); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+.band { height: 120px; overflow: hidden; }
+.band svg { display: block; width: 100%; height: 100%; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; display: flex; flex-direction: column; gap: 22px; }
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.eyebrow { margin: 0 0 4px; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--tomato-deep); }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5vw, 52px); line-height: 1; text-wrap: balance; }
+.lede { margin: 10px 0 0; color: var(--muted); max-width: 60ch; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--paper); box-shadow: 0 4px 0 var(--sky-deep); font-size: 14px; font-weight: 700; cursor: pointer; user-select: none; }
+.pill input { accent-color: var(--tomato); width: 16px; height: 16px; margin: 0; }
+.pill:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--sky-deep); }
+
+.card { background: var(--paper); border-radius: 26px; box-shadow: 0 7px 0 var(--sky-deep); }
+.card h3 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.game { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 880px) { .game { grid-template-columns: 1fr; } }
+.side { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.stage { overflow: hidden; }
+.stage svg { display: block; width: 100%; height: auto; }
+.stagecap { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 16px 14px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagecap b { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--ink); }
+
+.missions { padding: 18px; }
+.missions ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.missions li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; padding: 6px 8px; border-radius: 14px; color: var(--muted); font-weight: 700; }
+.missions li .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 14px; transition: background .3s; }
+.missions li small { display: block; font-weight: 600; font-size: 13px; color: var(--muted); }
+.missions li.current { background: var(--warn-bg); color: var(--ink); }
+.missions li.current .n { background: var(--tomato); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--tomato-deep); }
+.missions li.done { color: var(--ink); }
+.missions li.done .n { background: var(--mint); color: #13372A; box-shadow: inset 0 -3px 0 var(--mint-deep); }
+.missions li.done .n svg { width: 15px; height: 15px; }
+
+.help { padding: 18px; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; margin: 0; font-size: 14px; }
+.keys dd { margin: 0; color: var(--muted); }
+kbd { font-family: var(--font-body); font-weight: 800; font-size: 13px; padding: 1px 7px; border-radius: 7px; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); color: var(--ink); }
+
+.chat { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.chathead { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.chathead .face { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--sky); flex: none; }
+.chathead .face svg { width: 100%; height: 100%; display: block; }
+.chathead b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 1.1; }
+.chathead span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.log { padding: 20px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; max-height: 560px; overflow-y: auto; scroll-behavior: smooth; }
+@media (max-width: 880px) { .log { max-height: 62vh; min-height: 300px; } }
+@media (prefers-reduced-motion: reduce) { .log { scroll-behavior: auto; } }
+.row { display: flex; gap: 10px; align-items: end; max-width: 88%; }
+.row.npc { align-self: flex-start; }
+.row.me { align-self: flex-end; flex-direction: column; align-items: flex-end; gap: 6px; }
+.row.me .line { display: flex; gap: 10px; align-items: end; }
+.mini { width: 36px; height: 36px; flex: none; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.mini svg { width: 100%; height: 100%; display: block; }
+.bubble { padding: 11px 16px; border-radius: 20px; font-size: 17px; line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }
+.npc .bubble { background: var(--soft); border-bottom-left-radius: 6px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
+.me .bubble { background: var(--navy); color: #FFFFFF; border-bottom-right-radius: 6px; font-weight: 700; box-shadow: 0 3px 0 var(--navy-deep); }
+.speak { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--paper); box-shadow: 0 2px 0 var(--soft-deep); display: grid; place-items: center; cursor: pointer; color: var(--mint-deep); }
+.speak svg { width: 17px; height: 17px; }
+.no-tts .speak, .no-tts .tts-only { display: none !important; }
+.appear { animation: appear .25s ease-out both; }
+@keyframes appear { from { transform: translateY(6px); opacity: .4; } to { transform: none; opacity: 1; } }
+.typing span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); margin: 0 2px; animation: blink 1s infinite; }
+.typing span:nth-child(2) { animation-delay: .15s; } .typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .appear, .typing span { animation: none; } }
+
+.fb { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; max-width: 100%; }
+.chip { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 14px; padding: 7px 12px; border-radius: 14px; max-width: 100%; font-weight: 600; }
+.chip b { font-weight: 800; }
+.chip.ok { background: var(--ok-bg); color: var(--ok-fg); }
+.chip.warn { background: var(--warn-bg); color: var(--warn-fg); }
+.chip.err { background: var(--err-bg); color: var(--err-fg); }
+.chip.info { background: var(--info-bg); color: var(--info-fg); }
+.chip .fix s { opacity: .75; }
+.chip .note { color: var(--ink); }
+@keyframes pop { 0% { transform: scale(.7); opacity: 0 } 60% { transform: scale(1.06); opacity: 1 } 100% { transform: scale(1) } }
+.chip.ok { animation: pop .35s cubic-bezier(.2, .9, .3, 1.3) both; }
+
+.composer { border-top: 2px solid var(--soft); padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.hint { display: flex; gap: 10px; align-items: baseline; padding: 9px 14px; border-radius: 14px; background: var(--warn-bg); font-size: 15px; font-weight: 700; }
+.hint .lbl { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--warn-fg); flex: none; }
+.accentbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.accentbar button { min-width: 38px; height: 38px; padding: 0 8px; border-radius: 12px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); font-weight: 800; font-size: 18px; cursor: pointer; transition: background .2s; }
+.accentbar button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--soft-deep); }
+.accentbar button.flash { background: var(--sun); box-shadow: 0 3px 0 var(--sun-deep); }
+.accentbar .caps { font-size: 13px; color: var(--muted); margin-left: 4px; font-weight: 600; }
+.inputrow { display: flex; gap: 10px; }
+.inputrow input { flex: 1; min-width: 0; height: 54px; border-radius: 999px; border: 3px solid var(--soft); background: #F8F9FC; padding: 0 20px; font-size: 18px; font-weight: 700; }
+.inputrow input:focus { outline: none; border-color: var(--navy); }
+.btn { border: 0; border-radius: 999px; padding: 0 20px; min-height: 54px; font-weight: 800; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn svg { width: 19px; height: 19px; }
+.btn.primary { background: var(--tomato); color: #FFFFFF; box-shadow: 0 5px 0 var(--tomato-deep); font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+.btn.hintb { background: var(--sun); color: var(--ink); box-shadow: 0 5px 0 var(--sun-deep); }
+.btn:active { transform: translateY(3px); box-shadow: none; }
+.btn:disabled { opacity: .5; cursor: default; transform: none; }
+@media (max-width: 520px) { .inputrow { flex-wrap: wrap; } .inputrow input { flex-basis: 100%; } .inputrow .btn { flex: 1; } }
+
+.summary { border-top: 2px solid var(--soft); padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+.summary h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.1; }
+.summary h3 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { padding: 12px; border-radius: 18px; background: var(--soft); }
+.stat .v { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .k { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 800; background: var(--sun); color: var(--ink); box-shadow: 0 3px 0 var(--sun-deep); animation: pop .45s cubic-bezier(.2, .9, .3, 1.3) both; }
+.badge:nth-child(2) { animation-delay: .1s } .badge:nth-child(3) { animation-delay: .2s } .badge:nth-child(4) { animation-delay: .3s }
+.badge.off { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 2px var(--soft-deep); font-weight: 600; animation: none; }
+@media (prefers-reduced-motion: reduce) { .chip.ok, .badge { animation: none; } }
+.wrote { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; }
+.outcomes { margin: 0; font-size: 14px; color: var(--muted); }
+
+details.teacher { background: var(--paper); border-radius: 22px; padding: 16px 20px; box-shadow: 0 5px 0 var(--sky-deep); }
+details.teacher summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+details.teacher ul { margin: 12px 0 4px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---- shared scene pieces (scenes 2–6) ---- */
+.game.wide { grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr); }
+@media (max-width: 900px) { .game.wide { grid-template-columns: 1fr; } }
+.stagehead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; padding: 12px 18px; border-bottom: 2px solid var(--soft); font-size: 14px; font-weight: 700; color: var(--muted); }
+.stagehead .place { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); }
+.viewport { position: relative; background: var(--sky); }
+.viewport > svg { display: block; width: 100%; height: auto; }
+.intro { position: absolute; inset: 0; z-index: 6; display: flex; overflow-y: auto; padding: 16px; background: rgba(190, 221, 235, .72); }
+.intro .box { margin: auto; max-width: 470px; background: var(--paper); border-radius: 26px; padding: 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 0 var(--sky-deep); }
+.intro h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; }
+.intro p { margin: 0; color: var(--muted); font-weight: 600; }
+.intro ul { margin: 0; padding-left: 20px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 560px) { .intro { position: static; background: none; } }
+.panel { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.panelhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.panelhead h3 { margin: 0; }
+.task { margin: 0; font-size: 16px; font-weight: 600; }
+.btn.small { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.btn.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 4px 0 var(--soft-deep); }
+.btn.go { background: var(--mint); color: #13372A; box-shadow: 0 5px 0 var(--mint-deep); }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice { text-align: left; padding: 11px 16px; border-radius: 16px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-size: 16px; font-weight: 700; }
+.choice:hover { background: #E3EAF4; }
+.choice:active { transform: translateY(2px); box-shadow: none; }
+.choice:disabled { opacity: .5; cursor: default; transform: none; }
+.opt { padding: 9px 16px; border-radius: 14px; border: 0; background: var(--soft); box-shadow: 0 3px 0 var(--soft-deep); cursor: pointer; font-weight: 800; font-size: 15px; }
+.opt:active { transform: translateY(2px); box-shadow: none; }
+.fbs { display: flex; flex-direction: column; gap: 6px; }
+.fbs .chip { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.fbs .chip span { font-weight: 600; color: var(--ink); }
+
+.feedcard { display: flex; flex-direction: column; overflow: hidden; }
+.feedhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.feedhead h3 { margin: 0; }
+.mini-switch { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.mini-switch input { accent-color: var(--tomato); margin: 0; }
+.feed { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; max-height: 340px; min-height: 120px; overflow-y: auto; }
+.feed .empty { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; }
+.msg { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
+.msg .av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--sky); }
+.msg .av svg { width: 100%; height: 100%; display: block; }
+.mhead { display: flex; gap: 8px; align-items: baseline; font-size: 14px; }
+.mhead b { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.mhead .time { color: var(--muted); font-size: 12px; font-weight: 700; }
+.mtext { margin: 2px 0 6px; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.mtext.masked { color: var(--muted); font-style: italic; }
+.mctl { display: flex; gap: 6px; flex-wrap: wrap; }
+.mctl button { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 800; padding: 5px 12px; border-radius: 999px; border: 0; background: var(--soft); box-shadow: 0 2px 0 var(--soft-deep); cursor: pointer; }
+.mctl button svg { width: 14px; height: 14px; }
+.mctl .play { color: var(--mint-deep); }
+.msg.me { grid-template-columns: minmax(0, 1fr); justify-items: end; }
+.msg.me .bubble { background: var(--navy); color: #FFFFFF; padding: 9px 14px; border-radius: 18px 18px 6px 18px; max-width: 90%; overflow-wrap: anywhere; font-weight: 700; }
+.msg.me .fbrow { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-top: 6px; max-width: 95%; }
+.msg.me .fbrow .chip { flex-direction: column; align-items: flex-end; text-align: right; }
+
+.missions .stars { margin-left: auto; color: var(--sun-deep); font-size: 14px; letter-spacing: 1px; flex: none; }
+.missions li .t { min-width: 0; }
+.missions.compact li { grid-template-columns: 30px minmax(0, 1fr) auto; }
+.mrows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .mrows { grid-template-columns: 1fr; } }
+.mrow { display: flex; justify-content: space-between; gap: 8px; padding: 9px 14px; border-radius: 14px; background: var(--soft); font-size: 14px; font-weight: 700; }
+.mrow .stars { color: var(--sun-deep); }
+.transcript { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; max-width: 80ch; }
+.tablewrap { overflow-x: auto; border-radius: 16px; background: var(--soft); }
+table.tbl { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tbl th, .tbl td { padding: 7px 10px; text-align: left; white-space: nowrap; }
+.tbl th { font-family: var(--font-display); font-weight: 600; font-size: 13px; background: var(--soft-deep); }
+.tbl tr + tr td { border-top: 2px solid var(--paper); }
+.hud { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 14px; font-weight: 700; color: var(--ink); }
+.hud .num { font-family: var(--font-display); font-weight: 700; font-size: 19px; font-variant-numeric: tabular-nums; }
+.hearts { display: inline-flex; gap: 3px; }
+.hearts svg { width: 20px; height: 20px; }
+.keyhelp { margin: 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.nolabels .lbl, .nolabels .itemlbl { display: none; }
+svg text { font-family: var(--font-body); }
+.svgbtn { cursor: pointer; }
+.svgbtn:focus { outline: none; }
+.svgbtn .ring { fill: none; stroke: var(--tomato); stroke-width: 4; opacity: 0; transition: opacity .15s; }
+.svgbtn:hover .ring, .svgbtn:focus-visible .ring, .svgbtn.sel .ring { opacity: 1; }
+
+/* ---- scene ---- */
+.person { cursor: pointer; }
+.person:focus { outline: none; }
+.person .ring { fill: none; stroke: var(--tomato); stroke-width: 6; opacity: 0; transition: opacity .15s; }
+.person:hover .ring, .person:focus-visible .ring, .person.sel .ring { opacity: 1; }
+.pname { font-size: 13px; font-weight: 800; fill: #2A2440; paint-order: stroke; stroke: #FFFFFF; stroke-width: 4px; stroke-linejoin: round; }
+.roomlbl { font-size: 12px; font-weight: 800; fill: #5D5873; }
+.clue { cursor: pointer; }
+.clue:focus { outline: none; }
+.clue .glow { fill: #FFC94A; fill-opacity: .35; stroke: #E0A21E; stroke-width: 3; stroke-dasharray: 6 5; animation: glow 1.4s ease-in-out infinite; }
+.clue:hover .glow, .clue:focus-visible .glow { fill-opacity: .6; }
+.clue.found .glow { display: none; }
+.clue .seen { display: none; }
+.clue.found .seen { display: inline; }
+@keyframes glow { 50% { opacity: .35; } }
+.crumb { opacity: 0; animation: crumbIn .3s ease-out forwards; }
+@keyframes crumbIn { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .clue .glow { animation: none; } .crumb { animation: none; opacity: 1; } }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 700; }
+.steps li { display: flex; gap: 10px; align-items: center; color: var(--muted); }
+.steps li .n { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-size: 13px; }
+.steps li.done { color: var(--ink); }
+.steps li.done .n { background: var(--mint); color: #13372A; }
+.steps li.done .n svg { width: 14px; height: 14px; }
+.steps li.current { color: var(--ink); }
+.steps li.current .n { background: var(--tomato); color: #FFFFFF; }
+.talkhead { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 2px solid var(--soft); }
+.talkhead .face { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--sky); flex: none; }
+.talkhead .face svg { width: 100%; height: 100%; display: block; }
+.talkhead b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.1; }
+.talkhead span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.qchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.qchips button { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 999px; border: 2px dashed var(--soft-deep); background: transparent; cursor: pointer; }
+.qchips button:hover { border-style: solid; border-color: var(--navy); }
+.cluelist { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; font-weight: 600; }
+.cluelist .none { list-style: none; margin-left: -22px; color: var(--muted); }
+.notebook { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.tbl tr.out td { color: var(--muted); text-decoration: line-through; }
+.tbl td.x button { border: 0; background: var(--paper); border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 800; padding: 3px 10px; box-shadow: 0 2px 0 var(--soft-deep); }
+.said { color: var(--warn-fg); }
+.fam { color: var(--ok-fg); }
+.feed.talk { max-height: 300px; }
+</style>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="cStripes" width="12" height="16" patternUnits="userSpaceOnUse"><rect width="12" height="16" fill="#FFF8EE"/><rect width="12" height="8" fill="#2B4A9B"/></pattern>
+    <radialGradient id="cSkin" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFDCC2"/><stop offset=".55" stop-color="#F2B98F"/><stop offset="1" stop-color="#D38E66"/></radialGradient>
+    <radialGradient id="cRed" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FF8573"/><stop offset=".5" stop-color="#E2463C"/><stop offset="1" stop-color="#A9271F"/></radialGradient>
+    <radialGradient id="cDenim" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#6683CF"/><stop offset=".6" stop-color="#34509A"/><stop offset="1" stop-color="#22386E"/></radialGradient>
+    <radialGradient id="cBoot" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C98A50"/><stop offset=".6" stop-color="#8A5527"/><stop offset="1" stop-color="#5E3618"/></radialGradient>
+    <radialGradient id="cHair" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#9A6640"/><stop offset="1" stop-color="#5A361C"/></radialGradient>
+    <radialGradient id="cMust" cx=".5" cy=".2" r=".8"><stop offset="0" stop-color="#8A5A34"/><stop offset="1" stop-color="#47290F"/></radialGradient>
+    <radialGradient id="cNose" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFC2B0"/><stop offset="1" stop-color="#E07A64"/></radialGradient>
+    <radialGradient id="cShade" cx=".35" cy=".25" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".35"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#1A1440" stop-opacity=".32"/></radialGradient>
+    <radialGradient id="cBand" cx=".4" cy=".2" r=".9"><stop offset="0" stop-color="#5776D0"/><stop offset="1" stop-color="#1E3577"/></radialGradient>
+    <radialGradient id="cCamSkin" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#E7AE86"/><stop offset=".6" stop-color="#C98B62"/><stop offset="1" stop-color="#A86C46"/></radialGradient>
+    <radialGradient id="cCamHair" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#C9693E"/><stop offset="1" stop-color="#7E3A1E"/></radialGradient>
+    <radialGradient id="cHoodie" cx=".35" cy=".2" r=".9"><stop offset="0" stop-color="#9BE0C6"/><stop offset=".6" stop-color="#5DB894"/><stop offset="1" stop-color="#3A8B6B"/></radialGradient>
+    <radialGradient id="cTable" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9DDE6"/></radialGradient>
+    <radialGradient id="cCup" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#7FA8F0"/><stop offset="1" stop-color="#2B4A9B"/></radialGradient>
+    <radialGradient id="cCloud" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E3F0F6"/></radialGradient>
+    <path id="cStar" d="M0 -3.4 L1 -1 L3.4 -1 L1.4 .5 L2.1 2.9 L0 1.5 L-2.1 2.9 L-1.4 .5 L-3.4 -1 L-1 -1 Z"/>
+  </defs>
+  <symbol id="hero" viewBox="0 0 220 420">
+    <ellipse cx="110" cy="414" rx="82" ry="9" fill="#9C7446" opacity=".45"/>
+    <path d="M66 70 C 50 82 50 114 62 130 L 72 122 C 66 108 68 92 78 80 Z" fill="url(#cHair)"/>
+    <path d="M154 70 C 170 82 170 114 158 130 L 148 122 C 154 108 152 92 142 80 Z" fill="url(#cHair)"/>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M70 180 L 36 224 L 58 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M70 180 L 36 224 L 58 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="#1E3577" stroke-width="25"/>
+      <path d="M150 180 L 184 224 L 162 254" stroke="url(#cStripes)" stroke-width="21"/>
+      <path d="M45 236 L 58 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M45 236 L 58 254" stroke="#F2B98F" stroke-width="13"/>
+      <path d="M175 236 L 162 254" stroke="#D38E66" stroke-width="17"/>
+      <path d="M175 236 L 162 254" stroke="#E7A87E" stroke-width="13"/>
+    </g>
+    <rect x="97" y="140" width="26" height="28" rx="8" fill="#D38E66"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cStripes)"/>
+    <path d="M62 176 C 74 166 92 164 110 164 C 128 164 146 166 158 176 C 164 204 166 238 162 266 L 58 266 C 54 238 56 204 62 176 Z" fill="url(#cShade)"/>
+    <path d="M58 272 L 162 272 L 156 384 C 146 388 126 388 116 384 L 111 302 L 109 302 L 104 384 C 94 388 74 388 64 384 Z" fill="url(#cDenim)"/>
+    <rect x="60" y="368" width="48" height="19" rx="9" fill="#D3D7E0"/>
+    <rect x="112" y="368" width="48" height="19" rx="9" fill="#BCC1CD"/>
+    <path d="M62 386 L 106 386 L 108 400 C 108 408 104 413 97 413 L 50 413 C 40 413 38 403 46 397 C 52 393 58 392 62 386 Z" fill="url(#cBoot)"/>
+    <path d="M158 386 L 114 386 L 112 400 C 112 408 116 413 123 413 L 170 413 C 180 413 182 403 174 397 C 168 393 162 392 158 386 Z" fill="url(#cBoot)"/>
+    <rect x="58" y="259" width="104" height="14" rx="6" fill="#7A4524"/>
+    <rect x="100" y="256" width="20" height="20" rx="5" fill="#FFC94A"/>
+    <rect x="105" y="261" width="10" height="10" rx="2" fill="#7A4524"/>
+    <path d="M88 166 L 84 262 M132 166 L 136 262" fill="none" stroke="#2E2A38" stroke-width="8" stroke-linecap="round"/>
+    <rect x="78" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <rect x="130" y="249" width="12" height="13" rx="3" fill="#FFC94A"/>
+    <circle cx="58" cy="256" r="12" fill="url(#cSkin)"/>
+    <circle cx="162" cy="256" r="12" fill="url(#cSkin)"/>
+    <path d="M90 154 C 100 163 120 163 130 154 L 136 166 C 120 175 100 175 84 166 Z" fill="url(#cBand)"/>
+    <path d="M84 164 C 100 172 120 172 136 164 L 112 202 Z" fill="url(#cBand)"/>
+    <path d="M100.2 186 L 122.1 186 L 112 202 Z" fill="url(#cRed)"/>
+    <path d="M138 172 L 154 192 L 144 194 Z M134 172 L 140 196 L 131 194 Z" fill="url(#cRed)"/>
+    <ellipse cx="136" cy="168" rx="9" ry="7" fill="url(#cRed)"/>
+    <g fill="#FFFFFF"><use href="#cStar" x="96" y="171"/><use href="#cStar" x="110" y="177"/><use href="#cStar" x="124" y="171"/><use href="#cStar" x="104" y="182"/><use href="#cStar" x="117" y="182"/></g>
+    <circle cx="72" cy="106" r="9" fill="url(#cSkin)"/>
+    <circle cx="148" cy="106" r="9" fill="url(#cSkin)"/>
+    <path d="M72 86 C 72 56 148 56 148 86 C 150 116 142 146 128 154 C 120 159 100 159 92 154 C 78 146 70 116 72 86 Z" fill="url(#cSkin)"/>
+    <path d="M86 84 C 92 77 102 77 106 82 M114 82 C 118 77 128 77 134 84" fill="none" stroke="#4A2C16" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="97" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <ellipse cx="123" cy="97" rx="6" ry="8" fill="#2A2440"/>
+    <circle cx="99.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="125.2" cy="93.6" r="2.2" fill="#FFFFFF"/>
+    <circle cx="84" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <circle cx="136" cy="117" r="8" fill="#F07A6A" opacity=".35"/>
+    <path d="M103 143 Q110 148 117 143" fill="none" stroke="#8A3A2E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M110 124 C 100 116 84 116 76 124 C 70 130 60 128 58 120 C 56 132 68 138 80 136 C 92 134 102 132 110 130 C 118 132 128 134 140 136 C 152 138 164 132 162 120 C 160 128 150 130 144 124 C 136 116 120 116 110 124 Z" fill="url(#cMust)"/>
+    <ellipse cx="110" cy="113" rx="13" ry="12" fill="url(#cNose)"/>
+    <ellipse cx="105" cy="108" rx="4" ry="3" fill="#FFFFFF" opacity=".6"/>
+    <path d="M58 72 C 50 46 80 26 112 26 C 148 26 172 44 164 68 C 150 78 72 82 58 72 Z" fill="url(#cRed)"/>
+    <path d="M60 72 C 74 82 150 78 164 68" fill="none" stroke="#A9271F" stroke-width="5" stroke-linecap="round"/>
+    <path d="M80 44 C 90 36 104 32 118 32" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+    <circle cx="112" cy="27" r="4.5" fill="url(#cRed)"/>
+  </symbol>
+  <symbol id="camilleBase" viewBox="0 0 200 240">
+    <path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="url(#cCamHair)"/>
+    <rect x="88" y="140" width="24" height="34" rx="8" fill="#A86C46"/>
+    <path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#cHoodie)"/>
+    <path d="M70 174 Q100 198 130 174" fill="none" stroke="#3A8B6B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M92 190 L 90 214 M108 190 L 110 214" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="104" r="46" fill="url(#cCamSkin)"/>
+    <path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="url(#cCamHair)"/>
+    <path d="M74 64 C 84 54 98 50 110 52" fill="none" stroke="#E38A5E" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/>
+    <circle cx="86" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="118" cy="108" r="2" fill="#FFFFFF"/>
+    <circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".45"/>
+    <circle cx="56" cy="126" r="4.5" fill="#FFC94A"/>
+    <circle cx="144" cy="126" r="4.5" fill="#FFC94A"/>
+  </symbol>
+</svg>
+<div class="band" aria-hidden="true">
+  <svg viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice">
+    <rect width="1440" height="120" fill="#BEDDEB"/>
+    <ellipse cx="180" cy="34" rx="56" ry="20" fill="url(#cCloud)"/><ellipse cx="216" cy="24" rx="34" ry="22" fill="url(#cCloud)"/>
+    <ellipse cx="760" cy="28" rx="46" ry="16" fill="url(#cCloud)"/><ellipse cx="790" cy="20" rx="28" ry="18" fill="url(#cCloud)"/>
+    <g fill="#9C8B7C">
+      <path d="M1148 96 C 1158 70 1166 44 1172 6 L 1176 6 C 1182 44 1190 70 1200 96 L 1190 96 C 1184 84 1180 80 1174 80 C 1168 80 1164 84 1158 96 Z"/>
+      <rect x="1156" y="62" width="36" height="6" rx="3"/><rect x="1162" y="36" width="24" height="5" rx="2.5"/>
+    </g>
+    <g fill="#8E9AAE">
+      <path d="M0 120 V84 Q20 70 40 84 V76 H110 Q130 62 150 76 V88 H230 V72 Q260 58 290 72 V86 H360 V78 Q385 64 410 78 V90 H470 V70 H560 Q585 56 610 70 V86 H690 V80 Q720 66 750 80 V92 H830 V74 Q855 60 880 74 V84 H960 V76 H1040 Q1065 62 1090 76 V92 H1140 V100 H1220 V78 Q1245 64 1270 78 V88 H1350 V74 Q1395 60 1440 74 V120 Z"/>
+    </g>
+    <g fill="#C46A4A"><rect x="64" y="64" width="10" height="16" rx="3"/><rect x="250" y="58" width="10" height="16" rx="3"/><rect x="520" y="58" width="10" height="16" rx="3"/><rect x="842" y="62" width="10" height="16" rx="3"/><rect x="1300" y="62" width="10" height="16" rx="3"/></g>
+    <g fill="#F7EFE2" opacity=".85"><rect x="90" y="94" width="10" height="14" rx="3"/><rect x="300" y="96" width="10" height="14" rx="3"/><rect x="600" y="96" width="10" height="14" rx="3"/><rect x="920" y="98" width="10" height="14" rx="3"/><rect x="1380" y="96" width="10" height="14" rx="3"/></g>
+  </svg>
+</div>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Français 10-3Y · Scène 3</p>
+      <h1>Qui a mangé le gâteau&#8239;?</h1>
+      <p class="lede">It’s Mamie Jeanne’s birthday and her cake has vanished. Search the house for clues, question the family in French, then write your accusation.</p>
+    </div>
+    <div class="toggles">
+      <label class="pill"><input type="checkbox" id="sfxOn" checked> Effets sonores</label>
+      <label class="pill tts-only"><input type="checkbox" id="autoplay" checked> Réponses à voix haute</label>
+      <label class="pill"><input type="checkbox" id="labels" checked> Noms dans la maison</label>
+      <button class="pill" id="restart" type="button">Nouveau mystère</button>
+    </div>
+  </header>
+
+  <div class="game wide">
+    <div class="side">
+      <section class="card stage" aria-label="La maison">
+        <div class="stagehead"><span class="place">Chez la famille de Camille · 19 h 30</span><span>Click a person to talk · click a glowing spot to search</span></div>
+        <div class="viewport">
+          <svg id="house" viewBox="0 0 700 460" role="group" aria-label="La maison"></svg>
+          <div class="intro" id="intro">
+            <div class="box">
+              <p class="eyebrow">Scène 3</p>
+              <h2>Qui a mangé le gâteau&#8239;?</h2>
+              <p>The party starts at eight, and the birthday cake is gone. Every game has a different culprit.</p>
+              <ul>
+                <li>Click the glowing spots to find three clues.</li>
+                <li>Click a family member, then type your questions in French.</li>
+                <li>Two clues you can see. One you can only get by asking.</li>
+                <li>Careful: whoever ate the cake will lie about themselves. Ask the rest of the family about them too.</li>
+              </ul>
+              <div><button class="btn primary" id="startBtn" type="button">Commencer</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="card notebook" aria-label="Carnet du détective">
+        <h3>Carnet du détective</h3>
+        <div><h3 class="lbl" style="font-size:15px;margin-bottom:6px">Indices</h3><ol class="cluelist" id="clueList"></ol></div>
+        <div class="tablewrap"><table class="tbl"><thead><tr><th>Personne</th><th>Cheveux</th><th>Lunettes</th><th>T-shirt</th><th>Pièce</th><th>Parfum : <span class="said">dit</span> · <span class="fam">famille</span></th><th></th></tr></thead><tbody id="nbBody"></tbody></table></div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <div class="card panel">
+        <div class="panelhead"><h3>Ta tâche</h3><button class="btn ghost small" id="hintBtn" type="button">Indice</button></div>
+        <ol class="steps" id="steps"></ol>
+        <div class="fbs" id="fbs" aria-live="polite"></div>
+      </div>
+      <div class="card feedcard">
+        <div class="talkhead" id="talkHead"><div><b>Personne</b><span>Click a family member in the house.</span></div></div>
+        <div class="feed talk" id="feed" aria-live="polite"></div>
+        <div class="panel" style="border-top:2px solid var(--soft)">
+          <div class="accentbar" id="accentBar"></div>
+          <form class="inputrow" id="askForm" autocomplete="off">
+            <label for="ask" class="sr">Ta question</label>
+            <input id="ask" type="text" placeholder="Écris une question…" spellcheck="false">
+            <button class="btn primary" type="submit">Demander</button>
+          </form>
+          <div><h3 style="font-size:15px;margin-bottom:6px">Questions utiles</h3><div class="qchips" id="qchips"></div></div>
+        </div>
+      </div>
+      <div class="card panel">
+        <h3>Ton accusation</h3>
+        <p class="task" style="color:var(--muted)">Write who did it and why. Example: <i>Hugo a mangé le gâteau parce que…</i></p>
+        <div class="accentbar" id="accentBar2"></div>
+        <form class="inputrow" id="accForm" autocomplete="off">
+          <label for="acc" class="sr">Ton accusation</label>
+          <input id="acc" type="text" placeholder="___ a mangé le gâteau parce que…" spellcheck="false">
+          <button class="btn primary" type="submit">Accuser</button>
+        </form>
+        <div class="fbs" id="accFbs" aria-live="polite"></div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card summary" id="summary" hidden></section>
+
+  <details class="teacher">
+    <summary>Pour le prof : how this scene works</summary>
+    <ul>
+      <li>Every game picks a new culprit and new family details (hair, glasses, T-shirt colour, room, favourite cake flavour). The three clues always point to exactly one person, and the two clues students can see always fit two people. They have to ask about flavours to solve it.</li>
+      <li>Questions are typed. The parser understands common 10-3Y frames, with or without <i>est-ce que</i> or inversion: <i>Comment tu t’appelles ? Tu as quel âge ? Tu aimes le chocolat ? Quel est ton parfum préféré ? Où es-tu ? Où est Hugo ? Tu as faim ? Tu as des lunettes ?</i> People are named by name (<i>Papa, Maman, Hugo, Tante Claire, Oncle Marc, Léa</i>). Unrecognised questions get “Comment ? Je ne comprends pas.” and are counted.</li>
+      <li><b>The culprit lies about their own favourite flavour.</b> Students have to notice the contradiction and check with other family members, using third-person questions (<i>Quel est le parfum préféré de Léa ? Est-ce que Papa aime le citron ?</i>). Everyone else tells the truth about everyone. Writing <i>a menti</i> or <i>ment</i> in the accusation earns the <b>Détecteur de mensonges</b> badge.</li>
+      <li>The clues: Coco the parrot in the living room repeats the culprit’s hair colour, the empty plate leaves a trail of crumbs to the culprit’s room, and the recipe on the fridge names the cake’s flavour.</li>
+      <li>Answers model the negative with <i>de</i> (<i>Je n’ai pas de lunettes</i>) and <i>il / elle</i>. Missing accents, a missing question mark and missed elisions are pointed out after each question.</li>
+      <li>A wrong accusation gets an in-character alibi tied to a clue (<i>Mais j’ai les cheveux blonds !</i>). Naming two or more clues earns <b>Avec des preuves</b>. <i>A mangé</i> is used as a set phrase; the passé composé itself is 20-3Y.</li>
+      <li>Outcomes practised: 10 C 1.3 (family members), 10 A 3 (seek and give information), 10 R 2.4b (asking questions), 10 R 2.11a (negation), 10 R 2.12 (adjective agreement), 10 R 2.2c (<i>il, elle</i>), 10 R 2.17 (<i>parce que</i>).</li>
+      <li>Audio uses one French voice from this computer: <b id="vozName">checking…</b>. Nothing is saved or sent anywhere.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ===================== Sound design (Web Audio, no files) ===================== */
+const SFX = (() => {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  let ctx = null, out = null, muted = false, last = { t: 0, p: -1 }, noiseBuf = null;
+  try { muted = localStorage.getItem('jeu-fr-sfx-off') === '1'; } catch (e) {}
+  const N = m => 440 * Math.pow(2, (m - 69) / 12);
+  function init() {
+    if (!AC) return null;
+    if (!ctx) {
+      try {
+        ctx = new AC();
+        const comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -18; comp.ratio.value = 4;
+        out = ctx.createGain(); out.gain.value = 0.42;
+        out.connect(comp); comp.connect(ctx.destination);
+      } catch (e) { ctx = null; return null; }
+    }
+    if (ctx.state === 'suspended') { try { ctx.resume(); } catch (e) {} }
+    return ctx;
+  }
+  function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function tone(f, t, { type = 'sine', a = 0.006, d = 0.3, v = 0.2, to = 0, pan = 0 } = {}) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + a + d);
+    env(g, t, a, v, d);
+    let node = g;
+    if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = pan; g.connect(p); node = p; }
+    o.connect(g); node.connect(out); o.start(t); o.stop(t + a + d + 0.05);
+  }
+  function mallet(f, t, v = 0.2, d = 0.45, pan = 0) {
+    tone(f, t, { v, d, pan });
+    tone(f * 4, t, { v: v * 0.16, d: d * 0.22, pan });
+    tone(f * 2.01, t, { type: 'triangle', v: v * 0.1, d: d * 0.5, pan });
+  }
+  function sparkle(t, n = 5, base = 88) {
+    const steps = [0, 4, 7, 12, 16, 19, 24];
+    for (let k = 0; k < n; k++) tone(N(base + steps[k % 7]), t + k * 0.045, { v: 0.05, d: 0.28, pan: k % 2 ? 0.45 : -0.45 });
+  }
+  function noise(t, { d = 0.3, v = 0.12, type = 'bandpass', f = 1200, to = 0, q = 0.8 } = {}) {
+    if (!noiseBuf) {
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const ch = noiseBuf.getChannelData(0);
+      for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    }
+    const s = ctx.createBufferSource(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
+    s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t);
+    if (to) fl.frequency.exponentialRampToValueAtTime(to, t + d);
+    fl.Q.value = q; env(g, t, 0.01, v, d);
+    s.connect(fl); fl.connect(g); g.connect(out); s.start(t); s.stop(t + d + 0.05);
+  }
+  const SOUNDS = {
+    tap: [0, t => tone(1320, t, { v: 0.04, d: 0.035 })],
+    soft: [1, t => mallet(N(76), t, 0.07, 0.2)],
+    step: [0, t => { noise(t, { d: 0.05, v: 0.07, type: 'lowpass', f: 520 }); noise(t + 0.17, { d: 0.05, v: 0.05, type: 'lowpass', f: 460 }); }],
+    turn: [0, t => noise(t, { d: 0.12, v: 0.035, f: 900, to: 1800, q: 1.2 })],
+    star: [4, t => sparkle(t, 6, 88)],
+    door: [3, t => { noise(t, { d: 0.45, v: 0.08, type: 'highpass', f: 2600 }); mallet(N(76), t + 0.08, 0.11, 0.5); mallet(N(72), t + 0.34, 0.11, 0.7); }],
+    bell: [3, t => { [79, 76, 72, 79].forEach((m, k) => mallet(N(m), t + k * 0.26, 0.14, 0.8)); }],
+    mission: [5, t => { [72, 76, 79, 84].forEach((m, k) => mallet(N(m), t + k * 0.085, 0.16, 0.6, (k - 1.5) * 0.2)); sparkle(t + 0.38, 5, 96); }],
+    message: [1, t => { tone(N(81), t, { v: 0.08, d: 0.12 }); tone(N(88), t + 0.07, { v: 0.07, d: 0.2 }); }],
+    whoosh: [1, t => noise(t, { d: 0.5, v: 0.08, f: 300, to: 2600, q: 0.9 })],
+    hint: [2, t => { mallet(N(79), t, 0.09, 0.5); mallet(N(86), t + 0.12, 0.07, 0.6); }],
+    wrong: [2, t => { tone(N(57), t, { type: 'triangle', v: 0.13, d: 0.2, to: N(53) }); tone(N(53), t + 0.11, { type: 'triangle', v: 0.09, d: 0.28, to: N(48) }); }],
+    correct: [3, t => { mallet(N(76), t, 0.17); mallet(N(83), t + 0.09, 0.17, 0.6); }],
+    perfect: [4, t => { mallet(N(76), t, 0.15); mallet(N(79), t + 0.08, 0.15); mallet(N(84), t + 0.16, 0.17, 0.7); sparkle(t + 0.24, 4, 91); }],
+    fanfare: [6, t => {
+      [[67, 0, .14], [72, .14, .14], [76, .28, .14], [79, .42, .28], [76, .7, .14], [79, .84, .5]].forEach(([m, dt, d]) => {
+        mallet(N(m), t + dt, 0.17, d + 0.4);
+        tone(N(m), t + dt, { type: 'triangle', v: 0.045, d: d + 0.2 });
+      });
+      [48, 55, 64, 67, 72].forEach(m => tone(N(m), t + 0.84, { type: 'triangle', v: 0.04, a: 0.1, d: 1.6 }));
+      sparkle(t + 1.0, 7, 96);
+    }],
+    badge: [5, t => { mallet(N(91), t, 0.09, 0.4); sparkle(t + 0.05, 3, 96); }]
+  };
+  function play(name, { force = false } = {}) {
+    if (muted) return;
+    const s = SOUNDS[name];
+    if (!s || !init()) return;
+    const now = ctx.currentTime, [p, fn] = s;
+    if (!force && now - last.t < 0.22 && p < last.p) return;
+    last = { t: now, p };
+    try { fn(now + 0.01); } catch (e) {}
+  }
+  const later = (ms, f) => setTimeout(() => { if (!muted && init()) { try { f(ctx.currentTime + 0.01); } catch (e) {} } }, ms);
+  return {
+    play,
+    mission(st = 0, delayMs = 0) {
+      later(delayMs, t => { last = { t, p: 5 }; SOUNDS.mission[1](t); });
+      for (let k = 0; k < st; k++) later(delayMs + 560 + k * 170, t => { mallet(N(88 + k * 4), t, 0.1, 0.5); sparkle(t, 2, 96 + k * 3); });
+    },
+    celebrate(badges = 0) {
+      later(0, t => { last = { t, p: 6 }; SOUNDS.fanfare[1](t); });
+      for (let k = 0; k < Math.min(badges, 6); k++) later(1700 + k * 260, t => SOUNDS.badge[1](t));
+    },
+    muted: () => muted,
+    setMuted(m) { muted = m; try { localStorage.setItem('jeu-fr-sfx-off', m ? '1' : '0'); } catch (e) {} }
+  };
+})();
+
+const $ = id => document.getElementById(id);
+const NB = ' '; // French thin space before ? ! ; :
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reduced = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+
+/* ================= 1. TEXT HELPERS ================= */
+const stripMarks = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+// accents stripped, apostrophes and hyphens become spaces: "J'ai dix-sept ans" -> "j ai dix sept ans"
+const norm = s => stripMarks(s.toLowerCase()).replace(/œ/g, 'oe').replace(/[’‘`´'\-]/g, ' ').replace(/[?!.,;:"“”«»()]/g, ' ').replace(/\s+/g, ' ').trim();
+const words = s => s.match(/[A-Za-zÀ-ÖØ-öø-ÿœŒ]+/g) || [];
+const key = w => stripMarks(w.toLowerCase()).replace(/œ/g, 'oe');
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+const isUpper = s => s[0] !== s[0].toLowerCase();
+const findSeq = (toks, seq) => {
+  for (let i = 0; i <= toks.length - seq.length; i++) if (seq.every((s, j) => toks[i + j] === s)) return i + seq.length;
+  return -1;
+};
+
+/* ================= 2. ACCENT INPUT: bar + typing shortcuts ================= */
+const ACUTE = { e: 'é', E: 'É' };
+const GRAVE = { a: 'à', e: 'è', u: 'ù', A: 'À', E: 'È', U: 'Ù' };
+const CIRC = { a: 'â', e: 'ê', i: 'î', o: 'ô', u: 'û', A: 'Â', E: 'Ê', I: 'Î', O: 'Ô', U: 'Û' };
+const DEFER = { 'c,': 'ç', 'C,': 'Ç', 'e:': 'ë', 'i:': 'ï', 'E:': 'Ë', 'I:': 'Ï' }; // converted only when a letter follows, so "avec, je" stays as typed
+
+function attachAccentInput(input, bar) {
+  const flash = ch => {
+    const b = bar.querySelector(`[data-ch="${ch.toLowerCase()}"]`);
+    if (!b) return;
+    b.classList.add('flash');
+    setTimeout(() => b.classList.remove('flash'), 350);
+  };
+  input.addEventListener('input', e => {
+    if (!e.inputType || !e.inputType.startsWith('insertText')) return;
+    const pos = input.selectionStart, v = input.value;
+    const last = v[pos - 1], prev = v[pos - 2];
+    let rep = null;
+    if ((last === "'" || last === '’' || last === '´') && ACUTE[prev]) rep = ACUTE[prev];
+    else if (last === '`' && GRAVE[prev]) rep = GRAVE[prev];
+    else if (last === '^' && CIRC[prev]) rep = CIRC[prev];
+    else if ((last === '<' && prev === '<') || (last === '>' && prev === '>')) rep = last === '<' ? '«' : '»';
+    if (rep) {
+      input.value = v.slice(0, pos - 2) + rep + v.slice(pos);
+      input.setSelectionRange(pos - 1, pos - 1);
+      flash(rep);
+      return;
+    }
+    if (/\p{L}/u.test(last || '') && pos >= 3) {
+      const pair = v.slice(pos - 3, pos - 1);
+      if (DEFER[pair]) {
+        const r = DEFER[pair];
+        input.value = v.slice(0, pos - 3) + r + v.slice(pos - 1);
+        input.setSelectionRange(pos - 1, pos - 1);
+        flash(r);
+      }
+    }
+  });
+  bar.querySelectorAll('button').forEach(b => {
+    b.addEventListener('pointerdown', e => e.preventDefault());
+    b.addEventListener('click', e => {
+      const ch = e.shiftKey ? b.dataset.ch.toUpperCase() : b.dataset.ch;
+      const s = input.selectionStart ?? input.value.length, en = input.selectionEnd ?? s;
+      input.value = input.value.slice(0, s) + ch + input.value.slice(en);
+      input.focus();
+      input.setSelectionRange(s + ch.length, s + ch.length);
+    });
+  });
+}
+
+/* ================= 3. REVIEW: accents, elision, spelling; never blocks a reply ================= */
+const ACCENT_WORDS = {
+  ca: 'ça', tres: 'très', francais: 'français', francaise: 'française', eleve: 'élève', eleves: 'élèves', ecole: 'école',
+  age: 'âge', deja: 'déjà', voila: 'voilà', frere: 'frère', freres: 'frères', mere: 'mère', pere: 'père',
+  cafe: 'café', enchante: 'enchanté', enchantee: 'enchantée', desole: 'désolé', desolee: 'désolée', bientot: 'bientôt',
+  apres: 'après', quebec: 'Québec', montreal: 'Montréal', etats: 'États', etes: 'êtes', meme: 'même', preferee: 'préférée',
+  noel: 'Noël', theatre: 'théâtre', musee: 'musée', numero: 'numéro', telephone: 'téléphone', television: 'télévision',
+  etudiant: 'étudiant', etudiante: 'étudiante', ete: 'été', chloe: 'Chloé', helene: 'Hélène', zoe: 'Zoé', jerome: 'Jérôme', theo: 'Théo', leo: 'Léo'
+};
+const SPELLING = { apelle: 'appelle', apelles: 'appelles', appele: 'appelle', apele: 'appelle', bonjours: 'bonjour', mercie: 'merci' };
+const NOTES = {
+  a: 'à = to / at, a = has.',
+  ou: 'où = where, ou = or.',
+  ca: 'The ç keeps the c soft: ça.'
+};
+const A_BEFORE = new Set(['habite', 'habites', 'vis', 'vais', 'suis', 'bienvenue', 'vit', 'habitons']);
+const A_AFTER = new Set(['bientot', 'demain', 'plus', 'la', 'paris', 'lethbridge', 'calgary', 'edmonton', 'toronto', 'vancouver', 'montreal', 'quebec', 'moi', 'toi', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche', 'l', 'pied']);
+const OU_AFTER = new Set(['habites', 'habite', 'vas', 'est', 'es', 'viens', 'vis', 'sont', 'etes', 'habitez']);
+const NO_ELIDE = new Set(['huit', 'onze', 'hockey', 'heros', 'hibou', 'hamburger', 'handball', 'hasard', 'haricot', 'haut', 'hollande', 'yoga', 'yaourt']);
+
+function review(raw) {
+  const issues = []; let correct = 0;
+  const isQ = /[?¿]/.test(raw);
+  const toks = words(raw);
+  toks.forEach((w, i) => {
+    const k = key(w), lw = w.toLowerCase();
+    let target = ACCENT_WORDS[k] || SPELLING[k];
+    const prev = i > 0 ? key(toks[i - 1]) : '', next = key(toks[i + 1] || '');
+    if (k === 'a' && (A_BEFORE.has(prev) || A_AFTER.has(next))) target = 'à';
+    if (k === 'ou' && (prev === 'd' || (isQ && (i === 0 || OU_AFTER.has(next) || i === toks.length - 1)))) target = 'où';
+    if (!target) return;
+    if (lw === target.toLowerCase()) { if (!SPELLING[k]) correct++; return; }
+    const fix = isUpper(w) || isUpper(target) ? target.charAt(0).toUpperCase() + target.slice(1) : target;
+    issues.push({ wrote: w, fix, note: NOTES[k] || (SPELLING[k] ? 'Spelling.' : '') });
+  });
+  // elision: je ai -> j'ai, je habite -> j'habite, de ou -> d'où
+  const re = /\b(je|me|te|se|le|la|ne|de|que)\s+([aeiouyhàâéèêëîïôûœ][\p{L}]*)/giu;
+  let m;
+  while ((m = re.exec(raw))) {
+    const w1 = m[1], w2 = m[2], k2 = key(w2);
+    if (NO_ELIDE.has(k2)) continue;
+    if (w1.toLowerCase() === 'je' && /^ap+el+e?s?$/.test(k2)) {
+      issues.push({ wrote: `${w1} ${w2}`, fix: 'je m’appelle', note: 'The phrase needs the m’: <b>je m’appelle</b> = I call myself.' });
+      continue;
+    }
+    const lead = w1.charAt(0) + (w1.length > 1 && /^qu/i.test(w1) ? 'u' : '');
+    issues.push({ wrote: `${w1} ${w2}`, fix: `${lead}’${w2}`, note: 'Before a vowel sound, the e drops and becomes an apostrophe (elision).' });
+  }
+  return { issues, correct };
+}
+
+const ENGLISH = new Set(['my', 'name', 'is', 'i', 'am', 'im', 'years', 'old', 'hello', 'hi', 'from', 'the', 'what', 'how', 'you', 'are', 'and', 'goodbye', 'bye', 'do', 'like', 'your', 'good', 'thanks', 'fine', 'where', 'live', 'have', 'it', 'its', 'see', 'later']);
+const looksEnglish = n => n.split(' ').filter(w => ENGLISH.has(w)).length >= 2;
+
+/* ---- speech: one French voice for the whole game, never an English one ---- */
+const tts = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+if (!tts) document.body.classList.add('no-tts');
+let VOIX = null;
+function rankVoice(v) {
+  const l = (v.lang || '').replace('_', '-');
+  if (!/^fr(-|$)/i.test(l)) return -1;
+  let s = 0;
+  if (/natural|online|neural/i.test(v.name)) s += 40;
+  if (/google/i.test(v.name)) s += 25;
+  if (/fr-FR/i.test(l)) s += 20; else if (/fr-CA/i.test(l)) s += 12; else s += 6;
+  if (/denise|eloise|vivienne|henri|remy|amelie|julie|thomas/i.test(v.name)) s += 3;
+  return s;
+}
+function pickVoice() {
+  try {
+    const best = speechSynthesis.getVoices().map(v => [rankVoice(v), v]).filter(x => x[0] >= 0).sort((a, b) => b[0] - a[0])[0];
+    VOIX = best ? best[1] : null;
+  } catch (e) { VOIX = null; }
+  document.body.classList.toggle('no-tts', !VOIX);
+  const el = document.getElementById('vozName');
+  if (el) el.textContent = VOIX ? `${VOIX.name} (${VOIX.lang})` : 'none found';
+  return VOIX;
+}
+if (tts) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
+function speak(text, slow = false) {
+  if (!tts || (!VOIX && !pickVoice())) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/ /g, ' '));
+    u.voice = VOIX; u.lang = VOIX.lang; u.rate = slow ? 0.72 : 0.95;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+
+/* ================= Shared helpers for every scene ================= */
+const SPEED = window.__testSpeed || 1;
+const sleep = ms => new Promise(r => setTimeout(r, ms * SPEED));
+const rand = n => Math.floor(Math.random() * n);
+const pick = a => a[rand(a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const capFirst = s => s.charAt(0).toUpperCase() + s.slice(1);
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* French articles: à + le = au, de + le = du, l' before a vowel */
+const au = full => full.startsWith('le ') ? 'au ' + full.slice(3) : full.startsWith('les ') ? 'aux ' + full.slice(4) : 'à ' + full;
+const du = full => full.startsWith('le ') ? 'du ' + full.slice(3) : full.startsWith('les ') ? 'des ' + full.slice(4) : 'de ' + full;
+
+/* French numbers 0–100 (traditional hyphens) */
+const UNITS = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+const TENS = { 2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante' };
+function numWord(n) {
+  if (n < 0) return 'moins ' + numWord(-n);
+  if (n < 20) return UNITS[n];
+  if (n === 100) return 'cent';
+  if (n < 70) { const t = Math.floor(n / 10), u = n % 10; return u === 0 ? TENS[t] : u === 1 ? TENS[t] + ' et un' : TENS[t] + '-' + UNITS[u]; }
+  if (n < 80) return n === 71 ? 'soixante et onze' : 'soixante-' + UNITS[n - 60];
+  if (n === 80) return 'quatre-vingts';
+  return 'quatre-vingt-' + UNITS[n - 80];
+}
+/* time in words, 12-hour as people say it: "neuf heures moins cinq" */
+function timeWords(h, m) {
+  let hh = h, mm = m, suffix = '';
+  if (m > 30) { hh = h + 1; mm = 60 - m; suffix = mm === 15 ? ' moins le quart' : ' moins ' + numWord(mm); }
+  else if (m === 15) suffix = ' et quart';
+  else if (m === 30) suffix = ' et demie';
+  else if (m > 0) suffix = ' ' + numWord(m);
+  const h12 = hh % 24;
+  let base;
+  if (h12 === 12) base = 'midi';
+  else if (h12 === 0) base = 'minuit';
+  else { const k = h12 > 12 ? h12 - 12 : h12; base = k === 1 ? 'une heure' : numWord(k) + ' heures'; }
+  if ((h12 === 12 || h12 === 0) && suffix === ' et demie') suffix = ' et demi';
+  return base + suffix;
+}
+const clock = (h, m) => `${h} h ${String(m).padStart(2, '0')}`;
+
+/* ---- clay people: one generator for the whole cast ---- */
+let gid = 0;
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  const f = c => Math.max(0, Math.min(255, Math.round(c + (amt > 0 ? (255 - c) * amt : c * amt))));
+  return '#' + [f(n >> 16), f((n >> 8) & 255), f(n & 255)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+const grad = (c) => { const id = 'pg' + (++gid); return [id, `<radialGradient id="${id}" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${shade(c, .35)}"/><stop offset=".6" stop-color="${c}"/><stop offset="1" stop-color="${shade(c, -.25)}"/></radialGradient>`]; };
+const MOUTHS = {
+  happy: '<path d="M86 128 Q100 146 114 128 Z" fill="#7A2E2E"/><path d="M90 129 Q100 134 110 129 Z" fill="#FFFFFF"/>',
+  neutral: '<path d="M88 130 Q100 140 112 130" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  think: '<path d="M90 134 Q100 130 110 135" fill="none" stroke="#7A2E2E" stroke-width="4" stroke-linecap="round"/>',
+  oh: '<ellipse cx="100" cy="134" rx="6" ry="8" fill="#7A2E2E"/>'
+};
+/* p: { skin, hair: 'short'|'bob'|'long'|'bun'|'curly'|'bald'|'pony', hairColor, glasses, mustache, shirt, kid, mouth } -> 200×240 svg body */
+function personBody(p) {
+  const [sg, sdef] = grad(p.skin), [hg, hdef] = grad(p.hairColor || '#5A3A22'), [cg, cdef] = grad(p.shirt || '#6CC6A6');
+  const hc = `url(#${hg})`, sk = `url(#${sg})`;
+  const s = p.kid ? .86 : 1;
+  let back = '', front = '';
+  switch (p.hair) {
+    case 'bob': back = `<path d="M40 112 C 34 52 70 24 100 24 C 136 24 166 52 160 112 C 160 142 152 160 146 164 L 54 164 C 48 158 40 142 40 112 Z" fill="${hc}"/>`;
+      front = `<path d="M54 98 C 54 60 80 46 104 46 C 130 46 148 64 146 98 C 132 84 116 78 100 80 C 84 80 68 86 54 98 Z" fill="${hc}"/>`; break;
+    case 'long': back = `<path d="M44 110 C 36 50 70 26 100 26 C 132 26 166 50 156 110 L 164 200 C 140 210 60 210 36 200 Z" fill="${hc}"/>`;
+      front = `<path d="M56 96 C 58 62 82 50 100 50 C 124 50 144 62 144 96 C 136 76 118 66 96 72 C 80 76 66 84 56 96 Z" fill="${hc}"/>`; break;
+    case 'pony': back = `<path d="M140 70 C 176 70 180 130 160 168 C 170 128 160 96 140 90 Z" fill="${hc}"/>`;
+      front = `<path d="M54 100 C 52 58 80 48 102 48 C 128 48 150 62 148 100 C 136 80 116 72 98 74 C 80 76 64 86 54 100 Z" fill="${hc}"/>`; break;
+    case 'bun': back = `<circle cx="100" cy="46" r="26" fill="${hc}"/>`;
+      front = `<path d="M56 104 C 56 66 80 54 100 54 C 122 54 146 66 144 104 C 132 82 116 76 100 76 C 84 76 68 82 56 104 Z" fill="${hc}"/>`; break;
+    case 'curly': front = [[64, 74], [80, 60], [100, 54], [120, 60], [136, 74], [146, 92], [54, 92]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="18" fill="${hc}"/>`).join(''); break;
+    case 'bald': front = `<path d="M56 116 C 52 96 58 86 64 82 L 66 112 Z M144 116 C 148 96 142 86 136 82 L 134 112 Z" fill="${hc}"/>`; break;
+    default: front = `<path d="M56 100 C 54 62 78 50 100 50 C 124 50 148 62 144 100 C 140 84 128 72 110 70 C 96 76 76 82 56 100 Z" fill="${hc}"/>`;
+  }
+  const glasses = p.glasses ? '<g fill="none" stroke="#2A2440" stroke-width="4"><circle cx="84" cy="110" r="13"/><circle cx="116" cy="110" r="13"/><path d="M97 109 h6"/></g>' : '';
+  const must = p.mustache ? `<path d="M100 122 C 92 116 78 116 72 124 C 80 128 92 128 100 126 C 108 128 120 128 128 124 C 122 116 108 116 100 122 Z" fill="${shade(p.hairColor || '#5A3A22', -.2)}"/>` : '';
+  return `<defs>${sdef}${hdef}${cdef}</defs><g transform="translate(${100 - 100 * s} ${240 - 240 * s}) scale(${s})">${back}`
+    + `<rect x="88" y="140" width="24" height="34" rx="8" fill="${shade(p.skin, -.2)}"/>`
+    + `<path d="M26 242 C 26 192 60 168 100 168 C 140 168 174 192 174 242 Z" fill="url(#${cg})"/>`
+    + `<path d="M76 172 Q100 190 124 172" fill="none" stroke="${shade(p.shirt || '#6CC6A6', -.3)}" stroke-width="4" stroke-linecap="round"/>`
+    + `<circle cx="100" cy="104" r="46" fill="${sk}"/>${front}`
+    + '<ellipse cx="84" cy="111" rx="5.5" ry="7" fill="#2A2440"/><ellipse cx="116" cy="111" rx="5.5" ry="7" fill="#2A2440"/><circle cx="86" cy="108" r="2" fill="#FFFFFF"/><circle cx="118" cy="108" r="2" fill="#FFFFFF"/>'
+    + glasses + '<circle cx="72" cy="125" r="7" fill="#F07A6A" opacity=".4"/><circle cx="128" cy="125" r="7" fill="#F07A6A" opacity=".4"/>'
+    + must + (MOUTHS[p.mouth] || MOUTHS.happy) + '</g>';
+}
+const CAMILLE_BODY = mood => `<use href="#camilleBase" width="200" height="240"/>${MOUTHS[mood] || MOUTHS.happy}`;
+const CAST = {
+  camille: { name: 'Camille', camille: true },
+  mamie: { name: 'Mamie Jeanne', skin: '#EBC2A0', hair: 'bun', hairColor: '#D9D4E2', glasses: true, shirt: '#B05C8E' },
+  papa: { name: 'Papa', skin: '#E3AE86', hair: 'short', hairColor: '#5A3A22', shirt: '#3E6E9E', mustache: false },
+  maman: { name: 'Maman', skin: '#C98B62', hair: 'long', hairColor: '#2E1E16', shirt: '#E2463C' },
+  hugo: { name: 'Hugo', skin: '#C98B62', hair: 'curly', hairColor: '#7E3A1E', shirt: '#FFC94A', kid: true },
+  bernard: { name: 'M. Bernard', skin: '#D9A27A', hair: 'bald', hairColor: '#C8C2B4', glasses: true, mustache: true, shirt: '#6E8F7A' }
+};
+function personSVG(who, { mood = 'happy', crop = false, label = '' } = {}) {
+  const p = typeof who === 'string' ? CAST[who] : who;
+  const vb = crop ? '40 34 120 120' : '0 0 200 240';
+  const body = p.camille ? CAMILLE_BODY(mood) : personBody({ ...p, mouth: mood });
+  return `<svg viewBox="${vb}" ${label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"'}>${body}</svg>`;
+}
+const HERO_MINI = '<svg viewBox="52 18 116 116" aria-hidden="true"><use href="#hero" width="220" height="420"/></svg>';
+const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* ---- feedback chips ---- */
+function chipEl(kind, fr, en) {
+  const c = document.createElement('div');
+  c.className = 'chip appear ' + kind;
+  c.innerHTML = `<b>${fr}</b>${en ? `<span>${en}</span>` : ''}`;
+  return c;
+}
+function fb(kind, fr, en, append = false, box = $('fbs')) {
+  if (!box) return;
+  const c = chipEl(kind, fr, en);
+  if (append) box.appendChild(c); else box.replaceChildren(c);
+}
+const clearFb = (box = $('fbs')) => box && box.replaceChildren();
+/* review a typed answer and add accent / elision chips; returns counts */
+function reviewChips(raw, box, append = true) {
+  const r = review(raw);
+  const seen = new Set();
+  r.issues.forEach(is => {
+    const tag = is.wrote.toLowerCase();
+    if (seen.has(tag)) return; seen.add(tag);
+    fb('warn', `<span class="fix"><s>${esc(is.wrote)}</s> → ${esc(is.fix)}</span>`, is.note || '', append, box);
+  });
+  return r;
+}
+
+/* ---- message feed (texts and voice notes from the cast) ---- */
+const ENG = { reveals: 0 };
+function feedTime() { const d = ENG.clock || { h: 16, m: 0 }; return clock(d.h, d.m); }
+function addMsg(who, text, { feed = $('feed'), time = '', challenge = $('challenge'), autoplay = $('autoplay') } = {}) {
+  if (!feed) return;
+  const empty = feed.querySelector('.empty'); if (empty) empty.remove();
+  const p = CAST[who] || who;
+  const masked = challenge && challenge.checked && VOIX;
+  const m = document.createElement('div');
+  m.className = 'msg appear';
+  m.innerHTML = `<div class="av">${personSVG(p, { crop: true })}</div><div><div class="mhead"><b>${esc(p.name)}</b><span class="time">${time || feedTime()}</span></div><p class="mtext${masked ? ' masked' : ''}"></p><div class="mctl"><button type="button" class="play tts-only">${SPEAKER} Écouter</button><button type="button" class="slow tts-only">Lentement</button>${masked ? '<button type="button" class="reveal">Voir le texte</button>' : ''}</div></div>`;
+  const t = m.querySelector('.mtext');
+  t.textContent = masked ? 'Message audio : écoute-le.' : text;
+  m.querySelector('.play').addEventListener('click', () => speak(text));
+  m.querySelector('.slow').addEventListener('click', () => speak(text, true));
+  const rv = m.querySelector('.reveal');
+  if (rv) rv.addEventListener('click', () => { t.textContent = text; t.classList.remove('masked'); rv.remove(); ENG.reveals++; });
+  feed.appendChild(m);
+  feed.scrollTop = feed.scrollHeight;
+  SFX.play('message');
+  if ((autoplay && autoplay.checked) || masked) speak(text);
+  return m;
+}
+function addMine(text, feed = $('feed')) {
+  const m = document.createElement('div');
+  m.className = 'msg me appear';
+  m.innerHTML = '<div class="bubble"></div><div class="fbrow"></div>';
+  m.querySelector('.bubble').textContent = text;
+  feed.appendChild(m); feed.scrollTop = feed.scrollHeight;
+  return m.querySelector('.fbrow');
+}
+
+/* ---- mission list with stars ---- */
+function renderMissionList(el, items, cur, starsArr = []) {
+  el.innerHTML = '';
+  items.forEach((it, i) => {
+    const li = document.createElement('li');
+    const done = i < cur;
+    li.className = done ? 'done' : i === cur ? 'current' : '';
+    li.innerHTML = `<span class="n">${done ? CHECK : i + 1}</span><span class="t">${it}</span>${done && starsArr[i] != null ? `<span class="stars" aria-label="${starsArr[i]} étoiles sur 3">${starStr(starsArr[i])}</span>` : ''}`;
+    el.appendChild(li);
+  });
+}
+const starsFor = (mistakes, hints) => Math.max(1, 3 - mistakes - hints);
+
+/* ---- end-of-scene summary ---- */
+function renderSummary(box, { eyebrow, title, stats, badges, blocks = '', outcomes, again = 'Rejouer', onAgain }) {
+  box.innerHTML = `<div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2></div>
+    <div class="stats">${stats.map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('')}</div>
+    <div><h3>Badges</h3><div class="badges">${badges.map(([n, d, on]) => `<span class="badge${on ? '' : ' off'}" title="${esc(d)}">${on ? '★ ' : ''}${n}</span>`).join('')}</div></div>
+    ${blocks}
+    <p class="outcomes">Practised: ${outcomes}</p>
+    <div><button class="btn primary" type="button" id="againBtn">${again}</button></div>`;
+  box.hidden = false;
+  $('againBtn').addEventListener('click', onAgain);
+  SFX.celebrate(badges.filter(b => b[2]).length);
+  box.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' });
+}
+
+/* ---- header toggles shared by every scene ---- */
+function wireCommon(onRestart) {
+  const sfx = $('sfxOn');
+  if (sfx) {
+    sfx.checked = !SFX.muted();
+    sfx.addEventListener('change', () => { SFX.setMuted(!sfx.checked); if (sfx.checked) SFX.play('correct', { force: true }); });
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('button, .choice, .opt'); if (b && !b.disabled) SFX.play('tap'); }, true);
+  const lab = $('labels');
+  if (lab) { const apply = () => document.body.classList.toggle('nolabels', !lab.checked); lab.addEventListener('change', apply); apply(); }
+  const r = $('restart');
+  if (r) r.addEventListener('click', () => { SFX.play('whoosh', { force: true }); onRestart(); });
+}
+const ACCENT_BAR = ['é', 'è', 'ê', 'à', 'â', 'ç', 'î', 'ô', 'ù', 'û', 'ë', 'ï', 'œ'].map(c => `<button type="button" data-ch="${c}">${c}</button>`).join('') + '<span class="caps">Shift + click for capitals</span>';
+function setupAccentBar(barId, inputId) { const bar = $(barId); bar.innerHTML = ACCENT_BAR; attachAccentInput($(inputId), bar); }
+
+/* ================= SCENE ================= */
+const FAMILY = [
+  { id: 'papa', name: 'Papa', g: 'm', age: 46, skin: '#E3AE86', hair: 'short', re: /\b(papa|laurent)\b/ },
+  { id: 'maman', name: 'Maman', g: 'f', age: 44, skin: '#C98B62', hair: 'long', re: /\b(maman|sophie)\b/ },
+  { id: 'hugo', name: 'Hugo', g: 'm', age: 10, skin: '#C98B62', hair: 'curly', kid: true, re: /\bhugo\b/ },
+  { id: 'claire', name: 'Tante Claire', g: 'f', age: 38, skin: '#F2C29B', hair: 'bob', re: /\b(tante claire|claire|tante)\b/ },
+  { id: 'marc', name: 'Oncle Marc', g: 'm', age: 51, skin: '#8A5A3C', hair: 'bald', mustache: true, re: /\b(oncle marc|marc|oncle)\b/ },
+  { id: 'lea', name: 'Léa', g: 'f', age: 14, skin: '#F5D0B0', hair: 'pony', kid: true, re: /\blea\b/ }
+];
+const HAIR = [['blonds', '#E0B060'], ['bruns', '#5A3A22'], ['roux', '#C2562A'], ['gris', '#B9B4C2'], ['noirs', '#2E1E16']];
+const SHIRT = [['rouge', '#E2463C'], ['bleu', '#2B4A9B'], ['vert', '#3E9C7C'], ['jaune', '#FFC94A'], ['noir', '#2E2A38'], ['blanc', '#F4F1EA']];
+const FLAV = ['chocolat', 'vanille', 'fraise', 'citron', 'framboise', 'caramel'];
+const FLAV_RE = /\b(chocolat|vanille|fraises?|citron|framboises?|caramel)\b/;
+const ROOMS = [
+  { id: 'hugo', full: 'la chambre de Hugo', x: 40, y: 90, floor: 'up' }, { id: 'parents', full: 'la chambre des parents', x: 240, y: 90, floor: 'up' },
+  { id: 'sdb', full: 'la salle de bains', x: 440, y: 90, floor: 'up' }, { id: 'cuisine', full: 'la cuisine', x: 40, y: 250, floor: 'down' },
+  { id: 'sam', full: 'la salle à manger', x: 240, y: 250, floor: 'down' }, { id: 'salon', full: 'le salon', x: 440, y: 250, floor: 'down' }
+];
+const FLOOR_Y = { up: 245, down: 415 };
+const S = {};
+
+function newGame() {
+  const people = FAMILY.map(f => ({ ...f }));
+  const culprit = pick(people), decoy = pick(people.filter(p => p !== culprit));
+  const hair = pick(HAIR), cake = pick(FLAV);
+  const room = pick(ROOMS.filter(r => r.id !== 'sam'));
+  culprit.hairC = hair; decoy.hairC = hair; culprit.room = room; decoy.room = room;
+  const others = people.filter(p => p !== culprit && p !== decoy);
+  const otherRooms = shuffle(ROOMS.filter(r => r !== room));
+  others.forEach((p, i) => {
+    p.room = otherRooms[i % otherRooms.length];
+    p.hairC = pick(HAIR);
+  });
+  people.forEach(p => {
+    if (p.id === 'marc' && p !== culprit && p !== decoy) p.hairC = pick([HAIR[3], HAIR[4]]);
+    p.glasses = Math.random() < .45;
+    p.shirtC = pick(SHIRT);
+    p.fav = p === culprit ? cake : pick(FLAV.filter(f => f !== cake));
+    p.lie = p === culprit ? pick(FLAV.filter(f => f !== cake)) : null;
+    p.said = ''; p.famSaid = ''; p.out = false;
+  });
+  Object.assign(S, { people, culprit, decoy, cake, hair, room, clues: [], cur: null, asked: 0, unknown: 0, hints: 0, wrongAcc: 0, done: false, active: false, lines: [], askedAbout: new Set() });
+  ENG.clock = { h: 19, m: 30 };
+}
+const pro = p => p.g === 'f' ? 'elle' : 'il';
+const cakeOf = f => (f === 'fraise' || f === 'framboise' || f === 'vanille') ? 'à la ' + f : 'au ' + f;
+const art = f => (f === 'fraise' || f === 'framboise' || f === 'vanille') ? 'la ' + f : 'le ' + f;
+const shirtOf = p => p.shirtC[0];
+const P = id => S.people.find(p => p.id === id);
+function bodyOf(p, mood = 'happy') { return { skin: p.skin, hair: p.hair, hairColor: p.hairC[1], glasses: p.glasses, mustache: p.mustache, shirt: p.shirtC[1], kid: p.kid, name: p.name, mouth: mood }; }
+
+/* ---------------- house ---------------- */
+function slots(room) { const fy = FLOOR_Y[room.floor]; return [[room.x + 62, fy], [room.x + 142, fy]]; }
+function drawHouse() {
+  let s = '<rect width="700" height="460" fill="#BEDDEB"/><rect x="0" y="420" width="700" height="40" fill="#9FD38C"/>';
+  s += '<path d="M24 92 L 340 14 L 656 92 Z" fill="#E2463C"/><rect x="40" y="90" width="600" height="330" fill="#FBE3C2"/>';
+  s += '<rect x="40" y="246" width="600" height="8" fill="#C9A47A"/><rect x="238" y="90" width="4" height="330" fill="#E9CBA4"/><rect x="438" y="90" width="4" height="330" fill="#E9CBA4"/>';
+  s += '<g stroke="#8A5527" stroke-width="5" stroke-linecap="round"><path d="M650 420 L 650 250 M676 420 L 676 250"/>' + [270, 300, 330, 360, 390].map(y => `<path d="M650 ${y} H676"/>`).join('') + '</g>';
+  ROOMS.forEach(r => { s += `<text class="roomlbl lbl" x="${r.x + 100}" y="${r.y + 20}" text-anchor="middle">${capFirst(r.full)}</text>`; });
+  // furniture
+  s += '<g><rect x="56" y="180" width="80" height="44" rx="10" fill="#F6D2C4"/><rect x="56" y="170" width="24" height="20" rx="6" fill="#FFFFFF"/></g>';
+  s += '<g><rect x="256" y="180" width="110" height="44" rx="10" fill="#DCEBD8"/><rect x="256" y="170" width="24" height="20" rx="6" fill="#FFFFFF"/><rect x="340" y="170" width="24" height="20" rx="6" fill="#FFFFFF"/></g>';
+  s += '<g><rect x="520" y="196" width="100" height="40" rx="18" fill="#FFFFFF" stroke="#C9CEDA" stroke-width="3"/><path d="M600 160 v 30" stroke="#9CA6B8" stroke-width="5"/></g>';
+  s += '<g><rect x="60" y="300" width="70" height="40" rx="6" fill="#C9CEDA"/><rect x="60" y="340" width="70" height="70" rx="6" fill="#E3E6EE"/></g>';
+  s += '<g><rect x="290" y="370" width="110" height="12" rx="6" fill="#8A5527"/><rect x="300" y="382" width="8" height="32" fill="#8A5527"/><rect x="382" y="382" width="8" height="32" fill="#8A5527"/><ellipse cx="345" cy="366" rx="22" ry="6" fill="#FFFFFF"/></g>';
+  s += '<g><rect x="456" y="360" width="110" height="40" rx="14" fill="#7B9CD6"/><rect x="456" y="344" width="110" height="26" rx="12" fill="#6A89C4"/><rect x="590" y="300" width="34" height="46" rx="10" fill="none" stroke="#9CA6B8" stroke-width="3"/><path d="M607 300 v -14" stroke="#9CA6B8" stroke-width="3"/><ellipse cx="607" cy="330" rx="9" ry="11" fill="#3E9C7C"/><circle cx="604" cy="324" r="2" fill="#FFFFFF"/><path d="M611 326 l 6 3 -6 2 z" fill="#FFC94A"/></g>';
+  // clue spots
+  const clue = (id, x, y, r, label) => `<g class="clue" id="clue-${id}" tabindex="0" role="button" aria-label="${label}"><circle class="glow" cx="${x}" cy="${y}" r="${r}"/><g class="seen"><circle cx="${x + r - 6}" cy="${y - r + 6}" r="10" fill="#6CC6A6" stroke="#FFFFFF" stroke-width="2"/><path d="M${x + r - 11} ${y - r + 6} l4 4 7 -8" fill="none" stroke="#13372A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g></g>`;
+  s += clue('fridge', 95, 350, 44, 'Chercher : le frigo') + clue('plate', 345, 364, 32, 'Chercher : l’assiette') + clue('parrot', 607, 320, 34, 'Chercher : la cage du perroquet');
+  s += '<g id="crumbs"></g>';
+  // people
+  const used = {};
+  S.people.forEach((p, i) => {
+    const k = used[p.room.id] = (used[p.room.id] || 0); used[p.room.id]++;
+    const [x, y] = slots(p.room)[k];
+    p.pos = [x, y];
+    s += `<g class="person" id="per-${p.id}" tabindex="0" role="button" aria-label="Parler à ${p.name}" transform="translate(${x - 38} ${y - 92}) scale(.38)">${personBody(bodyOf(p))}<rect class="ring" x="16" y="14" width="168" height="230" rx="40"/></g>`;
+    s += `<text class="pname" x="${x}" y="${y - 96}" text-anchor="middle">${p.name}</text>`;
+  });
+  $('house').innerHTML = s;
+  S.people.forEach(p => {
+    const g = $('per-' + p.id);
+    const go = () => select(p);
+    g.addEventListener('click', go);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  ['fridge', 'plate', 'parrot'].forEach(id => {
+    const g = $('clue-' + id);
+    const go = () => findClue(id);
+    g.addEventListener('click', go);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+}
+function crumbTrail() {
+  const r = S.room, pts = [];
+  const tx = r.x + 100;
+  const step = (x0, y0, x1, y1) => { const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 18)); for (let i = 1; i <= n; i++) pts.push([x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n]); };
+  if (r.floor === 'down') step(345, 405, tx, 405);
+  else { step(345, 405, 663, 405); step(663, 405, 663, 236); step(663, 236, tx, 236); }
+  $('crumbs').innerHTML = pts.map(([x, y], i) => `<circle class="crumb" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${3 + (i % 2)}" fill="#B9732A" style="animation-delay:${(i * 0.04).toFixed(2)}s"/>`).join('');
+}
+
+/* ---------------- clues ---------------- */
+const CLUE_TEXT = {
+  parrot: () => `Coco le perroquet répète : « Cheveux ${S.hair[0]} ! Cheveux ${S.hair[0]} ! »`,
+  plate: () => `L’assiette est vide. Les miettes vont vers ${S.room.full}.`,
+  fridge: () => `Sur le frigo, la recette : « Gâteau ${cakeOf(S.cake)} de Mamie Jeanne ».`
+};
+function findClue(id) {
+  if (!S.active || S.clues.includes(id)) return;
+  S.clues.push(id);
+  $('clue-' + id).classList.add('found');
+  SFX.play('star');
+  if (id === 'plate') crumbTrail();
+  if (id === 'parrot' && VOIX) speak(`Cheveux ${S.hair[0]} ! Cheveux ${S.hair[0]} !`);
+  renderClues(); renderSteps();
+  fb('ok', 'Un indice !', CLUE_TEXT[id]());
+}
+function renderClues() {
+  $('clueList').innerHTML = S.clues.length ? S.clues.map(c => `<li>${esc(CLUE_TEXT[c]())}</li>`).join('') : '<li class="none">No clues yet. Search the glowing spots.</li>';
+}
+function renderNotebook() {
+  $('nbBody').innerHTML = S.people.map(p => `<tr class="${p.out ? 'out' : ''}"><td><b>${p.name}</b></td><td>${p.hairC[0]}</td><td>${p.glasses ? 'oui' : 'non'}</td><td>${shirtOf(p)}</td><td>${p.room.full}</td><td><span class="said">${p.said || '—'}</span> · <span class="fam">${p.famSaid || '—'}</span></td><td class="x"><button type="button" data-id="${p.id}">${p.out ? 'Remettre' : 'Exclure'}</button></td></tr>`).join('');
+  $('nbBody').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const p = P(b.dataset.id); p.out = !p.out; renderNotebook(); }));
+}
+function stage() { if (S.done) return 3; if (S.clues.length < 3) return 0; return S.askedAbout.size >= 2 ? 2 : 1; }
+function renderSteps() {
+  const items = ['Trouve les trois indices', 'Pose des questions à la famille', 'Écris ton accusation'];
+  const cur = stage();
+  $('steps').innerHTML = items.map((t, i) => `<li class="${i < cur ? 'done' : i === cur ? 'current' : ''}"><span class="n">${i < cur ? CHECK : i + 1}</span>${t}</li>`).join('');
+}
+
+/* ---------------- interrogation ---------------- */
+function select(p) {
+  if (!S.active) return;
+  S.cur = p;
+  document.querySelectorAll('.person').forEach(g => g.classList.toggle('sel', g.id === 'per-' + p.id));
+  $('talkHead').innerHTML = `<div class="face">${personSVG(bodyOf(p), { crop: true })}</div><div><b>${p.name}</b><span>${p.age} ans · dans ${p.room.full}</span></div>`;
+  $('feed').innerHTML = '';
+  addMsg(bodyOf(p), pick([`Oui${NB}?`, `Bonsoir${NB}!`, `Qu’est-ce qu’il y a${NB}?`]), { autoplay: $('autoplay') });
+  $('ask').focus();
+}
+function whoIn(n) {
+  const hits = S.people.filter(p => p.re.test(n));
+  // "tante claire" also matches /tante/ etc: keep unique
+  return [...new Set(hits)];
+}
+function answer(p, n, raw) {
+  const others = whoIn(n).filter(o => o !== p);
+  const o = others[0];
+  const flavAsk = (n.match(FLAV_RE) || [])[1];
+  const flav = flavAsk ? flavAsk.replace(/s$/, '') : null;
+  if (/\b(qui a mange|qui est ce qui a mange)\b/.test(n)) return `Je ne sais pas${NB}! Demande aux autres.`;
+  if (/\b(tu as mange|as tu mange|c est toi|est ce que tu as mange)\b/.test(n)) return p === S.culprit ? `Moi${NB}? Non, non, ce n’est pas moi${NB}!` : `Non${NB}! Ce n’est pas moi${NB}!`;
+  if (/(t appelles|appelles tu|ton nom)/.test(n)) return `Je m’appelle ${p.name === 'Papa' ? 'Laurent' : p.name === 'Maman' ? 'Sophie' : p.name.replace(/^(Tante|Oncle) /, '')}.`;
+  if (/(quel age|age as tu|age a)/.test(n)) return o ? `${o.name} a ${numWord(o.age)} ans.` : `J’ai ${numWord(p.age)} ans.`;
+  if (/(as tu faim|tu as faim|a faim)/.test(n)) return pick([`Oui, un peu…`, `Non, pas vraiment.`, `Oh oui, j’ai très faim${NB}!`]);
+  if (/(parfum|aime|adore|prefere|gout|gateau prefere)/.test(n)) {
+    if (o) {
+      S.askedAbout.add(o.id);
+      o.famSaid = o.fav;
+      if (flav) return flav === o.fav ? `Oui, ${pro(o)} adore ${art(o.fav)}${NB}!` : `Non, ${o.name} préfère ${art(o.fav)}.`;
+      return `${o.name}${NB}? ${capFirst(pro(o))} adore ${art(o.fav)}.`;
+    }
+    S.askedAbout.add(p.id);
+    const mine = p.lie || p.fav;
+    p.said = mine;
+    if (flav) {
+      if (p.lie && flav === p.fav) return `${capFirst(art(flav))}${NB}? Non, je n’aime pas ça. Je préfère ${art(mine)}.`;
+      return flav === mine ? `Oui, j’adore ${art(mine)}${NB}!` : `Non, pas trop. Je préfère ${art(mine)}.`;
+    }
+    return `Mon parfum préféré, c’est ${art(mine)}.`;
+  }
+  if (/\b(ou est|ou se trouve)\b/.test(n) && o) return `${o.name} est dans ${o.room.full}.`;
+  if (/(ou es tu|tu es ou|ou est ce que tu es|ou tu es|dans quelle piece)/.test(n)) return `Je suis dans ${p.room.full}.`;
+  if (/lunettes/.test(n)) {
+    const t = o || p;
+    if (o) return t.glasses ? `Oui, ${pro(t)} a des lunettes.` : `Non, ${pro(t)} n’a pas de lunettes.`;
+    return t.glasses ? 'Oui, j’ai des lunettes.' : 'Non, je n’ai pas de lunettes.';
+  }
+  if (/cheveux/.test(n)) return o ? `${capFirst(pro(o))} a les cheveux ${o.hairC[0]}.` : `J’ai les cheveux ${p.hairC[0]}.`;
+  if (/(t shirt|tee shirt|couleur)/.test(n)) return o ? `Son t-shirt est ${shirtOf(o)}.` : `Mon t-shirt est ${shirtOf(p)}.`;
+  if (/^(bonjour|salut|bonsoir|coucou)\b/.test(n) && n.split(' ').length <= 3) return `Bonsoir${NB}!`;
+  if (/\b(mamie|camille)\b/.test(n)) return `${/mamie/.test(n) ? 'Mamie Jeanne' : 'Camille'} n’a rien mangé, j’en suis sûr${p.g === 'f' ? 'e' : ''}.`;
+  return null;
+}
+function ask(raw) {
+  raw = raw.trim();
+  if (!raw || !S.active) return;
+  if (!S.cur) { fb('info', 'Choisis une personne.', 'Click a family member in the house first.'); return; }
+  $('ask').value = '';
+  S.lines.push(`À ${S.cur.name} : ${raw}`);
+  const box = addMine(raw);
+  const n = norm(raw);
+  let rep = answer(S.cur, n, raw);
+  if (!rep && looksEnglish(n)) { fb('err', 'En français, s’il te plaît !', 'The family only speaks French tonight.', true, box); SFX.play('wrong'); S.unknown++; return; }
+  if (!rep) { S.unknown++; SFX.play('wrong'); rep = `Comment${NB}? Je ne comprends pas.`; }
+  else { S.asked++; SFX.play('soft'); }
+  const r = reviewChips(raw, box);
+  if (!/\?/.test(raw) && rep !== `Bonsoir${NB}!`) fb('warn', 'N’oublie pas le « ? »', 'A written question ends with a question mark.', true, box);
+  setTimeout(() => { addMsg(bodyOf(S.cur), rep, { autoplay: $('autoplay') }); renderNotebook(); renderSteps(); }, 450 * SPEED);
+}
+const QFRAMES = [`Quel est ton parfum préféré${NB}?`, `Tu aimes le chocolat${NB}?`, `Où est Hugo${NB}?`, `Quel est le parfum préféré de Léa${NB}?`, `Est-ce que Papa aime le citron${NB}?`, `Tu as des lunettes${NB}?`, `Tu as quel âge${NB}?`];
+
+/* ---------------- accusation ---------------- */
+function accuse(raw) {
+  raw = raw.trim();
+  if (!raw || !S.active || S.done) return;
+  const box = $('accFbs');
+  box.replaceChildren();
+  const n = norm(raw);
+  const named = whoIn(n);
+  if (!named.length) { fb('err', 'Qui ?', 'Name one person: <b>Hugo a mangé le gâteau parce que…</b>', true, box); SFX.play('wrong'); return; }
+  const who = named.map(x => [x, n.search(x.re)]).sort((a, b) => a[1] - b[1])[0][0];
+  S.lines.push(`Accusation : ${raw}`);
+  if (who !== S.culprit) {
+    S.wrongAcc++; SFX.play('wrong');
+    let alibi;
+    if (who.hairC !== S.hair) alibi = `Mais j’ai les cheveux ${who.hairC[0]}${NB}!`;
+    else if (who.room !== S.room) alibi = `Mais je suis dans ${who.room.full}${NB}!`;
+    else alibi = `Mais je n’aime pas ${art(S.cake)}${NB}! Je préfère ${art(who.fav)}.`;
+    fb('err', `${who.name} : « ${alibi} »`, 'Check your clues against that person.', true, box);
+    if (VOIX) speak(alibi);
+    return;
+  }
+  const hasParce = /parce qu/.test(n);
+  const proof = [new RegExp('\\b(cheveux|' + stripMarks(S.hair[0]) + ')\\b'), /\b(chambre|cuisine|salon|salle|miettes)\b/, new RegExp('\\b(' + S.cake + '|recette|parfum)\\b')].filter(re => re.test(n)).length;
+  const liar = /\b(ment|menti|mensonge|mentir|menteur|menteuse)\b/.test(n);
+  S.done = true; S.active = false;
+  SFX.play('perfect');
+  fb('ok', `Bravo, détective ! C’est ${who.name} !`, `${who.name} : « D’accord… c’est moi. J’adore ${art(S.cake)}${NB}! »`, true, box);
+  if (!hasParce) fb('warn', 'Ajoute une raison', 'Next time explain why with <b>parce que…</b>', true, box);
+  reviewChips(raw, box);
+  renderSteps();
+  finish(proof, liar);
+}
+function finish(proof, liar) {
+  renderSummary($('summary'), {
+    eyebrow: 'Scène 3 · mystère résolu',
+    title: `C’était ${S.culprit.name}${NB}!`,
+    stats: [[S.asked, 'Questions understood'], [S.unknown, 'Not understood'], [S.wrongAcc, 'Wrong accusations'], [S.hints, 'Hints used']],
+    badges: [
+      ['Détecteur de mensonges', 'Wrote that the culprit lied', liar],
+      ['Avec des preuves', 'Named two or more clues', proof >= 2],
+      ['Du premier coup', 'Right on the first accusation', S.wrongAcc === 0],
+      ['Sans indice', 'No hints used', S.hints === 0]
+    ],
+    blocks: `<div><h3>Ce que tu as écrit</h3><ol class="transcript">${S.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol></div>`,
+    outcomes: '10 C 1.3 · 10 A 3 · 10 R 2.2c · 10 R 2.4b · 10 R 2.11a · 10 R 2.12 · 10 R 2.17',
+    again: 'Nouveau mystère', onAgain: start
+  });
+}
+function hint() {
+  if (!S.active) return;
+  S.hints++; SFX.play('hint');
+  const st = stage();
+  if (st === 0) fb('info', 'Indice', 'Search the three glowing spots: the fridge, the plate and the parrot’s cage.');
+  else if (st === 1) fb('info', 'Indice', `Two people have the hair and the room from the clues. Ask them: <b>Quel est ton parfum préféré ?</b> Then ask someone else about them: <b>Quel est le parfum préféré de … ?</b>`);
+  else fb('info', 'Indice', `Compare what each person says about themselves (<span class="said">dit</span>) with what the family says (<span class="fam">famille</span>). Somebody lied.`);
+}
+function start() {
+  try { if (tts) speechSynthesis.cancel(); } catch (e) {}
+  newGame(); drawHouse(); renderClues(); renderNotebook(); renderSteps();
+  $('feed').innerHTML = ''; $('summary').hidden = true; clearFb(); $('accFbs').replaceChildren();
+  $('talkHead').innerHTML = '<div><b>Personne</b><span>Click a family member in the house.</span></div>';
+  $('intro').hidden = false;
+}
+$('startBtn').addEventListener('click', () => {
+  $('intro').hidden = true; S.active = true; SFX.play('whoosh', { force: true });
+  setTimeout(() => addMsg('mamie', `Mon gâteau d’anniversaire a disparu${NB}! Tu peux m’aider${NB}? Cherche des indices et pose des questions à la famille.`, { autoplay: $('autoplay') }), 300);
+});
+$('askForm').addEventListener('submit', e => { e.preventDefault(); ask($('ask').value); });
+$('accForm').addEventListener('submit', e => { e.preventDefault(); accuse($('acc').value); });
+$('hintBtn').addEventListener('click', hint);
+$('qchips').innerHTML = QFRAMES.map(q => `<button type="button">${q}</button>`).join('');
+$('qchips').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('ask').value = b.textContent; $('ask').focus(); }));
+setupAccentBar('accentBar', 'ask');
+setupAccentBar('accentBar2', 'acc');
+wireCommon(start);
+start();
+window.SceneTest = { S, ask, accuse, findClue, select, answer, norm };
+
+})();
+</script>
+
+</body></html>
