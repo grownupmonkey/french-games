@@ -33,3 +33,4 @@ Les élèves créent leur voyageur (prénom, genre, teint) dans `voyage.html`. L
 | 2 | Montréal : Le grand spectacle | `20-3y/02-montreal.html` | https://grownupmonkey.github.io/french-games/20-3y/02-montreal.html |
 | 3 | Acadie : La veillée | `20-3y/03-acadie.html` | https://grownupmonkey.github.io/french-games/20-3y/03-acadie.html |
 | 4 | Dakar : La teranga | `20-3y/04-dakar.html` | https://grownupmonkey.github.io/french-games/20-3y/04-dakar.html |
+| 5 | Bretagne : La semaine bretonne | `20-3y/05-bretagne.html` | https://grownupmonkey.github.io/french-games/20-3y/05-bretagne.html |

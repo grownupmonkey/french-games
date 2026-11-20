@@ -33,5 +33,8 @@ common = {'/*BASE_CSS*/': r('base.css'), '<!--DEFS-->': defs, '/*ART*/': r('art.
 (OUT / '04-dakar.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La teranga — Escale 4 : Dakar', '/*GAME_CSS*/': r('game.css'),
     '/*SCENES*/': r('dakar-scenes.js'), '/*DATA*/': r('dakar-data.js'), '/*ENGINE*/': r('engine.js')}))
+(OUT / '05-bretagne.html').write_text(page('game.html', **common, **{
+    '/*TITLE*/': 'La semaine bretonne — Escale 5 : Bretagne', '/*GAME_CSS*/': r('game.css'),
+    '/*SCENES*/': r('bretagne-scenes.js'), '/*DATA*/': r('bretagne-data.js'), '/*ENGINE*/': r('engine.js')}))
 for f in sorted(OUT.iterdir()):
     print(f.name, f.stat().st_size)

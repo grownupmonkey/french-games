@@ -112,6 +112,17 @@ function promptHTML(s){ return `<p class="prompt">${esc(fmt(s.prompt,P))}</p>${s
 function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.createElement('div'); $('#act').appendChild(fb);} fb.className='fb '+kind; fb.innerHTML=esc(fmt(fr,P))+(en?`<span class="en">${esc(fmt(en,P))}</span>`:''); }
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
+
+/* ---------- helpers for the newer step types ---------- */
+const DOCS=[];
+function docLink(){ return document.querySelector('#log .doc')?`<p class="doclink"><button type="button" class="linkbtn" onclick="document.querySelector('#log .doc:last-of-type')?.scrollIntoView({behavior:'smooth',block:'center'})">Relire le document</button></p>`:''; }
+function deaccent(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’]/g,"'"); }
+function normTxt(s){ return deaccent(s.toLowerCase()).replace(/\s+([.,!?])/g,'$1').replace(/\s+/g,' ').trim(); }
+function joinTiles(a){ return a.reduce((acc,t)=>acc+(acc===''||acc.endsWith("'")||/^[.,!?]/.test(t)?'':' ')+t,''); }
+function letterParts(s){ const d=new Date().toLocaleDateString('fr-CA',{day:'numeric',month:'long',year:'numeric'});
+ return {place:fmt(s.place||'Calgary',P)+', le '+d, greet:fmt(s.greet,P), paras:s.sections.map(x=>(PR.letter[x.id]||'').trim()), close:fmt(s.close||'Amitiés,',P), name:P.name}; }
+function letterHTML(s){ const L=letterParts(s); return `<p class="lplace">${esc(L.place)}</p><p>${esc(L.greet)}</p>${L.paras.map(p=>`<p>${esc(p)}</p>`).join('')}<p>${esc(L.close)}</p><p class="lsign">${esc(L.name)}</p>`; }
+function letterText(s){ const L=letterParts(s); return [L.place,'',L.greet,'',...L.paras.flatMap(p=>[p,'']),L.close,L.name].join('\n'); }
 function next(){ stepI++; step(); }
 function wrong(){ mistakes++; }
 
@@ -160,6 +171,128 @@ function step(){
   const c=document.createElement('div'); c.className='culture';
   c.innerHTML=`<span class="k">Le savais-tu?</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p>${s.en?`<p class="en">${esc(s.en)}</p>`:''}`;
   $('#log').appendChild(c); scrollLog(); contBtn('Continuer',next);
+ }
+ /* ----- documents to read (timetables, notes, recipes) ----- */
+ else if(s.t==='doc'){
+  const c=document.createElement('div'); c.className='doc';
+  let body='';
+  if(s.table) body+=`<div class="tablewrap"><table class="board doctable"><thead><tr>${s.table[0].map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${s.table.slice(1).map(r=>`<tr>${r.map((v,j)=>j?`<td>${esc(v)}</td>`:`<th scope="row">${esc(v)}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  if(s.lines) body+=`<ul>${s.lines.map(l=>`<li>${esc(fmt(l,P))}</li>`).join('')}</ul>`;
+  c.innerHTML=`<span class="k">${esc(s.kind||'Document')}</span><h3>${esc(s.title)}</h3>${body}${s.en?`<p class="en">${esc(s.en)}</p>`:''}`;
+  $('#log').appendChild(c); scrollLog(); DOCS.push(c.outerHTML); contBtn('J\'ai lu',next);
+ }
+ /* ----- planning grid: place each item in a slot that satisfies the constraints ----- */
+ else if(s.t==='plan'){
+  const pos={}; let sel=null;
+  act.innerHTML=promptHTML(s)+docLink()+`<div class="plan"><div class="chips" role="group" aria-label="${esc(s.itemsLabel||'À placer')}"></div><ol class="slots"></ol></div><div class="row2"><button class="btn primary check" type="button">Vérifier</button></div>`;
+  const chips=act.querySelector('.chips'), slots=act.querySelector('.slots');
+  const render=()=>{
+   chips.innerHTML=''; s.items.forEach(it=>{ if(it.id in pos) return; const b=document.createElement('button'); b.type='button'; b.className='chip'+(sel===it.id?' sel':''); b.textContent=fmt(it.txt,P); b.setAttribute('aria-pressed',sel===it.id);
+    b.addEventListener('click',()=>{ sel=sel===it.id?null:it.id; render(); }); chips.appendChild(b); });
+   if(!chips.children.length) chips.innerHTML='<span class="muted">Tout est placé. Vérifie ton plan!</span>';
+   slots.innerHTML=''; s.slots.forEach((lab,k)=>{ const id=Object.keys(pos).find(i=>pos[i]===k), it=s.items.find(x=>x.id===id);
+    const li=document.createElement('li'); li.innerHTML=`<span class="slab">${esc(fmt(lab,P))}</span>`; const b=document.createElement('button'); b.type='button';
+    b.className='slot'+(it?' full':'')+(sel&&!it?' ready':''); b.textContent=it?fmt(it.txt,P):(sel?'Placer ici':'—');
+    b.setAttribute('aria-label',`${lab} : ${it?fmt(it.txt,P):'vide'}`);
+    b.addEventListener('click',()=>{ if(sel){ if(it) delete pos[it.id]; pos[sel]=k; sel=null; } else if(it){ delete pos[it.id]; } act.querySelector('.fb')?.remove(); render(); });
+    li.appendChild(b); slots.appendChild(li); });
+  };
+  render();
+  act.querySelector('.check').addEventListener('click',()=>{
+   const missing=s.items.filter(it=>!(it.id in pos)), bad=s.items.filter(it=>(it.id in pos)&&!it.ok.includes(pos[it.id]));
+   slots.querySelectorAll('.slot').forEach(b=>b.classList.remove('bad'));
+   if(missing.length){ feedback('err','Place tout avant de vérifier.','Place everything before checking.'); return; }
+   if(bad.length){ wrong(); bad.forEach(it=>slots.querySelectorAll('.slot')[pos[it.id]].classList.add('bad')); const it=bad[0]; feedback('err',`${fmt(it.txt,P)} : ${it.why}`+(bad.length>1?` (Encore ${bad.length-1} autre${bad.length>2?'s':''} à revoir.)`:''),it.whyEn); return; }
+   act.querySelectorAll('button').forEach(b=>b.disabled=true);
+   meBubble(s.say||s.slots.map((lab,k)=>{const id=Object.keys(pos).find(i=>pos[i]===k);return id?`${lab} : ${s.items.find(x=>x.id===id).txt}`:null;}).filter(Boolean).join(' · '));
+   feedback('ok',s.done||'Ton plan fonctionne!'); setTimeout(next,1100);
+  });
+ }
+ /* ----- word tiles: build a sentence ----- */
+ else if(s.t==='tiles'){
+  const built=[];
+  act.innerHTML=promptHTML(s)+docLink()+`<p class="sentence built" aria-live="polite"><span class="muted">Touche les mots dans l'ordre.</span></p><div class="tilebank"></div><div class="row2"><button class="btn" type="button" data-a="clear">Effacer</button><button class="btn primary check" type="button">Vérifier</button></div>`;
+  const bank=act.querySelector('.tilebank'), out=act.querySelector('.built');
+  const tiles=shuffle(s.tiles.map((t,i)=>({t:fmt(t,P),i})));
+  const render=()=>{
+   bank.innerHTML=''; tiles.forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='tile'; b.textContent=o.t; b.disabled=built.includes(o);
+    b.addEventListener('click',()=>{ built.push(o); act.querySelector('.fb')?.remove(); render(); }); bank.appendChild(b); });
+   out.innerHTML=built.length?'':'<span class="muted">Touche les mots dans l\'ordre.</span>';
+   built.forEach((o,k)=>{ const b=document.createElement('button'); b.type='button'; b.className='tile on'; b.textContent=o.t; b.setAttribute('aria-label','Enlever '+o.t);
+    b.addEventListener('click',()=>{ built.splice(k,1); render(); }); out.appendChild(b); });
+  };
+  render();
+  act.querySelector('[data-a=clear]').addEventListener('click',()=>{ built.length=0; render(); });
+  act.querySelector('.check').addEventListener('click',()=>{
+   const txt=joinTiles(built.map(o=>o.t));
+   if((s.answers||[s.answer]).map(a=>normTxt(fmt(a,P))).includes(normTxt(txt))){
+    act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
+   wrong(); const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
+   feedback('err',h?s.hints[h]:(built.length<(s.min||3)?'Ta phrase n\'est pas complète.':(s.why||'Pas tout à fait. Vérifie la forme du verbe et l\'ordre des mots.')),h?null:s.whyEn);
+  });
+ }
+ /* ----- checklist: select everything that is needed, and nothing else ----- */
+ else if(s.t==='pack'){
+  const on=new Set();
+  act.innerHTML=promptHTML(s)+docLink()+`<div class="packgrid"></div><div class="row2"><button class="btn primary check" type="button">Vérifier</button></div>`;
+  const grid=act.querySelector('.packgrid');
+  s.items.forEach((it,k)=>{ const b=document.createElement('button'); b.type='button'; b.className='pack'; b.textContent=fmt(it.txt,P); b.setAttribute('aria-pressed','false');
+   b.addEventListener('click',()=>{ on.has(k)?on.delete(k):on.add(k); b.setAttribute('aria-pressed',on.has(k)); b.classList.toggle('on',on.has(k)); act.querySelector('.fb')?.remove(); }); grid.appendChild(b); });
+  act.querySelector('.check').addEventListener('click',()=>{
+   const extra=s.items.filter((it,k)=>!it.need&&on.has(k)), miss=s.items.filter((it,k)=>it.need&&!on.has(k));
+   if(!extra.length&&!miss.length){ act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(s.say||s.items.filter(it=>it.need).map(it=>it.txt).join(', ')); feedback('ok',s.done||'Parfait, tu as tout!'); setTimeout(next,1000); return; }
+   wrong();
+   if(extra.length) feedback('err',`${fmt(extra[0].txt,P)} : ${extra[0].why}`,extra[0].whyEn);
+   else feedback('err',s.missing||'Il manque encore quelque chose. Relis le document.',s.missingEn);
+  });
+ }
+ /* ----- numbers: calculate from a document ----- */
+ else if(s.t==='number'){
+  act.innerHTML=promptHTML(s)+docLink()+`<div class="numgrid">${s.rows.map((r,k)=>`<label class="numrow"><span>${esc(fmt(r.label,P))}</span><input type="text" inputmode="decimal" autocomplete="off" data-k="${k}" aria-label="${esc(r.label)}"><span class="unit">${esc(r.unit||'')}</span></label>`).join('')}</div><div class="row2"><button class="btn primary check" type="button">Vérifier</button></div>`;
+  act.querySelector('.check').addEventListener('click',()=>{
+   const ins=[...act.querySelectorAll('input')]; let firstBad=null;
+   ins.forEach(inp=>{ const r=s.rows[+inp.dataset.k], v=parseFloat(inp.value.replace(',','.').replace(/[^0-9.\-]/g,'')); const ok=!isNaN(v)&&Math.abs(v-r.ans)<=(r.tol||0);
+    inp.classList.toggle('bad',!ok); inp.classList.toggle('good',ok); if(!ok&&firstBad===null) firstBad=r; });
+   if(firstBad){ wrong(); feedback('err',`${fmt(firstBad.label,P)} : ${firstBad.why||'Recalcule.'}`,firstBad.whyEn); return; }
+   act.querySelectorAll('button,input').forEach(b=>b.disabled=true);
+   meBubble(s.say||s.rows.map(r=>`${r.label} : ${String(r.ans).replace('.',',')} ${r.unit||''}`).join(' · ')); feedback('ok',s.done||'Calcul parfait!'); setTimeout(next,1000);
+  });
+ }
+ /* ----- guided letter: every section is checked for specific language features ----- */
+ else if(s.t==='letter'){
+  PR.letter=PR.letter||{};
+  act.innerHTML=promptHTML(s)+`<div class="lettergrid">${s.sections.map((x,k)=>`<label class="lsec"><span class="lt">${k+1}. ${esc(x.label)}</span><span class="lp">${esc(fmt(x.prompt,P))}</span>${x.en?`<span class="en">${esc(x.en)}</span>`:''}<textarea rows="4" data-k="${k}" spellcheck="false" placeholder="${esc(x.placeholder||'')}"></textarea><span class="lerr" aria-live="polite"></span></label>`).join('')}</div><div class="row2"><button class="btn primary check" type="button">Vérifier ma lettre</button></div>`;
+  const areas=[...act.querySelectorAll('textarea')];
+  areas.forEach(a=>{ a.value=PR.letter[s.sections[+a.dataset.k].id]||''; a.addEventListener('input',()=>{ PR.letter[s.sections[+a.dataset.k].id]=a.value; save(); }); });
+  act.querySelector('.check').addEventListener('click',()=>{
+   let bad=0;
+   areas.forEach(a=>{ const x=s.sections[+a.dataset.k], txt=a.value.trim(), n=deaccent(txt.toLowerCase()), errs=[];
+    const words=(txt.match(/[A-Za-zÀ-ÿ'’-]+/g)||[]).length;
+    const gram=[], need=[];
+    (x.checks||[]).forEach(c=>{ const re=new RegExp(c.re,'g'); const m=n.match(re)||[]; if(c.not){ if(m.length) gram.push(c.msg); } else if(m.length<(c.count||1)) need.push(c.msg); });
+    errs.push(...gram,...need);
+    if(words<(x.min||10)) errs.push(`Écris au moins ${x.min||10} mots (tu en as ${words}).`);
+    a.closest('.lsec').classList.toggle('bad',!!errs.length); a.closest('.lsec').classList.toggle('good',!errs.length);
+    a.closest('.lsec').querySelector('.lerr').textContent=errs.slice(0,2).join(' '); if(errs.length) bad++; });
+   if(bad){ wrong(); feedback('err',`Encore ${bad} partie${bad>1?'s':''} à améliorer. Lis les conseils en rouge.`,'Read the red notes to improve your letter.'); return; }
+   act.querySelectorAll('button,textarea').forEach(b=>b.disabled=true);
+   const html=letterHTML(s); const c=document.createElement('div'); c.className='letter'; c.innerHTML=html; $('#log').appendChild(c); scrollLog();
+   act.innerHTML=''; feedback('ok',s.done||'Ta lettre est prête!');
+   const row=document.createElement('div'); row.className='row2';
+   row.innerHTML=`<button class="btn" type="button" data-a="print">Imprimer ma lettre</button><button class="btn" type="button" data-a="copy">Copier le texte</button><button class="btn primary cont" type="button">Continuer</button>`;
+   act.appendChild(row);
+   row.querySelector('[data-a=print]').addEventListener('click',()=>{ $('#printArea').innerHTML=`<div class="printLetter">${html}</div>`; const pg=document.createElement('style'); pg.textContent='@page{size:portrait;margin:18mm}'; document.head.appendChild(pg); window.print(); setTimeout(()=>pg.remove(),500); });
+   row.querySelector('[data-a=copy]').addEventListener('click',()=>{ const t=letterText(s); (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Lettre copiée!')).catch(()=>toast('Copie impossible : utilise Imprimer.')); });
+   row.querySelector('.cont').addEventListener('click',next);
+  });
+ }
+ /* ----- animated finale (unlocked by the step before) ----- */
+ else if(s.t==='finale'){
+  const svg=$('#stageSvg'); const f=FINALES[s.scene]; svg.innerHTML=f.svg(P); $('#stageOverlay').innerHTML=s.sign?`<div class="sign" style="left:${s.signPos[0]}%;top:${s.signPos[1]}%;width:${s.signPos[2]}%;height:${s.signPos[3]}%">${esc(s.sign)}</div>`:'';
+  if(f.start) f.start(svg);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(s.text) npcBubble(s.who||stop.who,s.text,s.en);
+  contBtn(s.btn||'Continuer',()=>{ if(f.stop) f.stop(); next(); });
  }
  else if(s.t==='clue'){
   if(!PR.clues.includes(s.text)) PR.clues.push(s.text); save(); updateCount();
@@ -251,5 +384,5 @@ ensureProfile(()=>{
  else if(PR.i>=ALL.length) endScreen();
  else renderMap();
 });
-window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id};}};
+window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id,step:stop&&stop.steps[stepI]};}};
 })();
