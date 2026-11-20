@@ -179,8 +179,44 @@ function endScreen(){
   <p>${esc(fmt("Grâce à toi, Bonhomme a retrouvé sa ceinture fléchée et le défilé a commencé à l'heure. Tu as gagné le tampon de Québec dans ton passeport.",P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
-  <div class="endbtns"><a class="btn accent" href="voyage.html">Voir mon passeport</a><button class="btn" type="button" id="replay">Rejouer l'escale</button></div></div></div>`;
+  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button><button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
  $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
+ $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
+ $('#printStamp').addEventListener('click',()=>printStamp(me,avg));
+}
+
+/* ---------- printable passport stamp ---------- */
+function stampCard(me,avg){
+ const date=String(P.done[GAME.id]||'');
+ const stars='★'.repeat(avg)+'☆'.repeat(3-avg);
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect x="6" y="6" width="788" height="508" rx="22" fill="#FFF9EE" stroke="${me.color}" stroke-width="4"/>
+  <rect x="20" y="20" width="760" height="480" rx="14" fill="none" stroke="${me.color}" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <svg x="50" y="90" width="300" height="300" viewBox="-60 -60 120 120">${stampSVG(me,'done',date.toUpperCase()).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</svg>
+  <text x="390" y="100" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2" fill="#6B6F7A">PASSEPORT · LE GRAND VOYAGE</text>
+  <text x="390" y="180" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="50" fill="#2B2D42">${esc(P.name)}</text>
+  <text x="390" y="228" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="22" fill="#2B2D42">${esc(me.place)} — ${esc(me.sub)}</text>
+  <text x="390" y="262" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="19" fill="#6B6F7A">${esc(GAME.title)}</text>
+  <text x="390" y="302" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="19" fill="#2B2D42">Visité le ${esc(date)}</text>
+  <text x="390" y="352" font-family="Arial,sans-serif" font-size="36" fill="#E9A93A" letter-spacing="4">${stars}</text>
+  <text x="390" y="416" font-family="Inter,Arial,sans-serif" font-size="16" fill="#6B6F7A">Escale réussie.</text>
+  <text x="390" y="440" font-family="Inter,Arial,sans-serif" font-size="16" fill="#6B6F7A">Présente ce tampon à ton enseignant·e.</text>
+ </svg>`;
+}
+function stampFileName(){ return 'passeport-'+P.name.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+GAME.id+'.png'; }
+function downloadStamp(me,avg){
+ const svg=stampCard(me,avg), url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+ const img=new Image();
+ const save=(href,name)=>{ const a=document.createElement('a'); a.href=href; a.download=name; document.body.appendChild(a); a.click(); a.remove(); };
+ img.onload=()=>{ const c=document.createElement('canvas'); c.width=1600; c.height=1040; const x=c.getContext('2d'); x.fillStyle='#FFFFFF'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+   c.toBlob(b=>{ save(URL.createObjectURL(b), stampFileName()); URL.revokeObjectURL(url); },'image/png'); };
+ img.onerror=()=>{ save(url, stampFileName().replace(/\.png$/,'.svg')); };
+ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function printStamp(me,avg){
+ $('#printArea').innerHTML=stampCard(me,avg);
+ window.print();
 }
 
 /* ---------- carnet ---------- */
