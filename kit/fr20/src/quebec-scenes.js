@@ -2,10 +2,10 @@
 const NPC={
  karine:{name:'Karine', role:'Organisatrice du Carnaval', look:{skin:5,hair:'#1E1612',style:'long',coat:'navy',noHat:true,headset:true,scarf:'#C9952F'}},
  josee:{name:'Josée', role:'Kiosque de queues de castor', look:{skin:3,hair:'#1E1612',style:'mid',coat:'rust',hat:'slate',band:'#C9CFDA',pompom:false}},
- patrice:{name:'Patrice', role:'Employé de la glissade', look:{skin:1,hair:'#6B4428',style:'short',coat:'navy',hat:'red',band:'#EFE6D4'}},
+ patrice:{name:'Patrice', role:'Employé de la glissade', pitch:.85, look:{skin:1,hair:'#6B4428',style:'short',coat:'navy',hat:'red',band:'#EFE6D4'}},
  gagnon:{name:'Mme Gagnon', role:'Billetterie de la traverse', look:{skin:0,hair:'#B9B4AC',style:'mid',grey:true,coat:'grey',noHat:true,glasses:true,collar:'#F2EFE8'}},
  pauline:{name:'Pauline', role:'Grand-mère de Léo', look:{skin:2,hair:'#CFCBC4',style:'mid',grey:true,coat:'plum',hat:'cream',band:'#B8443A',glasses:true,apron:'#EFE6D6'}},
- leo:{name:'Léo', role:'9 ans, de Lévis', look:{skin:4,hair:'#1E1612',style:'short',coat:'olive',hat:'green',band:'#EFE6D4',pants:'url(#pantsDenim)'}}
+ leo:{name:'Léo', role:'9 ans, de Lévis', pitch:1.4, look:{skin:4,hair:'#1E1612',style:'short',coat:'olive',hat:'green',band:'#EFE6D4',pants:'url(#pantsDenim)'}}
 };
 function npcFig(id,o){ return person(Object.assign({},NPC[id].look,o)); }
 function faceSVG(look){ return `<svg viewBox="-19 -232 38 46" aria-hidden="true"><rect x="-19" y="-232" width="38" height="46" fill="#C9D6E3"/>${person(Object.assign({},look,{x:0,y:0,noShadow:true}))}</svg>`; }

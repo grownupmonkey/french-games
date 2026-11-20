@@ -3,7 +3,8 @@
 const $=s=>document.querySelector(s);
 const SPEAK_ICON=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
 let P=null, PR=null, stop=null, stepI=0, mistakes=0;
-const ALL=[Object.assign({id:'intro',name:'Arrivée à Québec',sub:'La mission',scene:'map'},INTRO)].concat(STOPS);
+const ALL=[Object.assign({id:'intro',name:GAME.introName||'Arrivée',sub:'La mission',scene:'map'},INTRO)].concat(STOPS);
+const MAP_LABELS=GAME.mapLabels||'';
 
 function save(){ P.prog=P.prog||{}; P.prog[GAME.id]=PR; Store.set(P); }
 function starsFor(m){ return m<=1?3:m<=3?2:1; }
@@ -42,7 +43,7 @@ function speak(text,who){
  pickVoice();
  if(!VOICE){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Aucune voix française sur cet appareil : la lecture est désactivée.'); } return; }
  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(text));
- u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; u.pitch=who==='leo'?1.4:who==='patrice'?.85:1;
+ u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; u.pitch=(NPC[who]&&NPC[who].pitch)||1;
  speechSynthesis.speak(u);
 }
 
@@ -59,18 +60,19 @@ function renderMap(){
  $('#mapSvg').innerHTML=sceneMap();
  const nextI=PR.i;
  const ov=$('#mapOverlay');
- ov.innerHTML=`<span class="maplabel" style="left:4%;top:8%">Québec</span><span class="maplabel" style="left:72%;top:80%">Lévis</span><span class="maplabel river" style="left:16%;top:70%">fleuve Saint-Laurent</span>`
+ ov.innerHTML=MAP_LABELS
   +STOPS.map((s,k)=>{ const i=k+1, [x,y]=MAP_PINS[s.id], st=i<nextI?'done':i===nextI?'next':'locked';
    return `<button class="pin ${st}" style="left:${x/9.6}%;top:${y/5.4}%" data-i="${i}" ${st==='next'?'':'disabled'} aria-label="${s.name}${st==='done'?' (fait)':''}"><span class="dot"><i>${st==='done'?'✓':i}</i></span><span class="lbl">${s.name}</span></button>`; }).join('');
  ov.querySelectorAll('.pin.next').forEach(b=>b.addEventListener('click',()=>travel(+b.dataset.i)));
- $('#mapLede').innerHTML=fmt("Retrouve la ceinture fléchée de Bonhomme avant le défilé de 19 h. Suis la piste d'escale en escale.",P);
+ $('#mapLede').innerHTML=esc(fmt(GAME.lede,P));
+ $('#mapSvg').setAttribute('aria-label',GAME.mapAria||'Carte');
  $('#missionList').innerHTML=STOPS.map((s,k)=>{const i=k+1, st=i<nextI?'done':i===nextI?'next':'';
   return `<li class="${st}"><span class="n">${st==='done'?'✓':i}</span><span>${s.name}<small>${s.sub}</small></span><span class="st">${PR.stars[s.id]?'★'.repeat(PR.stars[s.id]):''}</span></li>`;}).join('');
  const nx=STOPS[nextI-1];
  $('#mapAction').innerHTML= nx?`<button class="btn accent" id="goNext" type="button">Aller : ${nx.name}</button>`:'';
  if(nx) $('#goNext').addEventListener('click',()=>travel(nextI));
 }
-function travel(i){ toast(i===4?'En route vers Lévis en traversier…':`En route : ${ALL[i].name}`); runStop(i); }
+function travel(i){ toast(ALL[i].toast||`En route : ${ALL[i].name}`); runStop(i); }
 
 /* ---------- stop ---------- */
 function runStop(i){
@@ -80,8 +82,9 @@ function runStop(i){
  svg.innerHTML = stop.scene==='map' ? sceneMap() : SCENES[stop.id](P);
  svg.setAttribute('aria-label', stop.name);
  const ov=$('#stageOverlay');
- ov.innerHTML = stop.scene==='map' ? `<span class="maplabel" style="left:4%;top:8%">Québec</span><span class="maplabel" style="left:72%;top:80%">Lévis</span><span class="maplabel river" style="left:16%;top:70%">fleuve Saint-Laurent</span>` : '';
+ ov.innerHTML = stop.scene==='map' ? MAP_LABELS : '';
  if(stop.sign){ const [l,t,w,h]=stop.signPos; ov.innerHTML+=`<div class="sign" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${esc(stop.sign)}</div>`; }
+ (stop.signs||[]).forEach(([txt,l,t,w,h,cls])=>{ ov.innerHTML+=`<div class="sign ${cls||''}" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${esc(txt)}</div>`; });
  $('#stopName').textContent=stop.name; $('#stopSub').textContent=stop.sub; $('#stopStars').textContent='';
  setNpc(stop.who);
  $('#log').innerHTML=''; $('#act').innerHTML='';
@@ -106,7 +109,7 @@ function contBtn(label,fn){
  $('#act').innerHTML=''; $('#act').appendChild(b); b.focus({preventScroll:true});
 }
 function promptHTML(s){ return `<p class="prompt">${esc(fmt(s.prompt,P))}</p>${s.en?`<p class="en">${esc(fmt(s.en,P))}</p>`:''}`; }
-function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.createElement('div'); $('#act').appendChild(fb);} fb.className='fb '+kind; fb.innerHTML=esc(fr)+(en?`<span class="en">${esc(en)}</span>`:''); }
+function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.createElement('div'); $('#act').appendChild(fb);} fb.className='fb '+kind; fb.innerHTML=esc(fmt(fr,P))+(en?`<span class="en">${esc(fmt(en,P))}</span>`:''); }
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
 function next(){ stepI++; step(); }
@@ -122,7 +125,7 @@ function step(){
  }
  else if(s.t==='choice'||s.t==='board'){
   let html=promptHTML(s);
-  if(s.t==='board') html+=`<p style="margin:0 0 8px">Heure : <span class="clock">14 h 10</span></p><table class="board"><thead><tr><th>Départ</th><th>Trajet</th><th>État</th></tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[2]==='Parti'?'gone':'ontime'}">${r[2]}</td></tr>`).join('')}</tbody></table>`;
+  if(s.t==='board') html+=`${s.clock?`<p style="margin:0 0 8px">Heure : <span class="clock">${s.clock}</span></p>`:''}<table class="board"><thead><tr>${(s.cols||['Départ','Trajet','État']).map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]||(r[2]==='Parti'?'gone':'ontime')}">${r[2]}</td></tr>`).join('')}</tbody></table>`;
   act.innerHTML=html+`<div class="opts"></div>`;
   const box=act.querySelector('.opts');
   shuffle(s.opts).forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=fmt(o.txt,P);
@@ -149,7 +152,7 @@ function step(){
   shuffle(items).forEach(it=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=it;
    b.addEventListener('click',()=>{
     if(it===items[k]){ k++; const li=document.createElement('li'); li.textContent=it; built.appendChild(li); b.remove(); act.querySelector('.fb')?.remove();
-     if(k===items.length){ meBubble(items.join(' ')); feedback('ok','Bravo! Tu as bien raconté ta journée.'); setTimeout(next,900); } }
+     if(k===items.length){ meBubble(items.join(' ')); feedback('ok',s.done||'Bravo! Tu as bien raconté ta journée.'); setTimeout(next,900); } }
     else{ wrong(); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); feedback('err','Pas encore. Qu\'est-ce que tu as fait avant ça?','What did you do before that?'); }
    }); box.appendChild(b); });
  }
@@ -181,7 +184,7 @@ function endScreen(){
  const me=JOURNEY.find(j=>j.id===GAME.id), nx=nextStop(P);
  $('#scrEnd').innerHTML=`<div class="card endcard"><div class="stampwrap go">${stampSVG(me,'done',String(P.done[GAME.id]).toUpperCase())}</div>
   <div><p class="eyebrow">Escale réussie</p><h1>${esc(fmt('Bravo, [nom]!',P))}</h1>
-  <p>${esc(fmt("Grâce à toi, Bonhomme a retrouvé sa ceinture fléchée et le défilé a commencé à l'heure. Tu as gagné le tampon de Québec dans ton passeport.",P))}</p>
+  <p>${esc(fmt(GAME.endText,P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
   <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button><button class="btn" type="button" id="replay">Rejouer l'escale</button></div>

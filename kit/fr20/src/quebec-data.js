@@ -4,7 +4,11 @@
    2.10b faire de / jouer à / jouer de, 2.8c je te suggère de, 2.3a de possessif, 3.2 tu/vous, 3.3 accents régionaux,
    2.7b-c passé composé (avoir/être), 2.11b négation au passé composé.
    Text markup: [[mot québécois|français standard|English]], {masc|fém} agreement, [nom] player name. */
-const GAME={id:'quebec', title:'La ceinture fléchée', place:'Québec', eyebrow:'Escale 1 · Québec, Carnaval'};
+const GAME={id:'quebec', title:'La ceinture fléchée', place:'Québec', eyebrow:'Escale 1 · Québec, Carnaval',
+ introName:'Arrivée à Québec', mapAria:'Carte de Québec et de Lévis',
+ mapLabels:`<span class="maplabel" style="left:4%;top:8%">Québec</span><span class="maplabel" style="left:72%;top:80%">Lévis</span><span class="maplabel river" style="left:16%;top:70%">fleuve Saint-Laurent</span>`,
+ lede:"Retrouve la ceinture fléchée de Bonhomme avant le défilé de 19 h. Suis la piste d'escale en escale.",
+ endText:"Grâce à toi, Bonhomme a retrouvé sa ceinture fléchée et le défilé a commencé à l'heure. Tu as gagné le tampon de Québec dans ton passeport."};
 
 const INTRO={who:'karine', steps:[
  {t:'npc', text:"Bonjour [nom]! Bienvenue à Québec! Tu viens d'arriver de Calgary, c'est ça?", en:"Hello [nom]! Welcome to Québec City! You've just arrived from Calgary, right?"},
@@ -89,7 +93,7 @@ const STOPS=[
   {txt:"Un aller-retour, s'il vous plaît. Je reviens ce soir.", ok:true},
   {txt:"Un aller simple, s'il vous plaît.", why:"Un aller simple, c'est seulement pour aller. Tu dois revenir pour le défilé!", whyEn:"One way only goes there. You need to come back!"}]},
  {t:'npc', text:"Oh non! Le traversier de 14 h vient de partir. Regardez l'horaire.", en:"Oh no! The 2 p.m. ferry just left. Look at the schedule."},
- {t:'board', prompt:"Il est 14 h 10. Le prochain traversier part à quelle heure?", en:"It's 2:10 p.m. What time does the next ferry leave?",
+ {t:'board', clock:'14 h 10', prompt:"Il est 14 h 10. Le prochain traversier part à quelle heure?", en:"It's 2:10 p.m. What time does the next ferry leave?",
   rows:[['13 h 30','Québec → Lévis','Parti'],['14 h 00','Québec → Lévis','Parti'],['14 h 30','Québec → Lévis','À l\'heure'],['15 h 00','Québec → Lévis','À l\'heure']],
   opts:[{txt:"Il part à 14 h 30.", ok:true},{txt:"Il part à 14 h.", why:"Le traversier de 14 h vient de partir.", whyEn:"The 2 p.m. ferry just left."},{txt:"Il part à 15 h.", why:"Il y en a un avant 15 h. Regarde bien l'horaire.", whyEn:"There's one before 3 p.m."}]},
  {t:'fill', prompt:"Complète.", en:"Complete.", before:"Le traversier", after:"partir. Je vais attendre le prochain.", opts:['vient de','va','est en train de'], ans:'vient de',
@@ -102,7 +106,7 @@ const STOPS=[
  {t:'clue', text:"Tu prends le traversier de 14 h 30 pour Lévis."},
  {t:'card', title:"La traverse Québec–Lévis", text:"Le traversier relie Québec et Lévis toute l'année, même quand il y a de la glace sur le fleuve Saint-Laurent. Pendant le Carnaval, des équipes font la course en canot à glace : elles traversent le fleuve en ramant et en poussant leur canot sur la glace!", en:"The ferry links Québec and Lévis all year, even when there's ice on the St. Lawrence. During Carnival, teams race ice canoes across the river, paddling and pushing their canoes over the ice!"}
  ]},
-{id:'levis', name:'Lévis', sub:'La tire sur la neige', who:'pauline', who2:'leo', sign:'Cabane à sucre', signPos:[7.3,50.4,21.9,4.1],
+{id:'levis', name:'Lévis', sub:'La tire sur la neige', toast:'En route vers Lévis en traversier…', who:'pauline', who2:'leo', sign:'Cabane à sucre', signPos:[7.3,50.4,21.9,4.1],
  steps:[
  {t:'npc', text:"Allô, mon [[chou|chéri (affectueux)|sweetie]]! Veux-tu de la tire sur la neige? Elle est bonne en [[titi|très|really]]!", en:"Hello, sweetie! Would you like some maple taffy on snow? It's really good!"},
  {t:'fill', prompt:"Pauline est une dame âgée que tu ne connais pas. Réponds poliment.", en:"Pauline is an older lady you don't know. Answer politely.", before:"Oui, j'aimerais", after:"tire, s'il vous plaît.", opts:['de la','du','des'], ans:'de la',
