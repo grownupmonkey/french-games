@@ -101,7 +101,7 @@ function npcBubble(who,text,en){
 }
 function meBubble(text){
  const row=document.createElement('div'); row.className='row me';
- row.innerHTML=`<div class="mini">${faceSVG(playerLook(P))}</div><div class="bubble">${esc(fmt(text,P))}</div>`;
+ row.innerHTML=`<div class="mini">${faceSVG(playerLook(P,GAME.playerExtra))}</div><div class="bubble">${esc(fmt(text,P))}</div>`;
  $('#log').appendChild(row); scrollLog();
 }
 function contBtn(label,fn){

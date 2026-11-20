@@ -31,3 +31,4 @@ Les élèves créent leur voyageur (prénom, genre, teint) dans `voyage.html`. L
 | — | Le passeport | `20-3y/voyage.html` | https://grownupmonkey.github.io/french-games/20-3y/voyage.html |
 | 1 | Québec : La ceinture fléchée | `20-3y/01-quebec.html` | https://grownupmonkey.github.io/french-games/20-3y/01-quebec.html |
 | 2 | Montréal : Le grand spectacle | `20-3y/02-montreal.html` | https://grownupmonkey.github.io/french-games/20-3y/02-montreal.html |
+| 3 | Acadie : La veillée | `20-3y/03-acadie.html` | https://grownupmonkey.github.io/french-games/20-3y/03-acadie.html |
