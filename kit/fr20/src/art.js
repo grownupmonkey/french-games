@@ -14,7 +14,7 @@ const HAIR = [
 const COATS = {
  teal:['#3F7D86','#2C5E67','#1B3E45'], rust:['#8C4A3A','#6E3428','#4A2119'], navy:['#4A5C8A','#33436A','#202B47'],
  plum:['#7A4E6E','#5C3753','#3C2236'], olive:['#77804F','#5A633A','#3C4226'], grey:['#7D8590','#5D646E','#3D434B'],
- cream:['#EFE6D6','#D8CCB8','#B3A58E'], yellow:['#F2C94C','#D9A82B','#9C7414'], blue:['#4E7FB8','#355E91','#223F66']
+ cream:['#EFE6D6','#D8CCB8','#B3A58E'], yellow:['#F2C94C','#D9A82B','#9C7414'], blue:['#4E7FB8','#355E91','#223F66'], saffron:['#F2B84B','#D9922A','#9C6414'], emerald:['#3FA36B','#2A7A4E','#1B5233'], magenta:['#C2477A','#9A2F5C','#6A1E3E']
 };
 const HATS = { mustard:['#D9A84A','#A97A26'], slate:['#5B6680','#363E52'], red:['#B8443A','#7E2620'], cream:['#EFE6D4','#C9BEA8'], green:['#5E8C6A','#3B5E45'] };
 

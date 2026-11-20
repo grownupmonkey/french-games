@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>La teranga — Escale 4 : Dakar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@500;600;700&display=swap">
+<style>
+:root{
+ color-scheme:light;
+ --page:#E8EDF1;--paper:#FFFFFF;--ink:#1F2433;--muted:#5A6172;--line:#DDE3EA;--soft:#F2F5F8;
+ --accent:#9B2F2F;--accent-deep:#6E1F1F;--teal:#2C5E67;--teal-deep:#1B3E45;--gold:#C9952F;--gold-soft:#F6E7C4;
+ --ok-bg:#E1F2EA;--ok-fg:#1D6247;--err-bg:#FBE6E3;--err-fg:#8E2A22;--info-bg:#E6EEF5;--info-fg:#244B6B;
+ --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+ --font-body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+ --radius:14px;--shadow:0 1px 2px rgba(20,24,40,.08),0 8px 24px rgba(20,24,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left)) 48px}
+.eyebrow{margin:0 0 4px;font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(28px,4.4vw,44px);line-height:1.05}
+h2{margin:0 0 10px;font-family:var(--font-display);font-weight:600;font-size:22px;line-height:1.2}
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow)}
+.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-weight:600;font-size:15px;transition:background .15s,transform .05s}
+.btn:hover{background:var(--soft)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.accent,.btn.primary{color:#fff}
+.btn.primary:hover{background:var(--teal-deep)}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.accent:hover{background:var(--accent-deep)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:14px;font-weight:600}
+.pill input{accent-color:var(--teal);width:16px;height:16px;margin:0}
+.svgdefs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* character creator */
+.creator{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px;padding:22px;align-items:start}
+@media (max-width:720px){.creator{grid-template-columns:1fr}}
+.creator .preview{background:linear-gradient(#AFC0D3,#E8D5C2 70%,#F4F6F8 70%);border-radius:12px;overflow:hidden}
+.creator .preview svg{display:block;width:100%;height:auto}
+.field{margin:0 0 16px;border:0;padding:0}
+.field legend,.field label.lab{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.field input[type=text]{width:100%;max-width:340px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;font-size:17px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choices label{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;background:var(--paper)}
+.choices input{position:absolute;opacity:0;pointer-events:none}
+.choices label:has(input:checked){border-color:var(--teal);background:#E5F0F1;color:var(--teal-deep);box-shadow:inset 0 0 0 1px var(--teal)}
+.choices label:has(input:focus-visible){outline:3px solid var(--teal);outline-offset:2px}
+.swatch{width:40px;height:40px;padding:0!important;justify-content:center}
+.swatch span{width:28px;height:28px;border-radius:50%;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.note{font-size:13px;color:var(--muted);margin:6px 0 0}
+
+header.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px;margin-bottom:18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px}
+a.pill{text-decoration:none;color:inherit}
+.pill .count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--gold-soft);color:#6B4A0E;font-size:12px}
+.game{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+.mapgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.game,.mapgrid{grid-template-columns:1fr}}
+.stage{overflow:hidden}
+.stagebox{position:relative;container-type:inline-size}
+.stagebox svg{display:block;width:100%;height:auto}
+.overlay{position:absolute;inset:0;pointer-events:none}
+.overlay>*{pointer-events:auto}
+.sign{position:absolute;display:grid;place-items:center;font-family:var(--font-display);font-weight:600;color:#E9C77B;font-size:1.85cqw;letter-spacing:.03em;white-space:nowrap;pointer-events:none}
+.stagecap{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;padding:10px 16px 14px;color:var(--muted);font-size:14px;font-weight:600}
+.stagecap b{font-family:var(--font-display);font-size:19px;color:var(--ink)}
+.stars{margin-left:auto;color:var(--gold);letter-spacing:2px;font-size:16px}
+@media (prefers-reduced-motion:no-preference){.flake{animation:fall linear infinite}}
+@keyframes fall{from{transform:translateY(-40px)}to{transform:translateY(580px)}}
+
+/* map */
+.pin{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;padding:0;font-weight:700;font-size:max(10px,1.45cqw);color:var(--ink)}
+.pin .dot{width:clamp(22px,3vw,34px);height:clamp(22px,3vw,34px);border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;background:#9AA3AE;box-shadow:0 3px 6px rgba(20,24,40,.3);border:2px solid #fff}
+.pin .dot i{transform:rotate(45deg);font-style:normal;color:#fff;font-size:clamp(10px,1.3vw,14px)}
+.pin .lbl{background:rgba(255,255,255,.92);border-radius:6px;padding:1px 7px;box-shadow:0 1px 3px rgba(20,24,40,.2);white-space:nowrap}
+.pin.done .dot{background:var(--teal)}
+.pin.next .dot{background:var(--accent)}
+.pin.next{cursor:pointer}
+@media (prefers-reduced-motion:no-preference){.pin.next .dot{animation:bob 1.4s ease-in-out infinite}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -5px}}
+.pin:disabled{cursor:default}
+.maplabel{position:absolute;font-family:var(--font-display);font-weight:600;color:#3A4A5E;font-size:2.2cqw;pointer-events:none;letter-spacing:.03em}
+.maplabel.river{color:#E9F2F8;font-style:italic;transform:rotate(-14deg)}
+.missions{padding:18px 20px}
+.mlede{margin:0 0 12px;color:var(--muted)}
+.missions ol{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:6px}
+.missions li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;color:var(--muted);font-weight:600}
+.missions li .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:14px}
+.missions li small{display:block;font-weight:500;font-size:13px}
+.missions li.next{background:#FBEDEA;color:var(--ink)}
+.missions li.next .n{background:var(--accent);color:#fff}
+.missions li.done{color:var(--ink)}
+.missions li.done .n{background:var(--teal);color:#fff}
+.missions li .st{color:var(--gold);letter-spacing:1px}
+
+/* chat */
+.chat{display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.chathead{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.chathead .face{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:none;background:#C9D6E3}
+.chathead .face svg{display:block;width:100%;height:100%}
+.chathead b{display:block;font-family:var(--font-display);font-size:19px;line-height:1.1}
+.chathead span{font-size:13px;color:var(--muted);font-weight:600}
+.log{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:240px;max-height:440px;overflow-y:auto;scroll-behavior:smooth}
+@media (max-width:900px){.log{max-height:48vh;min-height:180px}}
+@media (prefers-reduced-motion:reduce){.log{scroll-behavior:auto}}
+.row{display:flex;gap:8px;align-items:flex-end;max-width:92%}
+.row.npc{align-self:flex-start}
+.row.me{align-self:flex-end;flex-direction:row-reverse}
+.mini{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:none;background:#C9D6E3}
+.mini svg{display:block;width:100%;height:100%}
+.bubble{padding:10px 14px;border-radius:14px;font-size:17px;line-height:1.4;min-width:0;overflow-wrap:anywhere}
+.row.npc .bubble{background:var(--soft);border-bottom-left-radius:4px}
+.row.me .bubble{background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.bubble .who{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.bubble .en{display:none;margin-top:6px;font-size:14px;color:var(--muted);font-style:italic}
+body.showEn .bubble .en,body.showEn .act .en{display:block}
+.say{border:0;background:none;padding:2px;margin-left:4px;vertical-align:-4px;color:var(--muted);border-radius:6px}
+.say svg{width:18px;height:18px;display:block}
+.qc{border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:3px;cursor:help}
+.qc:hover{background:var(--gold-soft)}
+.culture{align-self:stretch;border:1px solid #E9D9B6;background:linear-gradient(#FFFBF1,#FBF3E1);border-radius:12px;padding:14px 16px}
+.culture .k{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A6416}
+.culture h3{margin:2px 0 6px;font-family:var(--font-display);font-size:19px}
+.culture p{margin:0;font-size:16px}
+.culture .en{display:none;margin-top:8px;font-size:14px;color:var(--muted);font-style:italic}
+body.showEn .culture .en{display:block}
+.act{border-top:1px solid var(--line);padding:14px 16px 16px;background:#FAFBFC}
+.act .prompt{margin:0 0 10px;font-weight:700}
+.act .en{display:none;margin:-6px 0 10px;font-size:14px;color:var(--muted);font-style:italic}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:16px;font-weight:500;min-height:44px}
+.opt:hover:not(:disabled){border-color:var(--teal);background:#F1F7F8}
+.opt.wrong{border-color:#E3B2AB;background:var(--err-bg);color:var(--err-fg);text-decoration:line-through;text-decoration-thickness:1px}
+.opt.right{border-color:#9CCDB6;background:var(--ok-bg);color:var(--ok-fg)}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.optrow .opt{min-width:84px;text-align:center;font-weight:700}
+.sentence{font-size:18px;margin:0 0 12px;line-height:1.6}
+.blank{display:inline-block;min-width:70px;border-bottom:2px solid var(--teal);text-align:center;color:var(--teal);font-weight:700;padding:0 4px}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:15px}
+.fb.err{background:var(--err-bg);color:var(--err-fg)}
+.fb.ok{background:var(--ok-bg);color:var(--ok-fg);font-weight:600}
+.fb .en{display:none;margin-top:4px;font-style:italic}
+body.showEn .fb .en{display:block}
+.cont{margin-top:4px}
+table.board{width:100%;border-collapse:collapse;margin:0 0 12px;background:#1E2433;color:#F6E7C4;border-radius:8px;overflow:hidden;font-variant-numeric:tabular-nums}
+table.board caption{caption-side:top;text-align:left;font-weight:700;margin-bottom:6px;color:var(--ink)}
+table.board th,table.board td{padding:7px 10px;text-align:left;font-size:15px;border-bottom:1px solid #333B4F}
+table.board th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#AEB7C7}
+table.board td.gone{color:#E38A7E}
+table.board td.ontime{color:#8FD3A8}
+.clock{display:inline-block;background:#1E2433;color:#F6E7C4;padding:2px 10px;border-radius:6px;font-weight:700;font-variant-numeric:tabular-nums}
+.orderBuilt{list-style:decimal;margin:0 0 10px;padding-left:22px;min-height:24px}
+.orderBuilt li{padding:3px 0;color:var(--ok-fg);font-weight:600}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+
+/* drawer, popover, toast */
+.drawer{position:fixed;inset:0;background:rgba(20,24,40,.45);display:flex;justify-content:flex-end;z-index:20}
+.drawer-in{width:min(440px,100%);height:100%;border-radius:0;overflow-y:auto;padding:20px}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.drawer h3{margin:18px 0 8px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.clues{margin:0;padding-left:20px}.clues li{margin-bottom:6px}
+.qclist{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 14px}
+.qclist dt{font-weight:700}.qclist dd{margin:0;color:var(--muted)}
+.pop{position:fixed;z-index:30;max-width:260px;background:#1F2433;color:#fff;padding:8px 12px;border-radius:10px;font-size:14px;box-shadow:var(--shadow)}
+.pop b{color:#F2C46D}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:25;background:#1F2433;color:#fff;padding:10px 18px;border-radius:999px;font-weight:600;box-shadow:var(--shadow)}
+
+/* end */
+.endcard{padding:28px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;align-items:center}
+@media (max-width:640px){.endcard{grid-template-columns:1fr;text-align:center}.endcard .stampwrap{margin:0 auto}}
+.stampwrap{width:200px;height:200px}
+.stampwrap svg{width:100%;height:100%}
+@media (prefers-reduced-motion:no-preference){.stampwrap.go{animation:stampIn .5s cubic-bezier(.3,1.6,.6,1)}}
+@keyframes stampIn{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+.endcard p{color:var(--muted);font-size:17px}
+.endcard .bigstars{font-size:32px;color:var(--gold);letter-spacing:4px}
+.endbtns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+
+/* printable passport stamp */
+#printArea{display:none}
+.endbtns .btn{white-space:nowrap}
+@media print{
+ @page{size:landscape;margin:12mm}
+ body>*:not(#printArea){display:none!important}
+ #printArea{display:block!important}
+ #printArea svg{width:100%;height:auto;display:block}
+}
+
+.hint{font-size:14px;color:var(--muted);margin-top:14px}
+
+</style></head><body>
+<svg class="svgdefs" aria-hidden="true" focusable="false"><defs><linearGradient id="skin0" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F6D9C4"/><stop offset="0.50" stop-color="#E9BC9E"/><stop offset="1.00" stop-color="#CB967C"/></linearGradient><linearGradient id="skin1" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F0C9A8"/><stop offset="0.50" stop-color="#DDA884"/><stop offset="1.00" stop-color="#C08966"/></linearGradient><linearGradient id="skin2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#DCA77F"/><stop offset="0.50" stop-color="#C38862"/><stop offset="1.00" stop-color="#A06A49"/></linearGradient><linearGradient id="skin3" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#BC8762"/><stop offset="0.50" stop-color="#9C6946"/><stop offset="1.00" stop-color="#7C4F32"/></linearGradient><linearGradient id="skin4" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#92603F"/><stop offset="0.50" stop-color="#77492D"/><stop offset="1.00" stop-color="#58341F"/></linearGradient><linearGradient id="skin5" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#6C4532"/><stop offset="0.50" stop-color="#543424"/><stop offset="1.00" stop-color="#3B2318"/></linearGradient><linearGradient id="coat-teal" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3F7D86"/><stop offset="0.50" stop-color="#2C5E67"/><stop offset="1.00" stop-color="#1B3E45"/></linearGradient><linearGradient id="coat-rust" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8C4A3A"/><stop offset="0.50" stop-color="#6E3428"/><stop offset="1.00" stop-color="#4A2119"/></linearGradient><linearGradient id="coat-navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4A5C8A"/><stop offset="0.50" stop-color="#33436A"/><stop offset="1.00" stop-color="#202B47"/></linearGradient><linearGradient id="coat-plum" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#7A4E6E"/><stop offset="0.50" stop-color="#5C3753"/><stop offset="1.00" stop-color="#3C2236"/></linearGradient><linearGradient id="coat-olive" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#77804F"/><stop offset="0.50" stop-color="#5A633A"/><stop offset="1.00" stop-color="#3C4226"/></linearGradient><linearGradient id="coat-grey" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#7D8590"/><stop offset="0.50" stop-color="#5D646E"/><stop offset="1.00" stop-color="#3D434B"/></linearGradient><linearGradient id="coat-cream" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#EFE6D6"/><stop offset="0.50" stop-color="#D8CCB8"/><stop offset="1.00" stop-color="#B3A58E"/></linearGradient><linearGradient id="coat-yellow" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F2C94C"/><stop offset="0.50" stop-color="#D9A82B"/><stop offset="1.00" stop-color="#9C7414"/></linearGradient><linearGradient id="coat-blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4E7FB8"/><stop offset="0.50" stop-color="#355E91"/><stop offset="1.00" stop-color="#223F66"/></linearGradient><linearGradient id="coat-saffron" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F2B84B"/><stop offset="0.50" stop-color="#D9922A"/><stop offset="1.00" stop-color="#9C6414"/></linearGradient><linearGradient id="coat-emerald" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3FA36B"/><stop offset="0.50" stop-color="#2A7A4E"/><stop offset="1.00" stop-color="#1B5233"/></linearGradient><linearGradient id="coat-magenta" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#C2477A"/><stop offset="0.50" stop-color="#9A2F5C"/><stop offset="1.00" stop-color="#6A1E3E"/></linearGradient><linearGradient id="hat-mustard" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D9A84A"/><stop offset="1.00" stop-color="#A97A26"/></linearGradient><linearGradient id="hat-slate" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#5B6680"/><stop offset="1.00" stop-color="#363E52"/></linearGradient><linearGradient id="hat-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B8443A"/><stop offset="1.00" stop-color="#7E2620"/></linearGradient><linearGradient id="hat-cream" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#EFE6D4"/><stop offset="1.00" stop-color="#C9BEA8"/></linearGradient><linearGradient id="hat-green" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#5E8C6A"/><stop offset="1.00" stop-color="#3B5E45"/></linearGradient><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#5E7CA3"/><stop offset="0.33" stop-color="#8FA6C2"/><stop offset="0.67" stop-color="#C9D1DC"/><stop offset="1.00" stop-color="#EAD7C3"/></linearGradient><linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#0E1630"/><stop offset="0.33" stop-color="#1D2B52"/><stop offset="0.67" stop-color="#34497A"/><stop offset="1.00" stop-color="#4E5F8E"/></linearGradient><linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#7FA3C9"/><stop offset="0.50" stop-color="#AFC6DC"/><stop offset="1.00" stop-color="#DCE6EE"/></linearGradient><linearGradient id="snowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#F4F6F8"/><stop offset="1.00" stop-color="#C9D5E1"/></linearGradient><linearGradient id="snowNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#9AA9C6"/><stop offset="1.00" stop-color="#5F6F93"/></linearGradient><linearGradient id="snowTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBFCFD"/><stop offset="1" stop-color="#C7D3E0"/></linearGradient><linearGradient id="chWall" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B98B80"/><stop offset="1.00" stop-color="#93695F"/></linearGradient><linearGradient id="chRoof" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8DB3A6"/><stop offset="1.00" stop-color="#5F8A7D"/></linearGradient><linearGradient id="stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D3C8B8"/><stop offset="1.00" stop-color="#A99B88"/></linearGradient><linearGradient id="ochre" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D8C29A"/><stop offset="1.00" stop-color="#B09670"/></linearGradient><linearGradient id="greyStone" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#BFC5C9"/><stop offset="1.00" stop-color="#8E979E"/></linearGradient><linearGradient id="slate" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4E5568"/><stop offset="1.00" stop-color="#2C3140"/></linearGradient><linearGradient id="redRoof" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8A4238"/><stop offset="1.00" stop-color="#5E2B25"/></linearGradient><linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#FFE3A3"/><stop offset="1.00" stop-color="#E9A54E"/></linearGradient><radialGradient id="glow"><stop offset="0" stop-color="#FFD98A" stop-opacity=".55"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient><radialGradient id="glowStrong"><stop offset="0" stop-color="#FFE7B0" stop-opacity=".9"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient><linearGradient id="logGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#9C6E46"/><stop offset="0.50" stop-color="#7E5534"/><stop offset="1.00" stop-color="#5A3A20"/></linearGradient><pattern id="logs" width="40" height="17" patternUnits="userSpaceOnUse"><rect width="40" height="17" fill="url(#logGrad)"/><rect y="15.8" width="40" height="1.2" fill="#3B2412" opacity=".6"/><path d="M8,6 h10 M26,10 h7" stroke="#3B2412" stroke-width=".7" opacity=".3"/></pattern><pattern id="brick" width="12" height="6" patternUnits="userSpaceOnUse"><path d="M0,6 H12 M6,0 V3 M0,3 H12 M0,3 V6" stroke="#7E5A51" stroke-width=".6" opacity=".35" fill="none"/></pattern><pattern id="blocks" width="28" height="14" patternUnits="userSpaceOnUse"><path d="M0,14 H28 M0,7 H28 M14,0 V7 M0,7 V14 M28,7 V14" stroke="#5E5446" stroke-width=".7" opacity=".22" fill="none"/></pattern><pattern id="planks" width="60" height="12" patternUnits="userSpaceOnUse"><rect width="60" height="12" fill="#A4794F"/><rect y="11" width="60" height="1" fill="#5E4129" opacity=".5"/><rect x="38" width="1" height="12" fill="#5E4129" opacity=".35"/></pattern><linearGradient id="interior" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#2E1E14"/><stop offset="1.00" stop-color="#4E3423"/></linearGradient><linearGradient id="counterTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#D3A475"/><stop offset="1.00" stop-color="#AD7F52"/></linearGradient><linearGradient id="counterFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#7F532F"/><stop offset="1.00" stop-color="#58371C"/></linearGradient><linearGradient id="pastry" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDC67E"/><stop offset=".55" stop-color="#C98A3D"/><stop offset="1" stop-color="#93591E"/></linearGradient><linearGradient id="cup" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#FAF7F1"/><stop offset="0.50" stop-color="#E3DCCF"/><stop offset="1.00" stop-color="#B9AF9E"/></linearGradient><linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#A36D3F"/><stop offset="1.00" stop-color="#6E4524"/></linearGradient><linearGradient id="syrup" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DE9C46"/><stop offset=".5" stop-color="#B66A1F"/><stop offset="1" stop-color="#7A410F"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#906340"/><stop offset="1.00" stop-color="#5F3D22"/></linearGradient><linearGradient id="woodH" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B07F55"/><stop offset="1.00" stop-color="#7A5233"/></linearGradient><linearGradient id="pole" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4A5060"/><stop offset="1.00" stop-color="#1A1D26"/></linearGradient><linearGradient id="pantsDark" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3B3F4C"/><stop offset="1.00" stop-color="#22252E"/></linearGradient><linearGradient id="pantsDenim" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4D6286"/><stop offset="1.00" stop-color="#2D3B57"/></linearGradient><linearGradient id="boot" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#6B4A30"/><stop offset="1.00" stop-color="#36251A"/></linearGradient><linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#5F8FB0"/><stop offset="0.50" stop-color="#3D6A8C"/><stop offset="1.00" stop-color="#2C5070"/></linearGradient><linearGradient id="riverNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#2B4166"/><stop offset="1.00" stop-color="#1A2A47"/></linearGradient><linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0.00" stop-color="#F5F8FA"/><stop offset="1.00" stop-color="#C9D8E4"/></linearGradient><linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#FFFFFF"/><stop offset="0.50" stop-color="#DCE2E8"/><stop offset="1.00" stop-color="#AEB8C2"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#9BA4AE"/><stop offset="1.00" stop-color="#5E6772"/></linearGradient><linearGradient id="sash" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B3322B"/><stop offset="1.00" stop-color="#7E211C"/></linearGradient><linearGradient id="sled" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#C99A62"/><stop offset="1.00" stop-color="#8F6236"/></linearGradient><linearGradient id="trunk" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#6E5A4A"/><stop offset="1.00" stop-color="#3E3128"/></linearGradient><linearGradient id="float" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#2F5DA8"/><stop offset="1.00" stop-color="#1C3A70"/></linearGradient><filter id="blur" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="4"/></filter><filter id="blurS" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="1.4"/></filter><filter id="blurL" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter></defs></svg>
+<div class="wrap">
+ <header class="top">
+  <div><p class="eyebrow" id="eyebrow"></p><h1 id="title"></h1></div>
+  <div class="toolbar">
+   <label class="pill"><input type="checkbox" id="optEn"> Aide en anglais</label>
+   <label class="pill"><input type="checkbox" id="optVoice" checked> Voix</label>
+   <button class="pill" id="btnCarnet" type="button">Carnet <span class="count" id="carnetCount">0</span></button>
+   <a class="pill" href="voyage.html">Mon voyage</a>
+  </div>
+ </header>
+ <section id="scrCreate" hidden></section>
+ <section id="scrMap" hidden>
+  <div class="mapgrid">
+   <div class="card stage"><div class="stagebox"><svg viewBox="0 0 960 540" id="mapSvg" role="img" aria-label="Carte"></svg><div class="overlay" id="mapOverlay"></div></div></div>
+   <div class="card missions"><h2>Ta mission</h2><p class="mlede" id="mapLede"></p><ol id="missionList"></ol><div id="mapAction"></div></div>
+  </div>
+ </section>
+ <section id="scrStop" hidden>
+  <div class="game">
+   <div class="card stage"><div class="stagebox"><svg viewBox="0 0 960 540" id="stageSvg" role="img"></svg><div class="overlay" id="stageOverlay"></div></div>
+    <div class="stagecap"><b id="stopName"></b><span id="stopSub"></span><span class="stars" id="stopStars"></span></div></div>
+   <div class="card chat">
+    <div class="chathead"><div class="face" id="npcFace"></div><div><b id="npcName"></b><span id="npcRole"></span></div></div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="act" id="act"></div>
+   </div>
+  </div>
+ </section>
+ <section id="scrEnd" hidden></section>
+</div>
+<div class="drawer" id="carnet" hidden role="dialog" aria-modal="true" aria-labelledby="carnetTitle">
+ <div class="drawer-in card">
+  <div class="drawer-head"><h2 id="carnetTitle">Mon carnet</h2><button class="btn" id="closeCarnet" type="button">Fermer</button></div>
+  <h3>Indices</h3><ol id="clueList" class="clues"></ol>
+  <h3>Expressions québécoises</h3><p class="note">Touche un mot souligné dans la conversation pour voir ce qu'il veut dire.</p><dl id="qcList" class="qclist"></dl>
+ </div>
+</div>
+<div class="pop" id="pop" hidden role="tooltip"></div>
+<div class="toast" id="toast" hidden></div>
+<div id="printArea"></div>
+<script>
+/* ===== Shared art: one light from the top left, three tones per object, soft contact shadows. ===== */
+const SKIN = [
+ {name:'Très claire', l:'#F6D9C4', m:'#E9BC9E', d:'#CB967C'},
+ {name:'Claire',      l:'#F0C9A8', m:'#DDA884', d:'#C08966'},
+ {name:'Moyenne',     l:'#DCA77F', m:'#C38862', d:'#A06A49'},
+ {name:'Mate',        l:'#BC8762', m:'#9C6946', d:'#7C4F32'},
+ {name:'Foncée',      l:'#92603F', m:'#77492D', d:'#58341F'},
+ {name:'Très foncée', l:'#6C4532', m:'#543424', d:'#3B2318'}
+];
+const HAIR = [
+ {name:'Noir', c:'#1E1612'}, {name:'Brun', c:'#3A2418'}, {name:'Châtain', c:'#6B4428'},
+ {name:'Roux', c:'#A2502B'}, {name:'Blond', c:'#C7A160'}
+];
+const COATS = {
+ teal:['#3F7D86','#2C5E67','#1B3E45'], rust:['#8C4A3A','#6E3428','#4A2119'], navy:['#4A5C8A','#33436A','#202B47'],
+ plum:['#7A4E6E','#5C3753','#3C2236'], olive:['#77804F','#5A633A','#3C4226'], grey:['#7D8590','#5D646E','#3D434B'],
+ cream:['#EFE6D6','#D8CCB8','#B3A58E'], yellow:['#F2C94C','#D9A82B','#9C7414'], blue:['#4E7FB8','#355E91','#223F66'], saffron:['#F2B84B','#D9922A','#9C6414'], emerald:['#3FA36B','#2A7A4E','#1B5233'], magenta:['#C2477A','#9A2F5C','#6A1E3E']
+};
+const HATS = { mustard:['#D9A84A','#A97A26'], slate:['#5B6680','#363E52'], red:['#B8443A','#7E2620'], cream:['#EFE6D4','#C9BEA8'], green:['#5E8C6A','#3B5E45'] };
+
+function svgDefs(){
+ const lg=(id,stops,x2=1,y2=0)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map((c,i)=>`<stop offset="${(i/(stops.length-1)).toFixed(2)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+ let d='';
+ SKIN.forEach((s,i)=>{ d+=lg('skin'+i,[s.l,s.m,s.d]); });
+ for(const k in COATS) d+=lg('coat-'+k,COATS[k]);
+ for(const k in HATS) d+=lg('hat-'+k,HATS[k]);
+ d+=lg('sky',['#5E7CA3','#8FA6C2','#C9D1DC','#EAD7C3'],0,1)
+  +lg('skyNight',['#0E1630','#1D2B52','#34497A','#4E5F8E'],0,1)
+  +lg('skyDay',['#7FA3C9','#AFC6DC','#DCE6EE'],0,1)
+  +lg('snowG',['#F4F6F8','#C9D5E1'],0,1)
+  +lg('snowNight',['#9AA9C6','#5F6F93'],0,1)
+  +`<linearGradient id="snowTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBFCFD"/><stop offset="1" stop-color="#C7D3E0"/></linearGradient>`
+  +lg('chWall',['#B98B80','#93695F'])+lg('chRoof',['#8DB3A6','#5F8A7D'])
+  +lg('stone',['#D3C8B8','#A99B88'])+lg('ochre',['#D8C29A','#B09670'])+lg('greyStone',['#BFC5C9','#8E979E'])
+  +lg('slate',['#4E5568','#2C3140'])+lg('redRoof',['#8A4238','#5E2B25'])
+  +lg('win',['#FFE3A3','#E9A54E'],0,1)
+  +`<radialGradient id="glow"><stop offset="0" stop-color="#FFD98A" stop-opacity=".55"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient>`
+  +`<radialGradient id="glowStrong"><stop offset="0" stop-color="#FFE7B0" stop-opacity=".9"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient>`
+  +lg('logGrad',['#9C6E46','#7E5534','#5A3A20'],0,1)
+  +`<pattern id="logs" width="40" height="17" patternUnits="userSpaceOnUse"><rect width="40" height="17" fill="url(#logGrad)"/><rect y="15.8" width="40" height="1.2" fill="#3B2412" opacity=".6"/><path d="M8,6 h10 M26,10 h7" stroke="#3B2412" stroke-width=".7" opacity=".3"/></pattern>`
+  +`<pattern id="brick" width="12" height="6" patternUnits="userSpaceOnUse"><path d="M0,6 H12 M6,0 V3 M0,3 H12 M0,3 V6" stroke="#7E5A51" stroke-width=".6" opacity=".35" fill="none"/></pattern>`
+  +`<pattern id="blocks" width="28" height="14" patternUnits="userSpaceOnUse"><path d="M0,14 H28 M0,7 H28 M14,0 V7 M0,7 V14 M28,7 V14" stroke="#5E5446" stroke-width=".7" opacity=".22" fill="none"/></pattern>`
+  +`<pattern id="planks" width="60" height="12" patternUnits="userSpaceOnUse"><rect width="60" height="12" fill="#A4794F"/><rect y="11" width="60" height="1" fill="#5E4129" opacity=".5"/><rect x="38" width="1" height="12" fill="#5E4129" opacity=".35"/></pattern>`
+  +lg('interior',['#2E1E14','#4E3423'],0,1)
+  +lg('counterTop',['#D3A475','#AD7F52'],0,1)+lg('counterFront',['#7F532F','#58371C'],0,1)
+  +`<linearGradient id="pastry" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDC67E"/><stop offset=".55" stop-color="#C98A3D"/><stop offset="1" stop-color="#93591E"/></linearGradient>`
+  +lg('cup',['#FAF7F1','#E3DCCF','#B9AF9E'])+lg('sleeve',['#A36D3F','#6E4524'])
+  +`<linearGradient id="syrup" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DE9C46"/><stop offset=".5" stop-color="#B66A1F"/><stop offset="1" stop-color="#7A410F"/></linearGradient>`
+  +lg('wood',['#906340','#5F3D22'],0,1)+lg('woodH',['#B07F55','#7A5233'])
+  +lg('pole',['#4A5060','#1A1D26'])
+  +lg('pantsDark',['#3B3F4C','#22252E'])+lg('pantsDenim',['#4D6286','#2D3B57'])
+  +lg('boot',['#6B4A30','#36251A'],0,1)
+  +lg('river',['#5F8FB0','#3D6A8C','#2C5070'],0,1)
+  +lg('riverNight',['#2B4166','#1A2A47'],0,1)
+  +lg('ice',['#F5F8FA','#C9D8E4'],1,1)
+  +lg('hull',['#FFFFFF','#DCE2E8','#AEB8C2'],0,1)
+  +lg('metal',['#9BA4AE','#5E6772'])
+  +lg('sash',['#B3322B','#7E211C'])
+  +lg('sled',['#C99A62','#8F6236'],0,1)
+  +lg('trunk',['#6E5A4A','#3E3128'])
+  +lg('float',['#2F5DA8','#1C3A70'])
+  +`<filter id="blur" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="4"/></filter>`
+  +`<filter id="blurS" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="1.4"/></filter>`
+  +`<filter id="blurL" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>`;
+ return `<svg class="svgdefs" aria-hidden="true" focusable="false"><defs>${d}</defs></svg>`;
+}
+
+const shadow=(cx,cy,rx,ry,op=.3,f='blur')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#1F2A40" opacity="${op}" filter="url(#${f})"/>`;
+
+/* A person. Feet at (0,0), about 232 tall at scale 1. o: skin (0-5), hair colour, style long|mid|short,
+   coat key, hat key, pants id, plus extras: scarf, sash (worn), holdSash, map, headset, apron, noShadow, noHat. */
+function person(o){
+ const sk=SKIN[o.skin||0], skinG=`url(#skin${o.skin||0})`, h=o.hair||'#3A2418';
+ const C=COATS[o.coat||'teal'], coatG=`url(#coat-${o.coat||'teal'})`, H=HATS[o.hat||'mustard'];
+ const pants=o.pants||'url(#pantsDark)', glove=o.glove||'#2B2E38', style=o.style||'short';
+ let hairBack='';
+ if(style==='long') hairBack=`<path d="M-15,-206 C-19,-190 -20,-176 -18,-160 C-10,-156 10,-156 18,-160 C20,-176 19,-190 15,-206 Z" fill="${h}"/><path d="M8,-200 C14,-186 16,-172 16,-160 L18,-160 C20,-176 19,-190 15,-206 Z" fill="#000" opacity=".2"/>`;
+ else if(style==='mid') hairBack=`<path d="M-15,-206 C-17,-195 -17,-184 -15,-176 C-8,-173 8,-173 15,-176 C17,-184 17,-195 15,-206 Z" fill="${h}"/><path d="M9,-200 C13,-192 14,-182 13,-176 L15,-176 C17,-184 17,-195 15,-206 Z" fill="#000" opacity=".2"/>`;
+ else hairBack=`<path d="M-13.5,-206 C-14.5,-198 -14,-192 -13,-189 L13,-189 C14,-192 14.5,-198 13.5,-206 Z" fill="${h}"/>`;
+ const fringe = style==='short'
+  ? `<path d="M-13,-203 C-13,-211 -6,-214 0,-214 C6,-214 13,-211 13,-203 C9,-206 -5,-207 -13,-203 Z" fill="${h}"/>`
+  : `<path d="M-12.8,-202 C-13,-212 -6,-214 0,-214 C6,-214 13,-212 12.8,-202 C8,-207 -4,-208 -12.8,-202 Z" fill="${h}"/>`;
+ const sash = o.sash ? `
+  <path d="M-25,-110 Q0,-104 25,-110 L25.5,-100 Q0,-94 -25.5,-100 Z" fill="url(#sash)"/>
+  <path d="M-24,-107 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l4,-2.5" fill="none" stroke="#E2B860" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M-24,-102 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l5,-3.5 l5,3.5 l4,-2.5" fill="none" stroke="#2F4F86" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M25,-104 L26,-100 L31,-62 L24,-62 L21,-98 Z" fill="#8C2420"/>
+  <path d="M24,-90 l3,2.5 l3,-2.5 M24.5,-80 l3,2.5 l3,-2.5 M25,-70 l3,2.5 l3,-2.5" stroke="#E2B860" stroke-width="1.1" fill="none"/>
+  <g stroke="#8C2420" stroke-width="1" stroke-linecap="round"><path d="M25,-62 v6"/><path d="M27,-62 v7"/><path d="M29,-62 v6"/><path d="M31,-62 v7"/></g>` : '';
+ const apron = o.apron ? `<path d="M-16,-150 H16 L19,-96 Q0,-92 -19,-96 Z" fill="${o.apron}"/><path d="M-16,-150 H16 L16.6,-142 H-16.6 Z" fill="#000" opacity=".12"/><path d="M-10,-120 h20" stroke="#000" stroke-width="1" opacity=".15"/>` : '';
+ let right;
+ if(o.map) right=`<path d="M19,-170 C30,-166 31,-150 30,-138 C29,-130 24,-126 16,-122 L10,-124 L9,-131 L19,-136 C20,-146 20,-156 19,-170 Z" fill="${C[2]}"/>
+   <g transform="translate(-6 -134) rotate(-6)"><polygon points="0,0 22,-2 24,14 2,16" fill="#F4EDE0"/><polygon points="11,-1 13,15 2,16 0,0" fill="#E4DACA"/><path d="M4,5 L19,4 M5,10 L13,9" stroke="#2C5E67" stroke-width="1.1" opacity=".7"/><path d="M15,7 l3,0" stroke="#9B2F2F" stroke-width="2" stroke-linecap="round"/></g>
+   <ellipse cx="12" cy="-124" rx="5.5" ry="4.5" fill="${glove}"/>`;
+ else if(o.holdSash) right=`<path d="M19,-170 C30,-166 31,-150 30,-138 C29,-130 24,-126 16,-122 L10,-124 L9,-131 L19,-136 C20,-146 20,-156 19,-170 Z" fill="${C[2]}"/>
+   <path d="M2,-134 C10,-138 18,-132 22,-124 L26,-70 L18,-70 L15,-120 C12,-126 6,-126 2,-126 Z" fill="url(#sash)"/>
+   <path d="M17,-118 l3,2.5 l3,-2.5 M18,-106 l3,2.5 l3,-2.5 M19,-94 l3,2.5 l3,-2.5 M19.5,-82 l3,2.5 l3,-2.5" stroke="#E2B860" stroke-width="1.2" fill="none"/>
+   <g stroke="#8C2420" stroke-width="1.1" stroke-linecap="round"><path d="M19,-70 v6"/><path d="M21.5,-70 v7"/><path d="M24,-70 v6"/></g>
+   <ellipse cx="12" cy="-126" rx="5.5" ry="4.5" fill="${glove}"/>`;
+ else if(o.wave) right=`<path d="M19,-170 C28,-170 34,-180 36,-196 L42,-214 C44,-218 38,-220 36,-216 L28,-198 C26,-188 22,-182 18,-180 Z" fill="${C[2]}"/><ellipse cx="40" cy="-218" rx="5" ry="6" fill="${glove}"/>`;
+ else right=`<path d="M19,-170 C29,-166 31,-150 30,-128 L29,-104 C26,-100 22,-100 20,-104 L18,-150 Z" fill="${C[2]}"/><ellipse cx="24.5" cy="-100" rx="5" ry="6" fill="${glove}" opacity=".95"/>`;
+ const scarf = o.scarf ? `<path d="M-14,-178 C-6,-172 6,-172 14,-178 L15,-170 C6,-165 -6,-165 -15,-170 Z" fill="${o.scarf}"/><path d="M6,-170 L9,-142 L2,-142 L0,-168 Z" fill="${o.scarf}"/><path d="M6,-170 L9,-142 L6,-142 Z" fill="#000" opacity=".2"/><g stroke="${o.scarf}" stroke-width="1.2"><path d="M3,-142 v4"/><path d="M5.5,-142 v5"/><path d="M8,-142 v4"/></g>` : '';
+ const headset = o.headset ? `<path d="M-13.5,-204 C-14,-222 14,-222 13.5,-204" fill="none" stroke="#22252E" stroke-width="2.2"/><rect x="-16" y="-206" width="5" height="9" rx="2" fill="#22252E"/><path d="M-14,-198 C-14,-190 -9,-188 -4,-188" stroke="#22252E" stroke-width="1.4" fill="none"/>` : '';
+ const hat = o.noHat ? '' : `
+  <path d="M-13.5,-207 C-13.5,-222 -6,-226 0,-226 C6,-226 13.5,-222 13.5,-207 Z" fill="url(#hat-${o.hat||'mustard'})"/>
+  <path d="M-7,-208 V-222 M-2.3,-208 V-225 M2.3,-208 V-225 M7,-208 V-222" stroke="#000" stroke-width=".8" opacity=".15"/>
+  <rect x="-14.5" y="-211" width="29" height="7" rx="3" fill="${o.band||'#EFE6D4'}"/><rect x="-14.5" y="-207" width="29" height="3" rx="1.5" fill="#000" opacity=".15"/>
+  ${o.pompom===false?'':`<circle cx="0" cy="-228" r="5" fill="${o.band||'#EFE6D4'}"/><circle cx="-1.6" cy="-229.6" r="2" fill="#fff" opacity=".6"/>`}`;
+ return `<g transform="translate(${o.x} ${o.y}) scale(${o.sc||1})">
+  ${o.noShadow?'':shadow(0,1,38,7,.3)}
+  ${hairBack}
+  <rect x="-13" y="-98" width="11.5" height="88" rx="5" fill="${pants}"/>
+  <rect x="1.5" y="-98" width="11.5" height="88" rx="5" fill="${pants}"/><rect x="8" y="-96" width="5" height="84" rx="2.5" fill="#000" opacity=".22"/>
+  <path d="M-15,-16 C-15,-20 -13,-22 -10,-22 H-1 V0 H-19 C-20,-8 -17,-12 -15,-16 Z" fill="url(#boot)"/>
+  <path d="M1,-22 H10 C13,-22 15,-20 15,-16 C17,-12 20,-8 19,0 H1 Z" fill="url(#boot)"/>
+  <rect x="-19" y="-2" width="18" height="3" rx="1" fill="#1E140C"/><rect x="1" y="-2" width="18.5" height="3" rx="1" fill="#1E140C"/>
+  <path d="M-14,-24 h13 v4 h-13z" fill="#D9D2C6"/><path d="M1,-24 h13 v4 h-13z" fill="#B9B1A4"/>
+  <path d="M-19,-170 C-29,-166 -31,-150 -30,-128 L-29,-104 C-26,-100 -22,-100 -20,-104 L-18,-150 Z" fill="${C[0]}"/>
+  <ellipse cx="-24.5" cy="-100" rx="5" ry="6" fill="${glove}"/>
+  <path d="M-21,-172 C-8,-177 8,-177 21,-172 L26,-96 C10,-91 -10,-91 -26,-96 Z" fill="${coatG}"/>
+  <path d="M0,-174 V-93" stroke="#000" stroke-width="1.2" opacity=".35"/>
+  <path d="M-20,-150 C-22,-130 -22,-115 -21,-100" stroke="#fff" stroke-width="2" opacity=".15" fill="none" stroke-linecap="round"/>
+  ${apron}${sash}${right}
+  <rect x="-5" y="-188" width="10" height="12" fill="${sk.d}"/>
+  <path d="M-15,-176 C-8,-170 8,-170 15,-176 C12,-182 -12,-182 -15,-176 Z" fill="${o.collar||'#E9E3D8'}"/>
+  ${scarf}
+  <ellipse cx="0" cy="-200" rx="12.5" ry="15" fill="${skinG}"/>
+  <ellipse cx="-12.2" cy="-199" rx="2" ry="3.2" fill="${sk.d}"/>
+  <path d="M-8.5,-204.5 Q-5.5,-206 -2.5,-204.8 M2.5,-204.8 Q5.5,-206 8.5,-204.5" stroke="${o.brow||h}" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="-5.2" cy="-200.5" rx="1.5" ry="1.9" fill="#1F2433"/><ellipse cx="5.2" cy="-200.5" rx="1.5" ry="1.9" fill="#1F2433"/>
+  <circle cx="-4.7" cy="-201.1" r=".5" fill="#fff"/><circle cx="5.7" cy="-201.1" r=".5" fill="#fff"/>
+  <path d="M0.5,-199 L1.8,-194.2 L-0.4,-193.7" stroke="${sk.d}" stroke-width="1.1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M-3.2,-189.6 Q0,-187.2 3.2,-189.6" stroke="#7A3E30" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  ${o.glasses?`<g fill="none" stroke="#2A2A30" stroke-width="1"><circle cx="-5.2" cy="-200.5" r="3.6"/><circle cx="5.2" cy="-200.5" r="3.6"/><path d="M-1.6,-200.8 h3.2"/></g>`:''}
+  ${o.grey?`<path d="M-12.8,-202 C-13,-212 -6,-214 0,-214 C6,-214 13,-212 12.8,-202 C8,-207 -4,-208 -12.8,-202 Z" fill="${h}"/>`:fringe}
+  ${hat}${headset}
+ </g>`;
+}
+
+/* the player's look, from the saved profile */
+function playerLook(p, extra){
+ const style = p.style || (p.gender==='fille'?'long':p.gender==='garcon'?'short':'mid');
+ return Object.assign({skin:p.skin??1, hair:(HAIR[p.hair??1]||HAIR[1]).c, style, coat:'teal', hat:'mustard', scarf:'#9B2F2F', pants:'url(#pantsDark)'}, extra||{});
+}
+
+/* ---------- scene pieces ---------- */
+function snowfall(n, seed, night){
+ let s=seed||7; const r=()=>(s=(s*9301+49297)%233280)/233280; let g='';
+ for(let i=0;i<n;i++) g+=`<circle class="flake" cx="${(r()*960).toFixed(1)}" cy="${(r()*520).toFixed(1)}" r="${(.9+r()*1.9).toFixed(1)}" opacity="${((night?.35:.5)+r()*.45).toFixed(2)}" style="animation-duration:${(9+r()*9).toFixed(1)}s;animation-delay:${(-r()*18).toFixed(1)}s"/>`;
+ return `<g fill="#fff">${g}</g>`;
+}
+function chateau(x,y,s,op){
+ return `<g transform="translate(${x} ${y}) scale(${s})" opacity="${op??.82}">
+ <rect x="-154" y="52" width="308" height="130" fill="url(#chWall)"/><rect x="-154" y="52" width="308" height="130" fill="url(#brick)"/>
+ <polygon points="-162,54 162,54 142,24 -142,24" fill="url(#chRoof)"/>
+ <rect x="-48" y="0" width="96" height="182" fill="url(#chWall)"/><rect x="-48" y="0" width="96" height="182" fill="url(#brick)"/>
+ <polygon points="-58,2 58,2 24,-60 -24,-60" fill="url(#chRoof)"/>
+ <g fill="url(#chRoof)"><polygon points="-34,-14 -20,-14 -27,-28"/><polygon points="-7,-20 7,-20 0,-36"/><polygon points="20,-14 34,-14 27,-28"/></g>
+ <rect x="-1" y="-66" width="2" height="8" fill="#5F8A7D"/>
+ <rect x="-138" y="32" width="38" height="150" fill="url(#chWall)"/><polygon points="-142,34 -96,34 -119,-14" fill="url(#chRoof)"/>
+ <rect x="100" y="32" width="38" height="150" fill="url(#chWall)"/><polygon points="96,34 142,34 119,-14" fill="url(#chRoof)"/>
+ <g fill="#F5D394" opacity=".78">
+  <rect x="-34" y="20" width="7" height="11" rx="1"/><rect x="-16" y="20" width="7" height="11" rx="1"/><rect x="2" y="20" width="7" height="11" rx="1"/><rect x="20" y="20" width="7" height="11" rx="1"/>
+  <rect x="-34" y="44" width="7" height="11" rx="1"/><rect x="2" y="44" width="7" height="11" rx="1"/><rect x="20" y="44" width="7" height="11" rx="1"/>
+  <rect x="-88" y="66" width="6" height="10" rx="1"/><rect x="-72" y="66" width="6" height="10" rx="1"/><rect x="66" y="66" width="6" height="10" rx="1"/><rect x="82" y="66" width="6" height="10" rx="1"/>
+  <rect x="-126" y="52" width="6" height="10" rx="1"/><rect x="114" y="52" width="6" height="10" rx="1"/>
+  <rect x="-88" y="96" width="6" height="10" rx="1"/><rect x="-72" y="96" width="6" height="10" rx="1"/><rect x="66" y="96" width="6" height="10" rx="1"/><rect x="82" y="96" width="6" height="10" rx="1"/>
+ </g></g>`;
+}
+function snowCap(x1,x2,yTop,peakX,peakY){ /* scalloped snow on a gable roof */
+ const steps=7, w=(x2-x1)/steps; let p=`M${x1},${yTop} L${peakX},${peakY} L${x2},${yTop}`;
+ for(let i=steps;i>0;i--){const a=x1+i*w, b=a-w; p+=` C${a-w*.3},${yTop+6} ${b+w*.3},${yTop+4} ${b},${yTop+(i%2?5:2)}`;}
+ return `<path d="${p} Z" fill="url(#snowTop)"/>`;
+}
+function oldHouse(x,y,w,h,wall,roof,shutter,seed){
+ const peak=y-w*.48, cx=x+w/2;
+ let wins='';
+ const cols=w>140?2:1;
+ for(let r=0;r<2;r++) for(let c=0;c<cols;c++){
+  const wx= cols===1? cx-15 : x+w*.2+c*(w*.6-30)/(cols-1||1), wy=y+30+r*80;
+  if(wy+46>y+h-10) continue;
+  wins+=`<rect x="${wx}" y="${wy}" width="30" height="44" fill="url(#win)"/><path d="M${wx+15},${wy} V${wy+44} M${wx},${wy+22} H${wx+30}" stroke="#3A3226" stroke-width="2"/><rect x="${wx-2}" y="${wy-2}" width="34" height="48" fill="none" stroke="#EFE7DA" stroke-width="3"/><rect x="${wx-5}" y="${wy+45}" width="40" height="5" rx="1" fill="#F4F6F8"/>`
+   +(shutter?`<path d="M${wx-6},${wy} h6 v44 h-6z M${wx+30},${wy} h6 v44 h-6z" fill="${shutter}"/>`:'');
+ }
+ return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${wall})"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#blocks)"/>
+ <rect x="${x+w-10}" y="${y}" width="10" height="${h}" fill="#000" opacity=".1"/>
+ <polygon points="${x-12},${y+4} ${cx},${peak} ${x+w+12},${y+4}" fill="url(#${roof})"/><polygon points="${cx},${peak} ${x+w+12},${y+4} ${cx+w*.3},${y+4}" fill="#000" opacity=".18"/>
+ ${snowCap(x-6,x+w+6,y,cx,peak+5)}${wins}</g>`;
+}
+function lampPost(x,y,night){
+ return `${shadow(x,y+2,24,5,.3,'blurS')}<rect x="${x-5}" y="${y-266}" width="10" height="268" rx="3" fill="url(#pole)"/>
+ <rect x="${x-13}" y="${y-300}" width="26" height="38" rx="3" fill="#1F2230"/><rect x="${x-9}" y="${y-295}" width="18" height="28" rx="2" fill="url(#win)"/>
+ <path d="M${x-17},${y-298} L${x},${y-314} L${x+17},${y-298} Z" fill="#1F2230"/><path d="M${x-15},${y-301} L${x},${y-316} L${x+15},${y-301} Q${x},${y-305} ${x-15},${y-301}Z" fill="#F4F6F8"/>
+ <circle cx="${x}" cy="${y-280}" r="${night?70:40}" fill="url(#${night?'glowStrong':'glow'})"/>`;
+}
+function snowGround(y,night){ return `<path d="M0,${y} Q240,${y-12} 480,${y-4} T960,${y-8} V540 H0 Z" fill="url(#${night?'snowNight':'snowG'})"/>`; }
+function mapleTree(x,y,s){
+ return `<g transform="translate(${x} ${y}) scale(${s})">${shadow(0,2,30,5,.22,'blurS')}
+ <path d="M-6,0 L-4,-90 L-20,-140 M-4,-90 L10,-150 M-4,-60 L-30,-96 M4,-70 L26,-110 M-14,-120 L-26,-150 M10,-150 L2,-176" stroke="url(#trunk)" stroke-width="8" stroke-linecap="round" fill="none"/>
+ <path d="M-7,0 L-5,-92 L5,-92 L7,0 Z" fill="url(#trunk)"/>
+ <path d="M-30,-96 q4,-3 8,0 M26,-110 q-4,-3 -8,0 M-20,-140 q4,-3 8,0 M10,-150 q4,-3 8,0" stroke="#F4F6F8" stroke-width="3" stroke-linecap="round" fill="none"/>
+ <path d="M-4,-150 L2,-176" stroke="#F4F6F8" stroke-width="2" opacity=".7"/></g>`;
+}
+function bucket(x,y){ /* sap bucket on a tree */
+ return `<g transform="translate(${x} ${y})"><path d="M-7,0 L7,0 L6,14 L-6,14 Z" fill="url(#metal)"/><path d="M-8,0 Q0,-4 8,0" fill="#C9D2DA"/><path d="M-8,-2 L8,-2 L4,-7 L-4,-7Z" fill="#7C8792"/><rect x="-1" y="-10" width="2" height="5" fill="#5E6772"/></g>`;
+}
+
+/* ===== Traveller profile, shared by the journey page and every game (same site => same storage). ===== */
+const STORE_KEY='jeuxFr20.voyage';
+const Store={
+ get(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY))||null; }catch(e){ return Store._mem||null; } },
+ set(p){ Store._mem=p; try{ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }catch(e){} },
+ clear(){ Store._mem=null; try{ localStorage.removeItem(STORE_KEY); }catch(e){} }
+};
+/* agreement helper: {m|f} picks the masculine or feminine form for the player */
+function agree(p){ return p && (p.agree||(p.gender==='fille'?'f':'m')); }
+function fmt(text,p){
+ const a=agree(p);
+ return String(text).replace(/\{([^{}|]*)\|([^{}]*)\}/g,(m,mm,ff)=>a==='f'?ff:mm).replace(/\[nom\]/g,(p&&p.name)||'Voyageur');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* Character creator. host: element; onDone(profile). */
+function mountCreator(host, onDone, existing){
+ const p=Object.assign({name:'',gender:'fille',agree:'f',skin:1,hair:1,style:null,done:{},stars:{}}, existing||{});
+ const opt=(name,val,label,checked,extra='')=>`<label ${extra}><input type="radio" name="${name}" value="${val}" ${checked?'checked':''}>${label}</label>`;
+ host.innerHTML=`<form class="card creator" novalidate>
+  <div class="preview"><svg viewBox="-70 -250 140 262" role="img" aria-label="Aperçu de ton personnage"><g class="pv"></g></svg></div>
+  <div>
+   <h2>Crée ton voyageur</h2>
+   <div class="field"><label class="lab" for="cr-name">Comment tu t'appelles?</label>
+    <input type="text" id="cr-name" maxlength="20" autocomplete="off" value="${esc(p.name)}" placeholder="Ton prénom"></div>
+   <fieldset class="field"><legend>Tu es…</legend><div class="choices">
+    ${opt('gender','fille','une fille',p.gender==='fille')}${opt('gender','garcon','un garçon',p.gender==='garcon')}${opt('gender','nb','non binaire',p.gender==='nb')}</div></fieldset>
+   <fieldset class="field agreeRow" ${p.gender==='nb'?'':'hidden'}><legend>Pour les accords en français (je suis arrivé / arrivée), utilise :</legend><div class="choices">
+    ${opt('agree','m','le masculin',p.agree==='m')}${opt('agree','f','le féminin',p.agree==='f')}</div></fieldset>
+   <fieldset class="field"><legend>Teint</legend><div class="choices">
+    ${SKIN.map((s,i)=>opt('skin',i,`<span style="background:${s.m}"></span>`,p.skin===i,`class="swatch" title="${s.name}" aria-label="${s.name}"`)).join('')}</div></fieldset>
+   <fieldset class="field"><legend>Cheveux</legend><div class="choices">
+    ${HAIR.map((s,i)=>opt('hair',i,`<span style="background:${s.c}"></span>`,p.hair===i,`class="swatch" title="${s.name}" aria-label="${s.name}"`)).join('')}</div>
+    <div class="choices" style="margin-top:8px">${opt('style','long','longs',p.style==='long')}${opt('style','mid','mi-longs',p.style==='mid')}${opt('style','short','courts',p.style==='short')}</div></fieldset>
+   <button class="btn primary" type="submit">C'est moi! Allons-y</button>
+   <p class="note err" hidden>Écris ton prénom pour continuer.</p>
+  </div></form>`;
+ const f=host.querySelector('form'), pv=host.querySelector('.pv');
+ const read=()=>{
+  const g=f.gender.value; p.gender=g; p.name=f.querySelector('#cr-name').value.trim();
+  p.agree = g==='fille'?'f': g==='garcon'?'m': (f.agree.value||'m');
+  p.skin=+f.skin.value; p.hair=+f.hair.value;
+  p.style = f.style.value || (g==='fille'?'long':g==='garcon'?'short':'mid');
+  f.querySelector('.agreeRow').hidden = g!=='nb';
+  pv.innerHTML = person(Object.assign(playerLook(p),{x:0,y:0,noShadow:false}));
+ };
+ if(!p.style){ p.style = p.gender==='fille'?'long':p.gender==='garcon'?'short':'mid'; f.querySelector(`input[name=style][value=${p.style}]`).checked=true; }
+ f.addEventListener('input', e=>{
+  if(e.target.name==='gender'){ const d=e.target.value==='fille'?'long':e.target.value==='garcon'?'short':'mid'; f.querySelector(`input[name=style][value=${d}]`).checked=true; }
+  read();
+ });
+ f.addEventListener('submit', e=>{ e.preventDefault(); read();
+  if(!p.name){ f.querySelector('.err').hidden=false; f.querySelector('#cr-name').focus(); return; }
+  p.name=p.name.charAt(0).toUpperCase()+p.name.slice(1);
+  Store.set(p); onDone(p);
+ });
+ read();
+}
+
+/* ===== The connected journey: order of stops, shared by the hub and the games. ===== */
+const JOURNEY=[
+ {id:'quebec',     place:'Québec',     sub:'Le Carnaval',          code:'YQB', file:'01-quebec.html',     ready:true,  color:'#9B2F2F'},
+ {id:'montreal',   place:'Montréal',   sub:'Le métro',             code:'YUL', file:'02-montreal.html',   ready:true , color:'#2C5E67'},
+ {id:'acadie',     place:'Acadie',     sub:'Le Tintamarre',        code:'YQM', file:'03-acadie.html',     ready:true , color:'#2F4F86'},
+ {id:'dakar',      place:'Dakar',      sub:'La famille d\'accueil',code:'DSS', file:'04-dakar.html',      ready:true , color:'#B36A1F'},
+ {id:'bretagne',   place:'Bretagne',   sub:'Le lycée',             code:'RNS', file:'05-bretagne.html',   ready:false, color:'#1F5F7A'},
+ {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:false, color:'#7A5B1F'},
+ {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:false, color:'#2E7A55'},
+ {id:'louisiane',  place:'Louisiane',  sub:'Le concours d\'histoires', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
+];
+function stampIcon(id,c){
+ const s=`fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"`;
+ switch(id){
+  case 'quebec': return `<g ${s}><path d="M-14,10 V-2 H14 V10"/><path d="M-6,-2 V-8 H6 V-2"/><path d="M-8,-8 L0,-18 L8,-8"/><path d="M-16,-2 L-11,-10 L-6,-2 M6,-2 L11,-10 L16,-2"/></g>`;
+  case 'montreal': return `<g ${s}><rect x="-14" y="-12" width="28" height="20" rx="6"/><path d="M-14,-2 H14 M-8,8 L-11,14 M8,8 L11,14"/><circle cx="-7" cy="3" r="1.5"/><circle cx="7" cy="3" r="1.5"/></g>`;
+  case 'acadie': return `<g ${s}><path d="M0,-15 L4,-4 L15,-4 L6,3 L9,14 L0,7 L-9,14 L-6,3 L-15,-4 L-4,-4 Z"/></g>`;
+  case 'dakar': return `<g ${s}><path d="M-3,14 L-4,-2 M3,14 L4,-2 M-4,-2 C-10,-4 -14,-8 -14,-12 M4,-2 C10,-4 14,-8 14,-12 M0,-2 V-14"/><path d="M-16,-12 Q-10,-18 -4,-12 Q2,-20 8,-12 Q14,-18 18,-12"/></g>`;
+  case 'bretagne': return `<g ${s}><path d="M-6,14 L-4,-8 H4 L6,14 Z M-6,-8 H6 L4,-14 H-4 Z M-4,2 H4"/><path d="M-12,-14 L-18,-17 M12,-14 L18,-17"/></g>`;
+  case 'bruxelles': return `<g ${s}><path d="M-9,-2 L0,15 L9,-2 Z"/><path d="M-7,-2 L-8,-14 M-3,-2 L-3,-16 M2,-2 L3,-15 M6,-2 L8,-12"/></g>`;
+  case 'martinique': return `<g ${s}><path d="M-16,12 L-5,-6 L0,-2 L5,-8 L16,12 Z"/><path d="M-2,-10 C-2,-14 2,-14 2,-17"/></g>`;
+  case 'louisiane': return `<g ${s}><rect x="-14" y="-10" width="28" height="18" rx="2"/><path d="M-6,-10 V8 M0,-10 V8 M6,-10 V8"/><path d="M-14,-4 H-18 M14,-4 H18"/></g>`;
+ }
+ return '';
+}
+function stampSVG(stop, state, dateTxt){
+ const c = state==='done'? stop.color : '#9AA3AE';
+ const rot = state==='done'? (stop.place.length*7%13-6) : 0;
+ return `<svg viewBox="-60 -60 120 120" role="img" aria-label="${stop.place}${state==='done'?', visité':''}">
+  <g transform="rotate(${rot})" opacity="${state==='locked'?.55:1}">
+  <circle r="52" fill="none" stroke="${c}" stroke-width="${state==='done'?3:2}" ${state==='done'?'':'stroke-dasharray="5 5"'}/>
+  <g transform="translate(0 -14)">${stampIcon(stop.id,c)}</g>
+  <text y="20" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="${Math.min(13,104/stop.place.length)}" fill="${c}">${stop.place.toUpperCase()}</text>
+  <text y="33" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="600" font-size="7.5" letter-spacing=".8" fill="${c}">${state==='done'?(dateTxt||'VISITÉ'):state==='next'?'PROCHAINE':'À VENIR'}</text>
+  </g></svg>`;
+}
+function nextStop(p){ return JOURNEY.find(s=>!(p&&p.done&&p.done[s.id])) || null; }
+
+/* ===== Dakar scenes (960 x 540). Strong sun from the top left, three tones, contact shadows. ===== */
+const NPC={
+ awa:{name:'Awa', role:'Ta sœur d\'accueil', look:{skin:5,hair:'#1E1612',style:'long',coat:'magenta',noHat:true,scarf:''}},
+ fatou:{name:'Fatou Diop', role:'Ta mère d\'accueil', look:{skin:4,hair:'#1E1612',style:'mid',coat:'saffron',noHat:true,collar:'#F4EFE6'}},
+ ndiaye:{name:'Mme Ndiaye', role:'Marchande de tissus', look:{skin:5,hair:'#1E1612',style:'mid',coat:'emerald',noHat:true,glasses:true,collar:'#F2C46D'}},
+ ousmane:{name:'Ousmane', role:'Artiste, île de Gorée', pitch:.85, look:{skin:5,hair:'#1E1612',style:'short',coat:'olive',noHat:true,collar:'#F4EFE6'}},
+ ibou:{name:'Ibou', role:'10 ans, ton frère d\'accueil', pitch:1.35, look:{skin:4,hair:'#1E1612',style:'short',coat:'emerald',noHat:true,collar:'#F4F4F0'}},
+ moussa:{name:'Moussa Diop', role:'Ton père d\'accueil', look:{skin:5,hair:'#1E1612',style:'short',coat:'blue',noHat:true,glasses:true}},
+ mame:{name:'Mame Coumba', role:'La grand-mère', look:{skin:4,hair:'#CFCBC4',style:'mid',grey:true,coat:'plum',noHat:true}}
+};
+function npcFig(id,o){ return person(Object.assign({},NPC[id].look,o)); }
+function faceSVG(look){ return `<svg viewBox="-19 -232 38 46" aria-hidden="true"><rect x="-19" y="-232" width="38" height="46" fill="#C9D6E3"/>${person(Object.assign({},look,{x:0,y:0,noShadow:true}))}</svg>`; }
+const ME=(pl,o)=>person(Object.assign(playerLook(pl,GAME.playerExtra),o));
+
+const DK_DEFS=(()=>{
+ const lg=(id,stops,x2=1,y2=0)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map((c,i)=>`<stop offset="${(i/(stops.length-1)).toFixed(2)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+ const pat=(id,bg,body)=>`<pattern id="${id}" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="${bg}"/>${body}</pattern>`;
+ return `<defs>${lg('dkSky',['#5FA8DA','#A9D3EE','#F2E6C8'],0,1)}${lg('dkSea',['#4FB0C9','#2A85A8','#1C5E80'],0,1)}${lg('dkSand',['#F2DDB0','#DDBF86'],0,1)}
+ ${lg('dkWall',['#F4E6C6','#E2CC9E'],0,1)}${lg('dkOchre',['#E2A84E','#C4862E'],0,1)}${lg('dkRose',['#D97C6A','#B85A4A'],0,1)}${lg('dkTerra',['#C9784A','#9C5630'],0,1)}
+ ${lg('dkBlue',['#3C82B4','#25608A'],0,1)}${lg('dkTarp',['#3C82B4','#2A6A96'],0,1)}${lg('dkNight',['#14213F','#28406A','#3E5683'],0,1)}${lg('dkNightWall',['#4A4560','#2E2B40'],0,1)}
+ ${lg('dkWood',['#A9744A','#7A4E2C'],0,1)}${lg('dkPirogueR',['#D9534A','#9C2A22'],0,1)}${lg('dkPirogueB',['#3C82B4','#1F4E78'],0,1)}${lg('dkPirogueG',['#3FA36B','#1E6A42'],0,1)}
+ ${pat('dkWax1','#E9A93A','<circle cx="5" cy="5" r="3.5" fill="#B8332B"/><circle cx="15" cy="15" r="3.5" fill="#1F4E78"/><circle cx="15" cy="5" r="1.5" fill="#F4EFE6"/>')}
+ ${pat('dkWax2','#1F6E8A','<path d="M0,10 L5,4 L10,10 L15,4 L20,10" stroke="#F2C230" stroke-width="2.4" fill="none"/><path d="M0,18 L5,12 L10,18 L15,12 L20,18" stroke="#F4EFE6" stroke-width="1.4" fill="none"/>')}
+ ${pat('dkWax3','#B8332B','<circle cx="10" cy="10" r="6" fill="none" stroke="#F2C230" stroke-width="2"/><circle cx="10" cy="10" r="2" fill="#2A7A4E"/>')}
+ ${pat('dkWax4','#2A7A4E','<rect x="2" y="2" width="7" height="7" fill="#F2C230"/><rect x="11" y="11" width="7" height="7" fill="#C2477A"/>')}
+ ${pat('dkWax5','#5C3753','<path d="M0,0 L20,20 M20,0 L0,20" stroke="#F2B84B" stroke-width="2"/><circle cx="10" cy="10" r="2.5" fill="#F4EFE6"/>')}
+ ${pat('dkMat','#D9B77A','<rect width="20" height="5" fill="#B8332B" opacity=".75"/><rect y="10" width="20" height="3" fill="#2A7A4E" opacity=".7"/>')}
+ ${pat('dkTiles','#C9784A','<path d="M0,0 H20 V20" stroke="#9C5630" stroke-width="1" fill="none" opacity=".6"/>')}</defs>`;
+})();
+document.body.insertAdjacentHTML('afterbegin',`<svg width="0" height="0" style="position:absolute" aria-hidden="true">${DK_DEFS}</svg>`);
+
+/* ---------- shared pieces ---------- */
+function bougainvillea(x,y,n,seed){
+ let s=seed||3; const r=()=>(s=(s*9301+49297)%233280)/233280; let g=`<path d="M${x},${y+40} C${x+20},${y} ${x+60},${y-10} ${x+n*14},${y+6}" stroke="#4A6E2E" stroke-width="3" fill="none"/>`;
+ for(let i=0;i<n*5;i++){ const px=x+r()*n*14, py=y-14+r()*44; g+=`<circle cx="${px.toFixed(0)}" cy="${py.toFixed(0)}" r="${(4+r()*4).toFixed(1)}" fill="${r()<.25?'#3E7A3A':['#D6337A','#E2509A','#B8205E'][i%3]}"/>`; }
+ return g;
+}
+function palm(x,y,s){
+ return `${shadow(x+20*s,y+2,40*s,6*s,.28,'blurS')}<path d="M${x},${y} C${x+6*s},${y-80*s} ${x+2*s},${y-150*s} ${x+18*s},${y-210*s}" stroke="#7A5A3A" stroke-width="${10*s}" fill="none" stroke-linecap="round"/>
+ ${[[-70,-10],[-40,-40],[0,-50],[40,-38],[70,-6],[55,20],[-55,22]].map(([dx,dy])=>`<path d="M${x+18*s},${y-210*s} Q${x+18*s+dx*.5*s},${y-226*s+dy*.4*s} ${x+18*s+dx*s},${y-210*s+dy*s+30*s}" stroke="#3E7A3A" stroke-width="${7*s}" fill="none" stroke-linecap="round"/>`).join('')}
+ <circle cx="${x+18*s}" cy="${y-206*s}" r="${6*s}" fill="#6B4A2A"/>`;
+}
+
+/* ---------- 1. La maison des Diop (courtyard) ---------- */
+function sceneMaison(pl){
+ return `<rect width="960" height="540" fill="url(#dkSky)"/>
+ ${palm(860,300,1)}
+ <rect x="0" y="110" width="960" height="320" fill="url(#dkWall)"/><rect x="0" y="104" width="960" height="12" fill="#D9C08E"/>
+ <rect x="0" y="380" width="960" height="50" fill="#D9C08E" opacity=".5"/>
+ ${bougainvillea(10,100,16,4)}${bougainvillea(640,100,12,9)}
+ <!-- blue door and shuttered window -->
+ ${shadow(140,432,70,5,.25,'blurS')}<rect x="80" y="210" width="120" height="220" rx="4" fill="url(#dkBlue)"/><path d="M140,214 V430" stroke="#1C4A6E" stroke-width="2"/>
+ ${[230,270,310,350,390].map(y=>`<path d="M86,${y} H194" stroke="#1C4A6E" stroke-width="1.2" opacity=".5"/>`).join('')}<circle cx="128" cy="330" r="4" fill="#F2C46D"/>
+ <rect x="690" y="180" width="140" height="120" fill="#F4EFE6"/><rect x="698" y="188" width="60" height="104" fill="url(#dkBlue)"/><rect x="762" y="188" width="60" height="104" fill="url(#dkBlue)"/>
+ ${[200,214,228,242,256,270,284].map(y=>`<path d="M700,${y} H756 M764,${y} H820" stroke="#1C4A6E" stroke-width="1.4" opacity=".6"/>`).join('')}
+ <!-- family photo on the wall -->
+ ${shadow(450,250,74,5,.2,'blurS')}<rect x="370" y="150" width="160" height="104" rx="2" fill="#7A4E2C"/><rect x="380" y="160" width="140" height="84" fill="#E8D9B8"/>
+ <rect x="380" y="160" width="140" height="84" fill="url(#dkSky)" opacity=".5"/>
+ <g transform="translate(450 244) scale(.3)">${npcFig('moussa',{x:-150,y:0,noShadow:true})}${npcFig('mame',{x:-50,y:0,noShadow:true})}${npcFig('fatou',{x:50,y:0,noShadow:true})}${npcFig('ibou',{x:150,y:0,sc:.8,noShadow:true})}</g>
+ <!-- floor -->
+ <rect y="430" width="960" height="110" fill="url(#dkTiles)"/><rect y="430" width="960" height="110" fill="#000" opacity=".06"/>
+ ${shadow(470,476,160,8,.25)}<path d="M330,450 L620,450 L660,500 L290,500 Z" fill="url(#dkMat)"/><path d="M290,500 L660,500 L660,506 L290,506 Z" fill="#9C7A42"/>
+ ${npcFig('fatou',{x:560,y:478,sc:1.02})}
+ ${npcFig('awa',{x:760,y:490,sc:1})}
+ ${ME(pl,{x:280,y:512,sc:1.1})}`;
+}
+
+/* ---------- 2. Le marché HLM ---------- */
+function fabricStack(x,y,pats){
+ return `${shadow(x+50,y+2,56,5,.28,'blurS')}`+pats.map((p,i)=>`<rect x="${x}" y="${y-(i+1)*16}" width="100" height="15" rx="3" fill="url(#${p})"/><rect x="${x}" y="${y-(i+1)*16}" width="100" height="4" rx="2" fill="#fff" opacity=".22"/><rect x="${x+88}" y="${y-(i+1)*16}" width="12" height="15" fill="#000" opacity=".15"/>`).join('');
+}
+function hanging(x,p,len){ return `<rect x="${x}" y="84" width="70" height="${len}" fill="url(#${p})"/><path d="M${x},${84+len} q17,8 35,0 t35,0 V${84+len-4} H${x}Z" fill="url(#${p})"/><rect x="${x+56}" y="84" width="14" height="${len}" fill="#000" opacity=".18"/><rect x="${x}" y="84" width="10" height="${len}" fill="#fff" opacity=".15"/>`; }
+function sceneMarcheHLM(pl){
+ return `<rect width="960" height="540" fill="url(#dkSky)"/>
+ <rect y="140" width="960" height="290" fill="#E9D6AE"/>
+ <!-- tarp roof -->
+ <path d="M0,40 H960 V84 H0 Z" fill="url(#dkTarp)"/><path d="M0,84 Q60,96 120,84 Q180,96 240,84 Q300,96 360,84 Q420,96 480,84 Q540,96 600,84 Q660,96 720,84 Q780,96 840,84 Q900,96 960,84" fill="#2A6A96"/>
+ <path d="M0,84 H960" stroke="#1C4A6E" stroke-width="2"/>${[120,480,840].map(x=>`<rect x="${x-5}" y="84" width="10" height="346" fill="url(#dkWood)"/>`).join('')}
+ ${hanging(150,'dkWax1',170)}${hanging(230,'dkWax2',200)}${hanging(310,'dkWax3',150)}${hanging(560,'dkWax4',190)}${hanging(640,'dkWax5',160)}${hanging(720,'dkWax2',180)}
+ <rect y="430" width="960" height="110" fill="url(#dkSand)"/><rect y="430" width="960" height="8" fill="#000" opacity=".08"/>
+ ${npcFig('ndiaye',{x:470,y:410,sc:1,noShadow:true})}
+ <!-- table with stacks -->
+ <polygon points="300,350 680,350 700,366 280,366" fill="url(#counterTop)"/>
+ <rect x="280" y="366" width="420" height="80" fill="url(#dkWood)"/><rect x="684" y="366" width="16" height="80" fill="#000" opacity=".16"/>${shadow(490,452,220,7,.3)}
+ ${fabricStack(300,356,['dkWax1','dkWax3','dkWax2','dkWax4'])}${fabricStack(420,356,['dkWax5','dkWax2'])}${fabricStack(560,356,['dkWax4','dkWax1','dkWax5'])}
+ ${npcFig('awa',{x:820,y:500,sc:1})}
+ ${ME(pl,{x:170,y:512,sc:1.1})}`;
+}
+
+/* ---------- 3. L'île de Gorée ---------- */
+function goreeHouse(x,w,h,wall,shut){
+ const y=420-h;
+ return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${wall})"/><rect x="${x+w-10}" y="${y}" width="10" height="${h}" fill="#000" opacity=".12"/>
+ <rect x="${x-6}" y="${y-10}" width="${w+12}" height="12" fill="#8A5A3A"/>
+ ${[.15,.6].map(a=>`<rect x="${x+w*a}" y="${y+24}" width="${w*.25}" height="${h*.28}" fill="${shut}"/><path d="M${x+w*a+w*.125},${y+24} V${y+24+h*.28}" stroke="#000" stroke-width="1" opacity=".3"/>`).join('')}
+ <rect x="${x+8}" y="${y+h*.46}" width="${w-16}" height="6" fill="#5A3A20"/>${Array.from({length:Math.floor((w-16)/10)},(_,i)=>`<path d="M${x+12+i*10},${y+h*.46} v-22" stroke="#3A2A1A" stroke-width="1.4"/>`).join('')}<path d="M${x+8},${y+h*.46-22} H${x+w-8}" stroke="#3A2A1A" stroke-width="2"/>
+ <rect x="${x+w*.38}" y="${y+h*.62}" width="${w*.24}" height="${h*.38}" fill="${shut}"/>`;
+}
+function maisonEsclaves(x){ /* rose building with the twin curved staircase, set back */
+ const y=200;
+ return `<rect x="${x}" y="${y}" width="240" height="160" fill="url(#dkRose)"/><rect x="${x+228}" y="${y}" width="12" height="160" fill="#000" opacity=".12"/>
+ <rect x="${x-6}" y="${y-10}" width="252" height="12" fill="#8A4A3A"/>
+ ${[30,90,150,200].map(dx=>`<rect x="${x+dx}" y="${y+20}" width="22" height="34" fill="#5A2E24"/>`).join('')}
+ <rect x="${x+104}" y="${y+108}" width="32" height="52" fill="#3A1E18"/>
+ <path d="M${x+40},${y+160} C${x+60},${y+120} ${x+90},${y+92} ${x+110},${y+82} H${x+130} C${x+150},${y+92} ${x+180},${y+120} ${x+200},${y+160}" stroke="#F4E6C6" stroke-width="10" fill="none"/>
+ <path d="M${x+40},${y+150} C${x+60},${y+110} ${x+90},${y+84} ${x+110},${y+74} H${x+130} C${x+150},${y+84} ${x+180},${y+110} ${x+200},${y+150}" stroke="#5A2E24" stroke-width="2" fill="none"/>`;
+}
+function sandPainting(x,y,i){
+ const scenes=[`<rect x="${x+4}" y="${y+4}" width="52" height="24" fill="#5FA8DA"/><rect x="${x+4}" y="${y+28}" width="52" height="12" fill="#2A85A8"/><circle cx="${x+40}" cy="${y+14}" r="6" fill="#F2C230"/>`,
+  `<rect x="${x+4}" y="${y+4}" width="52" height="36" fill="#E9A93A"/><path d="M${x+10},${y+40} L${x+22},${y+18} L${x+34},${y+40} Z" fill="#7A4E2C"/><circle cx="${x+42}" cy="${y+14}" r="5" fill="#B8332B"/>`,
+  `<rect x="${x+4}" y="${y+4}" width="52" height="36" fill="#D97C6A"/><path d="M${x+14},${y+40} C${x+20},${y+26} ${x+40},${y+26} ${x+46},${y+40}" stroke="#F4E6C6" stroke-width="3" fill="none"/>`];
+ return `${shadow(x+30,y+48,30,3,.25,'blurS')}<rect x="${x}" y="${y}" width="60" height="44" fill="#5A3A20"/>${scenes[i%3]}<rect x="${x+4}" y="${y+4}" width="52" height="8" fill="#fff" opacity=".12"/>`;
+}
+function sceneGoree(pl){
+ return `<rect width="960" height="540" fill="url(#dkSky)"/>
+ <rect y="300" width="960" height="60" fill="url(#dkSea)"/>
+ ${maisonEsclaves(360)}
+ ${goreeHouse(-10,200,250,'dkOchre','#2A7A4E')}${goreeHouse(640,170,230,'dkTerra','#25608A')}${goreeHouse(800,180,260,'dkOchre','#B8332B')}
+ ${bougainvillea(170,170,10,5)}${bougainvillea(650,190,8,11)}
+ <rect y="420" width="960" height="120" fill="url(#dkSand)"/><g fill="#C9A86A" opacity=".5">${Array.from({length:30},(_,i)=>`<circle cx="${(i*67)%960}" cy="${440+(i*37)%90}" r="1.6"/>`).join('')}</g>
+ <!-- painting display -->
+ ${shadow(170,152,100,4,.18,'blurS')}<rect x="60" y="120" width="220" height="30" rx="4" fill="#2B2D42"/><rect x="63" y="123" width="214" height="24" rx="3" fill="none" stroke="#E9C77B" stroke-width="1" opacity=".55"/>
+ <rect x="60" y="160" width="220" height="200" fill="#E8D9B8" opacity=".9"/>
+ ${[[74,176],[140,176],[206,176],[74,240],[140,240],[206,240]].map(([x,y],i)=>sandPainting(x,y,i)).join('')}
+ ${shadow(170,424,110,6,.3)}<rect x="66" y="300" width="208" height="120" fill="url(#dkWood)"/><rect x="60" y="296" width="220" height="8" fill="#5A3A20"/>
+ ${[0,1,2].map(i=>`<ellipse cx="${100+i*60}" cy="296" rx="18" ry="5" fill="${['#E9A93A','#B8332B','#2A85A8'][i]}"/>`).join('')}
+ ${npcFig('ousmane',{x:340,y:500,sc:1.05})}
+ ${ME(pl,{x:620,y:512,sc:1.1})}`;
+}
+
+/* ---------- 4. La plage ---------- */
+function pirogue(x,y,s,g,flip){
+ const k=flip?-1:1, X=v=>x+k*v*s;
+ return `${shadow(X(110),y+6*s,120*s,6*s,.3,'blurS')}
+ <path d="M${X(0)},${y-34*s} Q${X(30)},${y} ${X(110)},${y} Q${X(190)},${y} ${X(225)},${y-38*s} Q${X(110)},${y-20*s} ${X(0)},${y-34*s} Z" fill="url(#${g})"/>
+ <path d="M${X(14)},${y-26*s} Q${X(110)},${y-12*s} ${X(212)},${y-30*s}" stroke="#F2C230" stroke-width="${4*s}" fill="none"/>
+ <path d="M${X(20)},${y-18*s} Q${X(110)},${y-4*s} ${X(206)},${y-20*s}" stroke="#F4EFE6" stroke-width="${3*s}" fill="none"/>
+ ${[50,90,130,170].map(v=>`<circle cx="${X(v)}" cy="${y-10*s}" r="${3*s}" fill="#F4EFE6"/>`).join('')}
+ <path d="M${X(0)},${y-34*s} L${X(-6)},${y-48*s}" stroke="#3A2A1A" stroke-width="${3*s}"/><path d="M${X(225)},${y-38*s} L${X(232)},${y-54*s}" stroke="#3A2A1A" stroke-width="${3*s}"/>
+ <rect x="${Math.min(X(232),X(232)+k*16*s)}" y="${y-62*s}" width="${16*s}" height="${10*s}" fill="#2A7A4E"/>`;
+}
+function scenePlage(pl){
+ return `<rect width="960" height="540" fill="url(#dkSky)"/>
+ <rect y="230" width="960" height="130" fill="url(#dkSea)"/>
+ <g stroke="#E8F6FA" stroke-width="2" opacity=".55" fill="none">${[[40,260],[300,280],[620,250],[820,300],[160,320],[520,330]].map(([x,y])=>`<path d="M${x},${y} q24,-5 48,0 t48,0"/>`).join('')}</g>
+ <path d="M0,356 Q240,344 480,352 T960,346 V360 H0Z" fill="#F4FAFC" opacity=".7"/>
+ <path d="M0,360 Q240,350 480,356 T960,350 V540 H0 Z" fill="url(#dkSand)"/>
+ ${pirogue(30,410,1,'dkPirogueR',false)}${pirogue(560,396,.85,'dkPirogueB',true)}${pirogue(700,420,1.05,'dkPirogueG',false)}
+ <!-- stick goal -->
+ ${shadow(420,444,60,4,.25,'blurS')}<path d="M370,444 V370 H470 V444" stroke="#7A5A3A" stroke-width="6" fill="none" stroke-linecap="round"/>
+ ${[0,1,2,3,4].map(i=>`<path d="M${378+i*22},372 L${384+i*20},440" stroke="#E8E2D6" stroke-width="1" opacity=".7"/>`).join('')}
+ ${shadow(560,500,10,3,.3,'blurS')}<circle cx="560" cy="490" r="10" fill="#F4F4F0"/><path d="M553,486 l7,-3 l6,4 l-2,7 l-8,0 z" fill="#2B2D42"/>
+ ${[120,200,880].map((x,i)=>`<g transform="translate(${x} ${350+i*4}) scale(.45)">${person({x:0,y:0,coat:['saffron','blue','rust'][i],skin:[4,5,3][i],hair:'#1E1612',style:'short',noHat:true})}</g>`).join('')}
+ ${npcFig('ibou',{x:680,y:505,sc:.9})}
+ ${ME(pl,{x:280,y:512,sc:1.1})}`;
+}
+
+/* ---------- 5. Le grand souper (night courtyard) ---------- */
+function attaya(x,y){
+ return `${shadow(x+30,y+2,34,4,.3,'blurS')}<rect x="${x}" y="${y-24}" width="40" height="24" rx="3" fill="#3A3D45"/><ellipse cx="${x+20}" cy="${y-24}" rx="20" ry="4" fill="#E8742A" opacity=".8"/>
+ <path d="M${x+8},${y-28} Q${x+6},${y-48} ${x+20},${y-50} Q${x+34},${y-48} ${x+32},${y-28} Z" fill="url(#metal)"/><path d="M${x+32},${y-40} L${x+44},${y-48}" stroke="#9BA4AE" stroke-width="3"/>
+ <rect x="${x+16}" y="${y-56}" width="8" height="6" rx="2" fill="#5E6772"/>
+ ${[0,1,2].map(i=>`<rect x="${x+50+i*10}" y="${y-12}" width="7" height="12" rx="1" fill="#A9D8C8" opacity=".85"/>`).join('')}`;
+}
+function sceneSouper(pl){
+ let s=4; const r=()=>(s=(s*9301+49297)%233280)/233280; let stars='';
+ for(let i=0;i<50;i++) stars+=`<circle cx="${(r()*960).toFixed(0)}" cy="${(r()*110).toFixed(0)}" r="${(.5+r()*1).toFixed(1)}" fill="#fff" opacity="${(.3+r()*.6).toFixed(2)}"/>`;
+ const bulbs=Array.from({length:22},(_,i)=>{const x=i*45+10,y=118+Math.sin(i/21*Math.PI)*38;return `<circle cx="${x}" cy="${y+5}" r="10" fill="url(#glowStrong)"/><circle cx="${x}" cy="${y+5}" r="2.8" fill="${['#FFE2A0','#FFB4A8','#A9D8FF'][i%3]}"/>`;}).join('');
+ return `<rect width="960" height="540" fill="url(#dkNight)"/>${stars}
+ <rect x="0" y="130" width="960" height="300" fill="url(#dkNightWall)"/><rect x="0" y="124" width="960" height="10" fill="#3A3650"/>
+ ${bougainvillea(20,130,14,7)}
+ <rect x="80" y="230" width="120" height="200" rx="4" fill="#1F3A55"/>
+ <path d="M0,118 Q480,170 960,118" stroke="#1A1D26" stroke-width="1.2" fill="none"/>${bulbs}
+ <rect y="430" width="960" height="110" fill="url(#dkTiles)"/><rect y="430" width="960" height="110" fill="#0E1630" opacity=".45"/>
+ <circle cx="480" cy="380" r="300" fill="url(#glow)" opacity=".6"/>
+ ${npcFig('moussa',{x:250,y:450,sc:.95})}${npcFig('mame',{x:360,y:446,sc:.92})}${npcFig('fatou',{x:600,y:450,sc:.95})}${npcFig('ibou',{x:700,y:456,sc:.8})}
+ <!-- mat and the big dish -->
+ ${shadow(480,500,220,10,.35)}<path d="M290,462 L670,462 L720,520 L240,520 Z" fill="url(#dkMat)"/>
+ ${shadow(480,494,90,8,.35,'blurS')}<ellipse cx="480" cy="486" rx="90" ry="20" fill="#C9CFD6"/><ellipse cx="480" cy="482" rx="80" ry="16" fill="#E2B05A"/>
+ <ellipse cx="480" cy="480" rx="56" ry="10" fill="#B8441C"/>${[[454,478],[480,474],[506,479]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="12" ry="5" fill="#9AA3AE"/><ellipse cx="${x-3}" cy="${y-2}" rx="4" ry="1.5" fill="#fff" opacity=".6"/>`).join('')}
+ <circle cx="440" cy="486" r="5" fill="#E8742A"/><circle cx="520" cy="488" r="5" fill="#3E7A3A"/><circle cx="498" cy="490" r="4" fill="#E8742A"/>
+ ${attaya(640,512)}
+ ${npcFig('awa',{x:830,y:500,sc:1})}
+ ${ME(pl,{x:130,y:512,sc:1.08})}`;
+}
+
+/* ---------- Map: Dakar peninsula ---------- */
+function sceneMap(){
+ return `<rect width="960" height="540" fill="url(#dkSea)"/>
+ <g stroke="#6FC0D6" stroke-width="1" opacity=".35">${Array.from({length:25},(_,i)=>`<path d="M${i*40},0 V540"/>`).join('')}${Array.from({length:14},(_,i)=>`<path d="M0,${i*40} H960"/>`).join('')}</g>
+ <path d="M960,120 C860,130 760,140 660,150 C560,156 470,150 400,170 C330,190 260,170 200,190 C140,210 100,250 130,290 C160,320 230,310 300,330 C380,350 460,360 520,390 C580,420 640,420 680,400 C720,380 760,340 820,320 C880,300 930,300 960,300 Z" fill="url(#dkSand)" stroke="#C9A86A" stroke-width="3"/>
+ <path d="M660,150 C640,220 600,280 560,330" stroke="#E2CC9E" stroke-width="10" fill="none"/>
+ <g fill="#E2CC9E">${[[300,240],[360,260],[420,220],[480,250],[540,230],[600,260],[520,300],[580,320],[460,300],[640,300],[700,250],[760,220],[820,200],[240,250]].map(([x,y])=>`<rect x="${x}" y="${y}" width="24" height="16" rx="2"/>`).join('')}</g>
+ <ellipse cx="760" cy="440" rx="22" ry="12" fill="url(#dkSand)" stroke="#C9A86A" stroke-width="2"/>
+ <path d="M640,410 C680,430 720,440 740,440" stroke="#2B2D42" stroke-width="2" stroke-dasharray="4 6" fill="none"/>
+ <path d="M310,200 L322,180 L334,200 Z" fill="#B8441C"/>
+ <path d="M300,215 C380,240 460,250 520,250 C560,260 590,320 620,350 C680,380 720,420 760,430 M760,430 C700,400 620,360 600,360" stroke="#9B2F2F" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" fill="none"/>`;
+}
+const MAP_PINS={maison:[560,360], marche:[520,250], goree:[760,430], plage:[300,212], souper:[700,300]};
+const SCENES={maison:sceneMaison, marche:sceneMarcheHLM, goree:sceneGoree, plage:scenePlage, souper:sceneSouper};
+
+/* ===== Escale 4 : Dakar, Sénégal — La teranga =====
+   Curriculum (French 20-3Y): 20 C 1.2 (friendships and relationships: a host family);
+   20 R 2.1e déterminants possessifs (mon/ma/mes, son/sa/ses, notre/votre/leur(s)), 2.3a possessive de,
+   2.12a agreement and placement of adjectives, 2.12b comparative and superlative (plus/moins/aussi … que, le plus, meilleur),
+   2.4a questions, 3.2 tu / vous, 2.7b-c passé composé review.
+   Culture (R 4.1a, 4.1e): la teranga, Wolof, Senghor, marché HLM, Gorée, les Lions de la Teranga, le thiéboudienne, l'attaya.
+   Text markup: [[mot|français standard|English]] (here: Wolof words and Senegalese French), {masc|fém}, [nom]. */
+const GAME={id:'dakar', title:'La teranga', place:'Dakar', eyebrow:'Escale 4 · Dakar, Sénégal',
+ introName:'Arrivée à Dakar', mapAria:'Carte de Dakar et de l\'île de Gorée', playerExtra:{noHat:true, scarf:'', coat:'cream'},
+ mapLabels:`<span class="maplabel river" style="left:4%;top:8%">océan Atlantique</span><span class="maplabel" style="left:44%;top:46%">Dakar</span><span class="maplabel" style="left:6%;top:44%;font-size:1.3cqw">pointe des Almadies</span>`,
+ lede:"Ta famille d'accueil, les Diop, t'accueille avec beaucoup de teranga. Trouve un cadeau pour chaque personne avant le grand souper de vendredi!",
+ endText:"Grâce à toi, chaque membre de la famille Diop a reçu un cadeau, et le souper a duré toute la soirée. Tu as gagné le tampon de Dakar dans ton passeport."};
+
+const INTRO={who:'awa', steps:[
+ {t:'npc', text:"[[Dalal ak jàmm|Bienvenue (wolof)|Welcome]], [nom]! Bienvenue à Dakar! Je suis Awa, ta sœur d'accueil. [[Nanga def?|Comment ça va? (wolof)|How are you?]]", en:"Welcome, [nom]! Welcome to Dakar! I'm Awa, your host sister. How are you?"},
+ {t:'choice', prompt:"Réponds à Awa.", en:"Answer Awa.", opts:[
+  {txt:"Ça va très bien, merci! C'est ma première visite en Afrique.", ok:true},
+  {txt:"Ça va très bien, merci! C'est mon première visite en Afrique.", why:"Visite est féminin : ma première visite.", whyEn:"Visite is feminine: ma."},
+  {txt:"Ça va très bien, merci! C'est mes première visite en Afrique.", why:"Mes, c'est pour le pluriel. Une visite, c'est singulier et féminin : ma première visite.", whyEn:"Mes is plural. Use ma."}]},
+ {t:'npc', text:"En wolof, on répond : [[Mangi fi rekk|Ça va, je suis là (wolof)|I'm fine]]! Ici, la [[teranga|hospitalité (wolof)|hospitality]], c'est très important. Toute ma famille t'attend à la maison!", en:"In Wolof, you answer: Mangi fi rekk! Here, teranga (hospitality) is very important. My whole family is waiting for you at home!"},
+ {t:'npc', text:"Vendredi soir, maman prépare un grand thiéboudienne pour toi. Ce sera ta fête!", en:"Friday night, Mom is making a big thiéboudienne for you. It'll be your party!"},
+ {t:'choice', prompt:"Tu veux remercier la famille. Dis-le à Awa.", en:"You want to thank the family. Tell Awa.", opts:[
+  {txt:"Je voudrais offrir un cadeau à chaque personne de ta famille.", ok:true},
+  {txt:"Je voudrais offrir un cadeau à chaque personne de ton famille.", why:"Famille est féminin : ta famille.", whyEn:"Famille is feminine: ta famille."},
+  {txt:"Je voudrais offrir un cadeau à chaque personne de sa famille.", why:"Tu parles à Awa de sa famille à elle : avec tu, on dit ta famille.", whyEn:"You're talking to Awa: use ta (your)."}]},
+ {t:'npc', text:"C'est trop gentil! Je vais t'aider. [[On est ensemble|On est solidaires (expression sénégalaise)|We're in this together]]! Viens, on va à la maison d'abord.", en:"That's so kind! I'll help you. We're in this together! Come, let's go home first."},
+ {t:'card', title:"Le Sénégal", text:"Le Sénégal est en Afrique de l'Ouest. Sa capitale, Dakar, est la ville la plus à l'ouest de l'Afrique continentale. Le français est la langue officielle, mais la plupart des Sénégalais parlent aussi wolof. Le premier président du pays, Léopold Sédar Senghor, était un grand poète. En 1983, il est devenu membre de l'Académie française.", en:"Senegal is in West Africa. Its capital, Dakar, is the westernmost city of mainland Africa. French is the official language, but most Senegalese people also speak Wolof. The country's first president, Léopold Sédar Senghor, was a great poet. In 1983 he became a member of the Académie française."}
+]};
+
+const STOPS=[
+{id:'maison', name:'La maison des Diop', sub:'La famille d\'accueil', who:'fatou', toast:'En route vers la maison des Diop…',
+ steps:[
+ {t:'npc', text:"[[Dalal ak jàmm|Bienvenue (wolof)|Welcome]] chez nous, [nom]! Je suis Fatou, la mère d'Awa. Fais comme chez toi!", en:"Welcome to our home, [nom]! I'm Fatou, Awa's mother. Make yourself at home!"},
+ {t:'choice', prompt:"Mme Diop est une adulte. Réponds poliment.", en:"Mme Diop is an adult. Answer politely.", opts:[
+  {txt:"Merci beaucoup, madame. Votre maison est très belle!", ok:true},
+  {txt:"Merci beaucoup, madame. Ta maison est très belle!", why:"Avec une adulte, on utilise vous, donc votre maison.", whyEn:"With an adult, use vous: votre maison."},
+  {txt:"Merci beaucoup, madame. Votre maison est très beau!", why:"Maison est féminin : très belle.", whyEn:"Maison is feminine: belle."}]},
+ {t:'npc', text:"Regarde la photo sur le mur. Voici mon mari, Moussa. Il est professeur. Voici notre fils, Ibou : il a dix ans et il adore le foot. Et voici [[Mame|grand-mère (wolof)|Grandma]] Coumba, la mère de Moussa.", en:"Look at the photo on the wall. Here's my husband, Moussa. He's a teacher. Here's our son, Ibou: he's ten and he loves soccer. And here's Grandma Coumba, Moussa's mother."},
+ {t:'fill', prompt:"Qui est Mame Coumba?", en:"Who is Mame Coumba?", before:"Mame Coumba est la grand-mère", after:"Awa.", opts:["d'","de","à"], ans:"d'",
+  why:{'de':"Devant une voyelle (Awa), de devient d' : la grand-mère d'Awa.", 'à':"Pour la possession, on écrit de : la grand-mère d'Awa."}},
+ {t:'fill', prompt:"Parle d'Ibou.", en:"Talk about Ibou.", before:"Ibou adore le foot.", after:"équipe préférée, ce sont les Lions du Sénégal.", opts:['Son','Sa','Ses'], ans:'Son',
+  why:{'Sa':"Équipe est féminin, mais elle commence par une voyelle : on dit son équipe.", 'Ses':"Ses, c'est pour le pluriel. Une équipe : son équipe."}},
+ {t:'fill', prompt:"Parle de Moussa et Fatou.", en:"Talk about Moussa and Fatou.", before:"Moussa et Fatou ont deux enfants.", after:"enfants s'appellent Awa et Ibou.", opts:['Leurs','Leur','Ses'], ans:'Leurs',
+  why:{'Leur':"Il y a plusieurs enfants (pluriel) : leurs enfants.", 'Ses':"Les parents sont deux : on utilise leurs (à eux), pas ses."}},
+ {t:'choice', prompt:"Fatou dit : « Parle-moi de ta famille! » Compare.", en:"Fatou says: Tell me about your family! Compare.", opts:[
+  {txt:"Ma sœur est plus âgée que moi, et mon frère est plus jeune.", ok:true},
+  {txt:"Ma sœur est plus âgée de moi, et mon frère est plus jeune.", why:"Pour comparer, on utilise que : plus âgée que moi.", whyEn:"To compare, use que."},
+  {txt:"Mon sœur est plus âgée que moi, et mon frère est plus jeune.", why:"Sœur est féminin : ma sœur.", whyEn:"Sœur is feminine: ma sœur."}]},
+ {t:'npc', who:'awa', text:"(Tout bas) Psst! Maman adore les beaux tissus. Allons au marché HLM, c'est le meilleur marché de tissus de Dakar!", en:"(Whispering) Psst! Mom loves beautiful fabrics. Let's go to the HLM market, it's the best fabric market in Dakar!"},
+ {t:'clue', text:"Cadeau pour Fatou : un beau tissu, au marché HLM."},
+ {t:'card', title:"La famille et la teranga", text:"Au Sénégal, les familles sont souvent grandes, et les grands-parents habitent parfois avec leurs enfants et leurs petits-enfants. On respecte beaucoup les personnes âgées. Quand on arrive chez quelqu'un, on prend le temps de saluer chaque personne et de demander des nouvelles de toute la famille.", en:"In Senegal, families are often large, and grandparents sometimes live with their children and grandchildren. Elders are deeply respected. When you arrive at someone's home, you take time to greet each person and ask about the whole family."}
+ ]},
+{id:'marche', name:'Le marché HLM', sub:'Comparer et marchander', who:'ndiaye', toast:'En route vers le marché HLM…',
+ steps:[
+ {t:'npc', text:"[[Nanga def?|Comment ça va? (wolof)|How are you?]] Bienvenue! Regarde mes tissus : du wax, du bazin… Tout est beau ici!", en:"How are you? Welcome! Look at my fabrics: wax prints, bazin… Everything is beautiful here!"},
+ {t:'choice', prompt:"Explique ce que tu cherches.", en:"Explain what you're looking for.", opts:[
+  {txt:"Je cherche un cadeau pour ma mère d'accueil.", ok:true},
+  {txt:"Je cherche un cadeau pour mon mère d'accueil.", why:"Mère est féminin : ma mère.", whyEn:"Mère is feminine: ma mère."},
+  {txt:"Je cherche un cadeau pour mes mère d'accueil.", why:"Tu as une seule mère d'accueil : ma mère (singulier).", whyEn:"One mother: ma (singular)."}]},
+ {t:'npc', text:"Ce tissu bleu est plus cher que le tissu jaune, mais il est plus beau! Le tissu vert est aussi cher que le tissu bleu.", en:"This blue fabric is more expensive than the yellow fabric, but it's more beautiful! The green fabric is as expensive as the blue fabric."},
+ {t:'choice', prompt:"Quel tissu est le moins cher?", en:"Which fabric is the least expensive?", opts:[
+  {txt:"Le tissu jaune est le moins cher.", ok:true},
+  {txt:"Le tissu bleu est le moins cher.", why:"Le bleu est plus cher que le jaune. Le jaune est donc le moins cher.", whyEn:"Blue costs more than yellow."},
+  {txt:"Le tissu vert est le moins cher.", why:"Le vert est aussi cher que le bleu, et le bleu est plus cher que le jaune.", whyEn:"Green costs the same as blue."}]},
+ {t:'choice', prompt:"Décris le tissu que tu préfères. Attention à la place des adjectifs!", en:"Describe the fabric you prefer. Watch where the adjectives go!", opts:[
+  {txt:"C'est un beau tissu bleu.", ok:true},
+  {txt:"C'est un tissu beau bleu.", why:"Beau se place avant le nom : un beau tissu. Les couleurs vont après : un beau tissu bleu.", whyEn:"Beau goes before the noun; colours go after."},
+  {txt:"C'est un bleu beau tissu.", why:"Les couleurs vont après le nom : un beau tissu bleu.", whyEn:"Colours go after the noun."}]},
+ {t:'fill', prompt:"Tu admires une autre étoffe.", en:"You admire another cloth.", before:"Et cette couleur est très", after:"aussi!", opts:['belle','beau','bel'], ans:'belle',
+  why:{'beau':"Couleur est féminin : belle.", 'bel':"Bel s'utilise devant un nom masculin qui commence par une voyelle (un bel oiseau). Ici : la couleur est belle."}},
+ {t:'npc', text:"Pour toi, cinq mille francs CFA.", en:"For you, five thousand CFA francs."},
+ {t:'npc', who:'awa', text:"(Tout bas) Au marché, on marchande! Demande un prix plus bas.", en:"(Whispering) At the market, you bargain! Ask for a lower price."},
+ {t:'choice', prompt:"Marchande poliment avec Mme Ndiaye.", en:"Bargain politely with Mme Ndiaye.", opts:[
+  {txt:"C'est un peu cher! Est-ce que vous pouvez faire un meilleur prix?", ok:true},
+  {txt:"C'est un peu cher! Est-ce que vous pouvez faire un plus bon prix?", why:"On ne dit pas plus bon. Le comparatif de bon, c'est meilleur.", whyEn:"Not plus bon: the comparative of bon is meilleur."},
+  {txt:"C'est un peu cher! Tu peux faire un prix plus cher?", why:"Tu veux un prix moins cher (ou meilleur), pas plus cher! Et avec une adulte, on dit vous.", whyEn:"You want a lower price, and use vous with an adult."}]},
+ {t:'npc', text:"[[Waaw|Oui (wolof)|Yes]], d'accord : quatre mille. Et pour Mame Coumba, prends du thé vert et de la menthe pour l'attaya. Elle va adorer!", en:"Yes, OK: four thousand. And for Grandma Coumba, take some green tea and mint for attaya. She'll love it!"},
+ {t:'clue', text:"Tu as le tissu pour Fatou et du thé pour Mame Coumba. Prochain arrêt : l'île de Gorée."},
+ {t:'card', title:"Le wax et les tailleurs", text:"Au Sénégal, on achète souvent du tissu au marché, puis on va chez un tailleur, qui coud un vêtement sur mesure. Les tissus wax ont des motifs et des couleurs vives. Au marché, marchander est normal : on discute du prix avec le vendeur, toujours avec le sourire. La monnaie du Sénégal est le franc CFA.", en:"In Senegal, people often buy fabric at the market, then go to a tailor who sews a custom-made outfit. Wax fabrics have bold patterns and colours. At the market, bargaining is normal: you discuss the price with the seller, always with a smile. Senegal's currency is the CFA franc."}
+ ]},
+{id:'goree', name:'L\'île de Gorée', sub:'L\'artiste et la mémoire', who:'ousmane', toast:'En chaloupe vers l\'île de Gorée…', sign:'Tableaux de sable', signPos:[6.3,22.2,22.9,5.6],
+ steps:[
+ {t:'npc', text:"Bienvenue à Gorée! Ici, il n'y a pas de voitures. Moi, je fais des tableaux avec du sable de toutes les couleurs.", en:"Welcome to Gorée! There are no cars here. I make pictures with sand of every colour."},
+ {t:'fill', prompt:"Utilise le superlatif.", en:"Use the superlative.", before:"C'est le tableau", after:"coloré de la boutique!", opts:['le plus','plus','la plus'], ans:'le plus',
+  why:{'plus':"Quand le superlatif est après le nom, on répète l'article : le tableau le plus coloré.", 'la plus':"Tableau est masculin : le plus coloré."}},
+ {t:'npc', text:"Ce tableau montre la Maison des Esclaves. C'est le lieu le plus important de l'île. On la visite avec respect.", en:"This picture shows the House of Slaves. It's the most important place on the island. People visit it with respect."},
+ {t:'choice', prompt:"Pose une question à Ousmane sur la Maison des Esclaves.", en:"Ask Ousmane a question about the House of Slaves.", opts:[
+  {txt:"Qu'est-ce qu'on peut voir dans la Maison des Esclaves?", ok:true},
+  {txt:"Qu'est-ce que on peut voir dans la Maison des Esclaves?", why:"Devant une voyelle, que devient qu' : qu'est-ce qu'on.", whyEn:"Before a vowel, que becomes qu'."},
+  {txt:"Quoi est-ce qu'on peut voir dans la Maison des Esclaves?", why:"Pour poser une question sur une chose, on dit qu'est-ce que (pas quoi est-ce que).", whyEn:"Use qu'est-ce que, not quoi est-ce que."}]},
+ {t:'npc', text:"On peut voir les petites cellules et la « porte du voyage sans retour ». Pendant la traite des esclaves, des millions d'Africains ont été déportés vers les Amériques. Aujourd'hui, c'est un lieu de mémoire pour le monde entier.", en:"You can see the small cells and the \"door of no return.\" During the slave trade, millions of Africans were deported to the Americas. Today it's a place of remembrance for the whole world."},
+ {t:'choice', prompt:"Choisis un tableau pour Moussa, le père d'Awa.", en:"Choose a picture for Moussa, Awa's father.", opts:[
+  {txt:"Je prends ce tableau de la mer. C'est le plus beau!", ok:true},
+  {txt:"Je prends ce tableau de la mer. C'est le plus belle!", why:"Tableau est masculin : le plus beau.", whyEn:"Tableau is masculine: beau."},
+  {txt:"Je prends ce tableau de la mer. C'est la plus beau!", why:"Tableau est masculin : le plus beau (pas la).", whyEn:"Use le, not la."}]},
+ {t:'npc', text:"Excellent choix! Et pour ton amie Awa? J'ai aussi de jolis bracelets en perles.", en:"Excellent choice! And for your friend Awa? I also have pretty bead bracelets."},
+ {t:'fill', prompt:"Explique pour qui est le bracelet.", en:"Explain who the bracelet is for.", before:"Ce bracelet est pour", after:"sœur d'accueil, Awa.", opts:['ma','mon','mes'], ans:'ma',
+  why:{'mon':"Sœur est féminin : ma sœur.", 'mes':"Une seule sœur : ma sœur."}},
+ {t:'clue', text:"Tu as un tableau de sable pour Moussa et un bracelet pour Awa. Il reste un cadeau pour Ibou!"},
+ {t:'card', title:"L'île de Gorée", text:"L'île de Gorée est à environ vingt minutes de Dakar en chaloupe. Ses maisons colorées et ses rues sans voitures sont très calmes. La Maison des Esclaves rappelle la traite des esclaves, un des plus grands crimes de l'histoire. L'île est inscrite au patrimoine mondial de l'UNESCO depuis 1978. Des chefs d'État comme Nelson Mandela et Barack Obama sont venus s'y recueillir.", en:"Gorée Island is about twenty minutes from Dakar by ferry. Its colourful houses and car-free streets are very calm. The House of Slaves recalls the slave trade, one of the greatest crimes in history. The island has been a UNESCO World Heritage Site since 1978. Leaders like Nelson Mandela and Barack Obama came there to pay their respects."}
+ ]},
+{id:'plage', name:'La plage', sub:'Le foot avec Ibou', who:'ibou', toast:'Retour à Dakar, direction la plage…',
+ steps:[
+ {t:'npc', text:"Salut [nom]! Tu joues au foot avec nous? Moi, je suis le meilleur joueur de mon équipe!", en:"Hi [nom]! Want to play soccer with us? I'm the best player on my team!"},
+ {t:'choice', prompt:"Ibou court très vite. Compare-toi à lui.", en:"Ibou runs very fast. Compare yourself to him.", opts:[
+  {txt:"D'accord! Mais tu es plus rapide que moi!", ok:true},
+  {txt:"D'accord! Mais tu es plus rapide de moi!", why:"Pour comparer, on utilise que : plus rapide que moi.", whyEn:"To compare, use que."},
+  {txt:"D'accord! Mais tu es plus rapide que je!", why:"Après que, on utilise moi (pronom tonique) : plus rapide que moi.", whyEn:"After que, use moi."}]},
+ {t:'fill', prompt:"Ibou parle de son joueur préféré.", en:"Ibou talks about his favourite player.", before:"Pour moi, Sadio Mané est le", after:"joueur du Sénégal!", opts:['meilleur','plus bon','mieux'], ans:'meilleur',
+  why:{'plus bon':"On ne dit pas plus bon. Le superlatif de bon, c'est le meilleur.", 'mieux':"Mieux est un adverbe (il joue mieux). Avec un nom, on dit le meilleur joueur."}},
+ {t:'npc', text:"Mon rêve, c'est d'avoir le maillot des Lions de la [[Teranga|hospitalité (wolof)|hospitality]]. Mais il est trop cher pour moi…", en:"My dream is to have a Lions of Teranga jersey. But it's too expensive for me…"},
+ {t:'choice', prompt:"Écris le rêve d'Ibou dans ton carnet.", en:"Write Ibou's dream in your notebook.", opts:[
+  {txt:"Le rêve d'Ibou, c'est d'avoir le maillot des Lions.", ok:true},
+  {txt:"Le rêve à Ibou, c'est d'avoir le maillot des Lions.", why:"À l'écrit, la possession se fait avec de : le rêve d'Ibou.", whyEn:"In writing, possession uses de."},
+  {txt:"Le rêve de Ibou, c'est d'avoir le maillot des Lions.", why:"Devant une voyelle, de devient d' : le rêve d'Ibou.", whyEn:"Before a vowel, de becomes d'."}]},
+ {t:'npc', text:"Regarde, un vendeur de maillots! Le vert coûte huit mille francs, et le blanc coûte huit mille francs aussi.", en:"Look, a jersey seller! The green one costs eight thousand francs, and the white one costs eight thousand too."},
+ {t:'choice', prompt:"Compare les deux maillots.", en:"Compare the two jerseys.", opts:[
+  {txt:"Le maillot vert est aussi cher que le maillot blanc.", ok:true},
+  {txt:"Le maillot vert est plus cher que le maillot blanc.", why:"Ils coûtent le même prix : aussi cher que.", whyEn:"They cost the same: aussi cher que."},
+  {txt:"Le maillot vert est aussi cher comme le maillot blanc.", why:"Avec aussi, on utilise que : aussi cher que.", whyEn:"Aussi takes que, not comme."}]},
+ {t:'clue', text:"Tu as acheté un maillot vert des Lions pour Ibou. Tous les cadeaux sont prêts!"},
+ {t:'card', title:"Le foot et la lutte", text:"Au Sénégal, on joue au foot partout, surtout sur les plages. L'équipe nationale, les Lions de la Teranga, a gagné la Coupe d'Afrique des nations en 2022. La lutte sénégalaise est aussi très populaire : les grands lutteurs sont de vraies vedettes, et les combats attirent des milliers de spectateurs.", en:"In Senegal, people play soccer everywhere, especially on beaches. The national team, the Lions of Teranga, won the Africa Cup of Nations in 2022. Senegalese wrestling is also very popular: top wrestlers are real stars, and matches draw thousands of spectators."}
+ ]},
+{id:'souper', name:'Le grand souper', sub:'Offrir les cadeaux', who:'fatou', night:true, toast:'Retour à la maison pour le souper…',
+ steps:[
+ {t:'npc', text:"À table! Voici le thiéboudienne : du riz, du poisson et des légumes. Au Sénégal, on mange ensemble, dans un grand plat.", en:"Dinner's ready! Here's thiéboudienne: rice, fish and vegetables. In Senegal, we eat together from one big dish."},
+ {t:'choice', prompt:"Fatou demande : « Comment tu trouves le thiéboudienne? »", en:"Fatou asks: How do you like the thiéboudienne?", opts:[
+  {txt:"C'est délicieux! C'est le meilleur repas de mon voyage!", ok:true},
+  {txt:"C'est délicieux! C'est le plus bon repas de mon voyage!", why:"On ne dit pas le plus bon : le meilleur repas.", whyEn:"Not le plus bon: le meilleur."},
+  {txt:"C'est délicieux! C'est la meilleure repas de mon voyage!", why:"Repas est masculin : le meilleur repas.", whyEn:"Repas is masculine."}]},
+ {t:'choice', prompt:"Offre le tissu à Fatou (tu la vouvoies).", en:"Give the fabric to Fatou (you use vous with her).", opts:[
+  {txt:"Madame Diop, voici votre cadeau : un beau tissu bleu.", ok:true},
+  {txt:"Madame Diop, voici ton cadeau : un beau tissu bleu.", why:"Tu vouvoies Mme Diop : votre cadeau.", whyEn:"You use vous with her: votre."},
+  {txt:"Madame Diop, voici votre cadeau : un tissu bleu beau.", why:"Beau se place avant le nom : un beau tissu bleu.", whyEn:"Beau goes before the noun."}]},
+ {t:'fill', prompt:"Offre le maillot à Ibou (tu le tutoies).", en:"Give the jersey to Ibou (you use tu with him).", before:"Ibou, voici", after:"maillot des Lions!", opts:['ton','ta','votre'], ans:'ton',
+  why:{'ta':"Maillot est masculin : ton maillot.", 'votre':"Ibou a dix ans : tu le tutoies, donc ton maillot."}},
+ {t:'fill', prompt:"Offre le thé à Mame Coumba (une aînée : tu la vouvoies).", en:"Give the tea to Mame Coumba (an elder: use vous).", before:"Mame Coumba, voici du thé pour", after:"attaya.", opts:['votre','vos','ton'], ans:'votre',
+  why:{'vos':"Attaya est singulier : votre attaya.", 'ton':"On vouvoie une personne âgée par respect : votre attaya."}},
+ {t:'fill', prompt:"Offre le tableau aux deux parents.", en:"Give the picture to both parents.", before:"Monsieur et Madame Diop, ce tableau est pour", after:"salon.", opts:['votre','leur','ton'], ans:'votre',
+  why:{'leur':"Tu parles directement aux parents : votre salon (à vous). Leur, c'est quand on parle d'eux.", 'ton':"Tu parles à deux personnes, et tu les vouvoies : votre salon."}},
+ {t:'npc', who:'awa', text:"Et moi? Oh, un bracelet! [[Jërëjëf|Merci (wolof)|Thank you]], [nom]! C'est le plus beau cadeau!", en:"And me? Oh, a bracelet! Thank you, [nom]! It's the most beautiful gift!"},
+ {t:'order', prompt:"Raconte ta semaine à la famille.", en:"Tell the family about your week.", done:"Bravo! Toute la famille applaudit.", items:[
+  "Je suis arrivé{|e} chez la famille Diop.",
+  "J'ai acheté un tissu au marché HLM.",
+  "J'ai pris la chaloupe pour l'île de Gorée.",
+  "J'ai joué au foot avec Ibou sur la plage.",
+  "J'ai offert les cadeaux au souper."]},
+ {t:'npc', text:"Merci, [nom]. Maintenant, tu fais partie de notre famille. [[Ba beneen yoon|À la prochaine (wolof)|See you next time]]! Demain, tu pars pour la Bretagne, c'est ça?", en:"Thank you, [nom]. Now you're part of our family. See you next time! Tomorrow you leave for Brittany, right?"},
+ {t:'card', title:"Le thiéboudienne et l'attaya", text:"Le thiéboudienne (ceebu jën en wolof) est le plat national du Sénégal : du riz, du poisson et des légumes cuits dans une sauce tomate. Depuis 2021, il fait partie du patrimoine culturel immatériel de l'UNESCO. Après le repas, on prépare souvent l'attaya, un thé vert à la menthe servi en trois tournées : le premier verre est fort et amer, le dernier est très sucré.", en:"Thiéboudienne (ceebu jën in Wolof) is Senegal's national dish: rice, fish and vegetables cooked in a tomato sauce. Since 2021 it has been on UNESCO's Intangible Cultural Heritage list. After the meal, people often make attaya, a green mint tea served in three rounds: the first glass is strong and bitter, the last one is very sweet."}
+ ]}
+];
+
+/* ===== Game engine: map -> stops -> dialogue steps. Data comes from GAME, INTRO, STOPS, NPC, SCENES. ===== */
+(function(){
+const $=s=>document.querySelector(s);
+const SPEAK_ICON=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+let P=null, PR=null, stop=null, stepI=0, mistakes=0;
+const ALL=[Object.assign({id:'intro',name:GAME.introName||'Arrivée',sub:'La mission',scene:'map'},INTRO)].concat(STOPS);
+const MAP_LABELS=GAME.mapLabels||'';
+
+function save(){ P.prog=P.prog||{}; P.prog[GAME.id]=PR; Store.set(P); }
+function starsFor(m){ return m<=1?3:m<=3?2:1; }
+function show(id){ ['scrCreate','scrMap','scrStop','scrEnd'].forEach(s=>$('#'+s).hidden=(s!==id)); window.scrollTo({top:0}); }
+function toast(t){ const el=$('#toast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,2600); }
+
+/* ---------- text with Québécois glosses ---------- */
+function rich(s){
+ s=fmt(s,P);
+ return esc(s).replace(/\[\[([^|\]]+)\|([^|\]]+)\|([^\]]+)\]\]/g,(m,w,std,en)=>{
+  const key=w.toLowerCase();
+  if(!PR.qc[key]){ PR.qc[key]=[w,std,en]; save(); updateCount(); }
+  return `<button type="button" class="qc" data-std="${std}" data-en="${en}">${w}</button>`;
+ });
+}
+function plain(s){ return fmt(s,P).replace(/\[\[([^|\]]+)\|[^\]]+\]\]/g,'$1'); }
+function updateCount(){ $('#carnetCount').textContent=PR.clues.length+Object.keys(PR.qc).length; }
+document.addEventListener('click',e=>{
+ const q=e.target.closest('.qc'), pop=$('#pop');
+ if(!q){ pop.hidden=true; return; }
+ pop.innerHTML=`<b>${esc(q.textContent)}</b> = ${esc(q.dataset.std)}<br><span style="opacity:.8">${esc(q.dataset.en)}</span>`;
+ pop.hidden=false; const r=q.getBoundingClientRect();
+ pop.style.left=Math.min(window.innerWidth-270,Math.max(8,r.left))+'px'; pop.style.top=(r.bottom+8)+'px';
+});
+
+/* ---------- voice ---------- */
+let VOICE=null;
+function pickVoice(){ if(!('speechSynthesis' in window)) return; const v=speechSynthesis.getVoices();
+ // Only a real French voice is ever used. Without one, Chrome reads French with an English voice, so reading is switched off instead.
+ const fr=v.filter(x=>/^fr/i.test(x.lang));
+ VOICE=fr.find(x=>/^fr[-_]CA/i.test(x.lang))||fr.find(x=>/^fr[-_]FR/i.test(x.lang))||fr[0]||null; }
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+let noVoiceWarned=false;
+function speak(text,who){
+ if(!('speechSynthesis' in window)) return;
+ pickVoice();
+ if(!VOICE){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Aucune voix française sur cet appareil : la lecture est désactivée.'); } return; }
+ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(text));
+ u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; u.pitch=(NPC[who]&&NPC[who].pitch)||1;
+ speechSynthesis.speak(u);
+}
+
+/* ---------- creator ---------- */
+function ensureProfile(then){
+ P=Store.get();
+ if(P&&P.name){ then(); return; }
+ show('scrCreate'); mountCreator($('#scrCreate'),p=>{P=p; then();});
+}
+
+/* ---------- map ---------- */
+function renderMap(){
+ show('scrMap');
+ $('#mapSvg').innerHTML=sceneMap();
+ const nextI=PR.i;
+ const ov=$('#mapOverlay');
+ ov.innerHTML=MAP_LABELS
+  +STOPS.map((s,k)=>{ const i=k+1, [x,y]=MAP_PINS[s.id], st=i<nextI?'done':i===nextI?'next':'locked';
+   return `<button class="pin ${st}" style="left:${x/9.6}%;top:${y/5.4}%" data-i="${i}" ${st==='next'?'':'disabled'} aria-label="${s.name}${st==='done'?' (fait)':''}"><span class="dot"><i>${st==='done'?'✓':i}</i></span><span class="lbl">${s.name}</span></button>`; }).join('');
+ ov.querySelectorAll('.pin.next').forEach(b=>b.addEventListener('click',()=>travel(+b.dataset.i)));
+ $('#mapLede').innerHTML=esc(fmt(GAME.lede,P));
+ $('#mapSvg').setAttribute('aria-label',GAME.mapAria||'Carte');
+ $('#missionList').innerHTML=STOPS.map((s,k)=>{const i=k+1, st=i<nextI?'done':i===nextI?'next':'';
+  return `<li class="${st}"><span class="n">${st==='done'?'✓':i}</span><span>${s.name}<small>${s.sub}</small></span><span class="st">${PR.stars[s.id]?'★'.repeat(PR.stars[s.id]):''}</span></li>`;}).join('');
+ const nx=STOPS[nextI-1];
+ $('#mapAction').innerHTML= nx?`<button class="btn accent" id="goNext" type="button">Aller : ${nx.name}</button>`:'';
+ if(nx) $('#goNext').addEventListener('click',()=>travel(nextI));
+}
+function travel(i){ toast(ALL[i].toast||`En route : ${ALL[i].name}`); runStop(i); }
+
+/* ---------- stop ---------- */
+function runStop(i){
+ stop=ALL[i]; stepI=0; mistakes=0; PR.cur=i;
+ show('scrStop');
+ const svg=$('#stageSvg');
+ svg.innerHTML = stop.scene==='map' ? sceneMap() : SCENES[stop.id](P);
+ svg.setAttribute('aria-label', stop.name);
+ const ov=$('#stageOverlay');
+ ov.innerHTML = stop.scene==='map' ? MAP_LABELS : '';
+ if(stop.sign){ const [l,t,w,h]=stop.signPos; ov.innerHTML+=`<div class="sign" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${esc(stop.sign)}</div>`; }
+ (stop.signs||[]).forEach(([txt,l,t,w,h,cls])=>{ ov.innerHTML+=`<div class="sign ${cls||''}" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${esc(txt)}</div>`; });
+ $('#stopName').textContent=stop.name; $('#stopSub').textContent=stop.sub; $('#stopStars').textContent='';
+ setNpc(stop.who);
+ $('#log').innerHTML=''; $('#act').innerHTML='';
+ step();
+}
+function setNpc(id){ const n=NPC[id]; $('#npcFace').innerHTML=faceSVG(n.look); $('#npcName').textContent=n.name; $('#npcRole').textContent=n.role; }
+function scrollLog(){ const l=$('#log'); l.scrollTop=l.scrollHeight; }
+function npcBubble(who,text,en){
+ const n=NPC[who]; const row=document.createElement('div'); row.className='row npc';
+ row.innerHTML=`<div class="mini">${faceSVG(n.look)}</div><div class="bubble"><span class="who">${esc(n.name)}</span>${rich(text)}<button class="say" type="button" aria-label="Écouter">${SPEAK_ICON}</button>${en?`<span class="en">${esc(fmt(en,P))}</span>`:''}</div>`;
+ row.querySelector('.say').addEventListener('click',()=>speak(text,who));
+ $('#log').appendChild(row); scrollLog();
+ if($('#optVoice').checked) speak(text,who);
+}
+function meBubble(text){
+ const row=document.createElement('div'); row.className='row me';
+ row.innerHTML=`<div class="mini">${faceSVG(playerLook(P,GAME.playerExtra))}</div><div class="bubble">${esc(fmt(text,P))}</div>`;
+ $('#log').appendChild(row); scrollLog();
+}
+function contBtn(label,fn){
+ const b=document.createElement('button'); b.className='btn primary cont'; b.type='button'; b.textContent=label||'Continuer'; b.addEventListener('click',fn);
+ $('#act').innerHTML=''; $('#act').appendChild(b); b.focus({preventScroll:true});
+}
+function promptHTML(s){ return `<p class="prompt">${esc(fmt(s.prompt,P))}</p>${s.en?`<p class="en">${esc(fmt(s.en,P))}</p>`:''}`; }
+function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.createElement('div'); $('#act').appendChild(fb);} fb.className='fb '+kind; fb.innerHTML=esc(fmt(fr,P))+(en?`<span class="en">${esc(fmt(en,P))}</span>`:''); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
+function next(){ stepI++; step(); }
+function wrong(){ mistakes++; }
+
+function step(){
+ const s=stop.steps[stepI];
+ if(!s){ finishStop(); return; }
+ const act=$('#act'); act.innerHTML='';
+ if(s.t==='npc'){
+  const who=s.who||stop.who; if(who!==stop.who||$('#npcName').textContent!==NPC[who].name) setNpc(who);
+  npcBubble(who,s.text,s.en); contBtn('Continuer',next);
+ }
+ else if(s.t==='choice'||s.t==='board'){
+  let html=promptHTML(s);
+  if(s.t==='board') html+=`${s.clock?`<p style="margin:0 0 8px">Heure : <span class="clock">${s.clock}</span></p>`:''}<table class="board"><thead><tr>${(s.cols||['Départ','Trajet','État']).map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]||(r[2]==='Parti'?'gone':'ontime')}">${r[2]}</td></tr>`).join('')}</tbody></table>`;
+  act.innerHTML=html+`<div class="opts"></div>`;
+  const box=act.querySelector('.opts');
+  shuffle(s.opts).forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=fmt(o.txt,P);
+   b.addEventListener('click',()=>{
+    if(o.ok){ b.classList.add('right'); box.querySelectorAll('button').forEach(x=>x.disabled=true); meBubble(o.txt); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,750); }
+    else{ b.classList.add('wrong'); b.disabled=true; wrong(); feedback('err',o.why||'Essaie encore.',o.whyEn); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='fill'){
+  act.innerHTML=promptHTML(s)+`<p class="sentence">${esc(fmt(s.before,P))} <span class="blank">?</span> ${esc(fmt(s.after,P))}</p><div class="optrow"></div>`;
+  const box=act.querySelector('.optrow');
+  s.opts.forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=o;
+   b.addEventListener('click',()=>{
+    if(o===s.ans){ b.classList.add('right'); box.querySelectorAll('button').forEach(x=>x.disabled=true); act.querySelector('.blank').textContent=o;
+     const joined=(fmt(s.before,P)+' '+o+(o.endsWith("'")?'':' ')+fmt(s.after,P)).replace(/\s+/g,' ');
+     meBubble(joined); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,750); }
+    else{ b.classList.add('wrong'); b.disabled=true; wrong(); feedback('err',(s.why&&s.why[o])||'Essaie encore.'); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='order'){
+  const items=s.items.map(x=>fmt(x,P)); let k=0;
+  act.innerHTML=promptHTML(s)+`<ol class="orderBuilt"></ol><div class="opts"></div>`;
+  const built=act.querySelector('.orderBuilt'), box=act.querySelector('.opts');
+  shuffle(items).forEach(it=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=it;
+   b.addEventListener('click',()=>{
+    if(it===items[k]){ k++; const li=document.createElement('li'); li.textContent=it; built.appendChild(li); b.remove(); act.querySelector('.fb')?.remove();
+     if(k===items.length){ meBubble(items.join(' ')); feedback('ok',s.done||'Bravo! Tu as bien raconté ta journée.'); setTimeout(next,900); } }
+    else{ wrong(); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); feedback('err','Pas encore. Qu\'est-ce que tu as fait avant ça?','What did you do before that?'); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='card'){
+  const c=document.createElement('div'); c.className='culture';
+  c.innerHTML=`<span class="k">Le savais-tu?</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p>${s.en?`<p class="en">${esc(s.en)}</p>`:''}`;
+  $('#log').appendChild(c); scrollLog(); contBtn('Continuer',next);
+ }
+ else if(s.t==='clue'){
+  if(!PR.clues.includes(s.text)) PR.clues.push(s.text); save(); updateCount();
+  toast('Nouvel indice dans ton carnet'); next();
+ }
+}
+function finishStop(){
+ const i=PR.cur, st=starsFor(mistakes);
+ if(stop.id!=='intro'){ PR.stars[stop.id]=Math.max(PR.stars[stop.id]||0,st); $('#stopStars').textContent='★'.repeat(st); }
+ if(PR.i<=i) PR.i=i+1; save();
+ const last=i===ALL.length-1;
+ contBtn(last?'Terminer l\'escale':'Retour à la carte', ()=> last?endScreen():renderMap());
+ if(stop.id!=='intro') feedback('ok', `Escale réussie! ${'★'.repeat(st)}${'☆'.repeat(3-st)}`);
+}
+
+/* ---------- end ---------- */
+function endScreen(){
+ show('scrEnd');
+ const vals=STOPS.map(s=>PR.stars[s.id]||1), avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+ const d=new Date(), date=d.toLocaleDateString('fr-CA',{day:'numeric',month:'short',year:'numeric'});
+ P.done=P.done||{}; if(!P.done[GAME.id]) P.done[GAME.id]=date; P.stars=P.stars||{}; P.stars[GAME.id]=Math.max(P.stars[GAME.id]||0,avg); save();
+ const me=JOURNEY.find(j=>j.id===GAME.id), nx=nextStop(P);
+ $('#scrEnd').innerHTML=`<div class="card endcard"><div class="stampwrap go">${stampSVG(me,'done',String(P.done[GAME.id]).toUpperCase())}</div>
+  <div><p class="eyebrow">Escale réussie</p><h1>${esc(fmt('Bravo, [nom]!',P))}</h1>
+  <p>${esc(fmt(GAME.endText,P))}</p>
+  <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
+  <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
+  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button><button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
+ $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
+ $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
+ $('#printStamp').addEventListener('click',()=>printStamp(me,avg));
+}
+
+/* ---------- printable passport stamp ---------- */
+function stampCard(me,avg){
+ const date=String(P.done[GAME.id]||'');
+ const stars='★'.repeat(avg)+'☆'.repeat(3-avg);
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect x="6" y="6" width="788" height="508" rx="22" fill="#FFF9EE" stroke="${me.color}" stroke-width="4"/>
+  <rect x="20" y="20" width="760" height="480" rx="14" fill="none" stroke="${me.color}" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <svg x="50" y="90" width="300" height="300" viewBox="-60 -60 120 120">${stampSVG(me,'done',date.toUpperCase()).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</svg>
+  <text x="390" y="100" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="2" fill="#6B6F7A">PASSEPORT · LE GRAND VOYAGE</text>
+  <text x="390" y="180" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="50" fill="#2B2D42">${esc(P.name)}</text>
+  <text x="390" y="228" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="22" fill="#2B2D42">${esc(me.place)} — ${esc(me.sub)}</text>
+  <text x="390" y="262" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="19" fill="#6B6F7A">${esc(GAME.title)}</text>
+  <text x="390" y="302" font-family="Inter,Arial,sans-serif" font-weight="600" font-size="19" fill="#2B2D42">Visité le ${esc(date)}</text>
+  <text x="390" y="352" font-family="Arial,sans-serif" font-size="36" fill="#E9A93A" letter-spacing="4">${stars}</text>
+  <text x="390" y="416" font-family="Inter,Arial,sans-serif" font-size="16" fill="#6B6F7A">Escale réussie.</text>
+  <text x="390" y="440" font-family="Inter,Arial,sans-serif" font-size="16" fill="#6B6F7A">Présente ce tampon à ton enseignant·e.</text>
+ </svg>`;
+}
+function stampFileName(){ return 'passeport-'+P.name.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+GAME.id+'.png'; }
+function downloadStamp(me,avg){
+ const svg=stampCard(me,avg), url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+ const img=new Image();
+ const save=(href,name)=>{ const a=document.createElement('a'); a.href=href; a.download=name; document.body.appendChild(a); a.click(); a.remove(); };
+ img.onload=()=>{ const c=document.createElement('canvas'); c.width=1600; c.height=1040; const x=c.getContext('2d'); x.fillStyle='#FFFFFF'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+   c.toBlob(b=>{ save(URL.createObjectURL(b), stampFileName()); URL.revokeObjectURL(url); },'image/png'); };
+ img.onerror=()=>{ save(url, stampFileName().replace(/\.png$/,'.svg')); };
+ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function printStamp(me,avg){
+ $('#printArea').innerHTML=stampCard(me,avg);
+ window.print();
+}
+
+/* ---------- carnet ---------- */
+function openCarnet(){
+ $('#clueList').innerHTML=PR.clues.length?PR.clues.map(c=>`<li>${esc(c)}</li>`).join(''):'<li style="list-style:none;color:var(--muted)">Pas encore d\'indice.</li>';
+ const q=Object.values(PR.qc); $('#qcList').innerHTML=q.length?q.map(([w,s,e])=>`<dt>${esc(w)}</dt><dd>${esc(s)} · <i>${esc(e)}</i></dd>`).join(''):'<dd style="grid-column:1/-1">Pas encore d\'expression.</dd>';
+ $('#carnet').hidden=false; $('#closeCarnet').focus();
+}
+$('#btnCarnet').addEventListener('click',openCarnet);
+$('#closeCarnet').addEventListener('click',()=>{ $('#carnet').hidden=true; $('#btnCarnet').focus(); });
+$('#carnet').addEventListener('click',e=>{ if(e.target.id==='carnet') $('#carnet').hidden=true; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ $('#carnet').hidden=true; $('#pop').hidden=true; } });
+$('#optEn').addEventListener('change',e=>{ document.body.classList.toggle('showEn',e.target.checked); try{localStorage.setItem('jeuxFr20.en',e.target.checked?'1':'0');}catch(_){} });
+$('#optVoice').addEventListener('change',e=>{ if(!e.target.checked&&'speechSynthesis' in window) speechSynthesis.cancel(); try{localStorage.setItem('jeuxFr20.voice',e.target.checked?'1':'0');}catch(_){} });
+try{ if(localStorage.getItem('jeuxFr20.en')==='1'){ $('#optEn').checked=true; document.body.classList.add('showEn'); } if(localStorage.getItem('jeuxFr20.voice')==='0') $('#optVoice').checked=false; }catch(_){}
+
+/* ---------- start ---------- */
+$('#eyebrow').textContent=GAME.eyebrow; $('#title').textContent=GAME.title;
+ensureProfile(()=>{
+ P.prog=P.prog||{}; PR=P.prog[GAME.id]||{i:0,stars:{},clues:[],qc:{},cur:0};
+ PR.qc=PR.qc||{}; PR.clues=PR.clues||[]; PR.stars=PR.stars||{};
+ updateCount();
+ if(PR.i===0) runStop(0);
+ else if(PR.i>=ALL.length) endScreen();
+ else renderMap();
+});
+window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id};}};
+})();
+
+</script>
+</body></html>
