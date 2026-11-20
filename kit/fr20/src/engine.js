@@ -1,0 +1,211 @@
+/* ===== Game engine: map -> stops -> dialogue steps. Data comes from GAME, INTRO, STOPS, NPC, SCENES. ===== */
+(function(){
+const $=s=>document.querySelector(s);
+const SPEAK_ICON=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+let P=null, PR=null, stop=null, stepI=0, mistakes=0;
+const ALL=[Object.assign({id:'intro',name:'Arrivée à Québec',sub:'La mission',scene:'map'},INTRO)].concat(STOPS);
+
+function save(){ P.prog=P.prog||{}; P.prog[GAME.id]=PR; Store.set(P); }
+function starsFor(m){ return m<=1?3:m<=3?2:1; }
+function show(id){ ['scrCreate','scrMap','scrStop','scrEnd'].forEach(s=>$('#'+s).hidden=(s!==id)); window.scrollTo({top:0}); }
+function toast(t){ const el=$('#toast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,2600); }
+
+/* ---------- text with Québécois glosses ---------- */
+function rich(s){
+ s=fmt(s,P);
+ return esc(s).replace(/\[\[([^|\]]+)\|([^|\]]+)\|([^\]]+)\]\]/g,(m,w,std,en)=>{
+  const key=w.toLowerCase();
+  if(!PR.qc[key]){ PR.qc[key]=[w,std,en]; save(); updateCount(); }
+  return `<button type="button" class="qc" data-std="${std}" data-en="${en}">${w}</button>`;
+ });
+}
+function plain(s){ return fmt(s,P).replace(/\[\[([^|\]]+)\|[^\]]+\]\]/g,'$1'); }
+function updateCount(){ $('#carnetCount').textContent=PR.clues.length+Object.keys(PR.qc).length; }
+document.addEventListener('click',e=>{
+ const q=e.target.closest('.qc'), pop=$('#pop');
+ if(!q){ pop.hidden=true; return; }
+ pop.innerHTML=`<b>${esc(q.textContent)}</b> = ${esc(q.dataset.std)}<br><span style="opacity:.8">${esc(q.dataset.en)}</span>`;
+ pop.hidden=false; const r=q.getBoundingClientRect();
+ pop.style.left=Math.min(window.innerWidth-270,Math.max(8,r.left))+'px'; pop.style.top=(r.bottom+8)+'px';
+});
+
+/* ---------- voice ---------- */
+let VOICE=null;
+function pickVoice(){ if(!('speechSynthesis' in window)) return; const v=speechSynthesis.getVoices();
+ VOICE=v.find(x=>/fr[-_]CA/i.test(x.lang))||v.find(x=>/^fr/i.test(x.lang))||null; }
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+function speak(text,who){
+ if(!('speechSynthesis' in window)) return;
+ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(text));
+ u.lang=VOICE?VOICE.lang:'fr-CA'; if(VOICE) u.voice=VOICE; u.rate=.92; u.pitch=who==='leo'?1.4:who==='patrice'?.85:1;
+ speechSynthesis.speak(u);
+}
+
+/* ---------- creator ---------- */
+function ensureProfile(then){
+ P=Store.get();
+ if(P&&P.name){ then(); return; }
+ show('scrCreate'); mountCreator($('#scrCreate'),p=>{P=p; then();});
+}
+
+/* ---------- map ---------- */
+function renderMap(){
+ show('scrMap');
+ $('#mapSvg').innerHTML=sceneMap();
+ const nextI=PR.i;
+ const ov=$('#mapOverlay');
+ ov.innerHTML=`<span class="maplabel" style="left:4%;top:8%">Québec</span><span class="maplabel" style="left:72%;top:80%">Lévis</span><span class="maplabel river" style="left:16%;top:70%">fleuve Saint-Laurent</span>`
+  +STOPS.map((s,k)=>{ const i=k+1, [x,y]=MAP_PINS[s.id], st=i<nextI?'done':i===nextI?'next':'locked';
+   return `<button class="pin ${st}" style="left:${x/9.6}%;top:${y/5.4}%" data-i="${i}" ${st==='next'?'':'disabled'} aria-label="${s.name}${st==='done'?' (fait)':''}"><span class="dot"><i>${st==='done'?'✓':i}</i></span><span class="lbl">${s.name}</span></button>`; }).join('');
+ ov.querySelectorAll('.pin.next').forEach(b=>b.addEventListener('click',()=>travel(+b.dataset.i)));
+ $('#mapLede').innerHTML=fmt("Retrouve la ceinture fléchée de Bonhomme avant le défilé de 19 h. Suis la piste d'escale en escale.",P);
+ $('#missionList').innerHTML=STOPS.map((s,k)=>{const i=k+1, st=i<nextI?'done':i===nextI?'next':'';
+  return `<li class="${st}"><span class="n">${st==='done'?'✓':i}</span><span>${s.name}<small>${s.sub}</small></span><span class="st">${PR.stars[s.id]?'★'.repeat(PR.stars[s.id]):''}</span></li>`;}).join('');
+ const nx=STOPS[nextI-1];
+ $('#mapAction').innerHTML= nx?`<button class="btn accent" id="goNext" type="button">Aller : ${nx.name}</button>`:'';
+ if(nx) $('#goNext').addEventListener('click',()=>travel(nextI));
+}
+function travel(i){ toast(i===4?'En route vers Lévis en traversier…':`En route : ${ALL[i].name}`); runStop(i); }
+
+/* ---------- stop ---------- */
+function runStop(i){
+ stop=ALL[i]; stepI=0; mistakes=0; PR.cur=i;
+ show('scrStop');
+ const svg=$('#stageSvg');
+ svg.innerHTML = stop.scene==='map' ? sceneMap() : SCENES[stop.id](P);
+ svg.setAttribute('aria-label', stop.name);
+ const ov=$('#stageOverlay');
+ ov.innerHTML = stop.scene==='map' ? `<span class="maplabel" style="left:4%;top:8%">Québec</span><span class="maplabel" style="left:72%;top:80%">Lévis</span><span class="maplabel river" style="left:16%;top:70%">fleuve Saint-Laurent</span>` : '';
+ if(stop.sign){ const [l,t,w,h]=stop.signPos; ov.innerHTML+=`<div class="sign" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">${esc(stop.sign)}</div>`; }
+ $('#stopName').textContent=stop.name; $('#stopSub').textContent=stop.sub; $('#stopStars').textContent='';
+ setNpc(stop.who);
+ $('#log').innerHTML=''; $('#act').innerHTML='';
+ step();
+}
+function setNpc(id){ const n=NPC[id]; $('#npcFace').innerHTML=faceSVG(n.look); $('#npcName').textContent=n.name; $('#npcRole').textContent=n.role; }
+function scrollLog(){ const l=$('#log'); l.scrollTop=l.scrollHeight; }
+function npcBubble(who,text,en){
+ const n=NPC[who]; const row=document.createElement('div'); row.className='row npc';
+ row.innerHTML=`<div class="mini">${faceSVG(n.look)}</div><div class="bubble"><span class="who">${esc(n.name)}</span>${rich(text)}<button class="say" type="button" aria-label="Écouter">${SPEAK_ICON}</button>${en?`<span class="en">${esc(fmt(en,P))}</span>`:''}</div>`;
+ row.querySelector('.say').addEventListener('click',()=>speak(text,who));
+ $('#log').appendChild(row); scrollLog();
+ if($('#optVoice').checked) speak(text,who);
+}
+function meBubble(text){
+ const row=document.createElement('div'); row.className='row me';
+ row.innerHTML=`<div class="mini">${faceSVG(playerLook(P))}</div><div class="bubble">${esc(fmt(text,P))}</div>`;
+ $('#log').appendChild(row); scrollLog();
+}
+function contBtn(label,fn){
+ const b=document.createElement('button'); b.className='btn primary cont'; b.type='button'; b.textContent=label||'Continuer'; b.addEventListener('click',fn);
+ $('#act').innerHTML=''; $('#act').appendChild(b); b.focus({preventScroll:true});
+}
+function promptHTML(s){ return `<p class="prompt">${esc(fmt(s.prompt,P))}</p>${s.en?`<p class="en">${esc(fmt(s.en,P))}</p>`:''}`; }
+function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.createElement('div'); $('#act').appendChild(fb);} fb.className='fb '+kind; fb.innerHTML=esc(fr)+(en?`<span class="en">${esc(en)}</span>`:''); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
+function next(){ stepI++; step(); }
+function wrong(){ mistakes++; }
+
+function step(){
+ const s=stop.steps[stepI];
+ if(!s){ finishStop(); return; }
+ const act=$('#act'); act.innerHTML='';
+ if(s.t==='npc'){
+  const who=s.who||stop.who; if(who!==stop.who||$('#npcName').textContent!==NPC[who].name) setNpc(who);
+  npcBubble(who,s.text,s.en); contBtn('Continuer',next);
+ }
+ else if(s.t==='choice'||s.t==='board'){
+  let html=promptHTML(s);
+  if(s.t==='board') html+=`<p style="margin:0 0 8px">Heure : <span class="clock">14 h 10</span></p><table class="board"><thead><tr><th>Départ</th><th>Trajet</th><th>État</th></tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[2]==='Parti'?'gone':'ontime'}">${r[2]}</td></tr>`).join('')}</tbody></table>`;
+  act.innerHTML=html+`<div class="opts"></div>`;
+  const box=act.querySelector('.opts');
+  shuffle(s.opts).forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=fmt(o.txt,P);
+   b.addEventListener('click',()=>{
+    if(o.ok){ b.classList.add('right'); box.querySelectorAll('button').forEach(x=>x.disabled=true); meBubble(o.txt); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,750); }
+    else{ b.classList.add('wrong'); b.disabled=true; wrong(); feedback('err',o.why||'Essaie encore.',o.whyEn); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='fill'){
+  act.innerHTML=promptHTML(s)+`<p class="sentence">${esc(fmt(s.before,P))} <span class="blank">?</span> ${esc(fmt(s.after,P))}</p><div class="optrow"></div>`;
+  const box=act.querySelector('.optrow');
+  s.opts.forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=o;
+   b.addEventListener('click',()=>{
+    if(o===s.ans){ b.classList.add('right'); box.querySelectorAll('button').forEach(x=>x.disabled=true); act.querySelector('.blank').textContent=o;
+     const joined=(fmt(s.before,P)+' '+o+(o.endsWith("'")?'':' ')+fmt(s.after,P)).replace(/\s+/g,' ');
+     meBubble(joined); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,750); }
+    else{ b.classList.add('wrong'); b.disabled=true; wrong(); feedback('err',(s.why&&s.why[o])||'Essaie encore.'); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='order'){
+  const items=s.items.map(x=>fmt(x,P)); let k=0;
+  act.innerHTML=promptHTML(s)+`<ol class="orderBuilt"></ol><div class="opts"></div>`;
+  const built=act.querySelector('.orderBuilt'), box=act.querySelector('.opts');
+  shuffle(items).forEach(it=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.textContent=it;
+   b.addEventListener('click',()=>{
+    if(it===items[k]){ k++; const li=document.createElement('li'); li.textContent=it; built.appendChild(li); b.remove(); act.querySelector('.fb')?.remove();
+     if(k===items.length){ meBubble(items.join(' ')); feedback('ok','Bravo! Tu as bien raconté ta journée.'); setTimeout(next,900); } }
+    else{ wrong(); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); feedback('err','Pas encore. Qu\'est-ce que tu as fait avant ça?','What did you do before that?'); }
+   }); box.appendChild(b); });
+ }
+ else if(s.t==='card'){
+  const c=document.createElement('div'); c.className='culture';
+  c.innerHTML=`<span class="k">Le savais-tu?</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p>${s.en?`<p class="en">${esc(s.en)}</p>`:''}`;
+  $('#log').appendChild(c); scrollLog(); contBtn('Continuer',next);
+ }
+ else if(s.t==='clue'){
+  if(!PR.clues.includes(s.text)) PR.clues.push(s.text); save(); updateCount();
+  toast('Nouvel indice dans ton carnet'); next();
+ }
+}
+function finishStop(){
+ const i=PR.cur, st=starsFor(mistakes);
+ if(stop.id!=='intro'){ PR.stars[stop.id]=Math.max(PR.stars[stop.id]||0,st); $('#stopStars').textContent='★'.repeat(st); }
+ if(PR.i<=i) PR.i=i+1; save();
+ const last=i===ALL.length-1;
+ contBtn(last?'Terminer l\'escale':'Retour à la carte', ()=> last?endScreen():renderMap());
+ if(stop.id!=='intro') feedback('ok', `Escale réussie! ${'★'.repeat(st)}${'☆'.repeat(3-st)}`);
+}
+
+/* ---------- end ---------- */
+function endScreen(){
+ show('scrEnd');
+ const vals=STOPS.map(s=>PR.stars[s.id]||1), avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+ const d=new Date(), date=d.toLocaleDateString('fr-CA',{day:'numeric',month:'short',year:'numeric'});
+ P.done=P.done||{}; if(!P.done[GAME.id]) P.done[GAME.id]=date; P.stars=P.stars||{}; P.stars[GAME.id]=Math.max(P.stars[GAME.id]||0,avg); save();
+ const me=JOURNEY.find(j=>j.id===GAME.id), nx=nextStop(P);
+ $('#scrEnd').innerHTML=`<div class="card endcard"><div class="stampwrap go">${stampSVG(me,'done',String(P.done[GAME.id]).toUpperCase())}</div>
+  <div><p class="eyebrow">Escale réussie</p><h1>${esc(fmt('Bravo, [nom]!',P))}</h1>
+  <p>${esc(fmt("Grâce à toi, Bonhomme a retrouvé sa ceinture fléchée et le défilé a commencé à l'heure. Tu as gagné le tampon de Québec dans ton passeport.",P))}</p>
+  <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
+  <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
+  <div class="endbtns"><a class="btn accent" href="voyage.html">Voir mon passeport</a><button class="btn" type="button" id="replay">Rejouer l'escale</button></div></div></div>`;
+ $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
+}
+
+/* ---------- carnet ---------- */
+function openCarnet(){
+ $('#clueList').innerHTML=PR.clues.length?PR.clues.map(c=>`<li>${esc(c)}</li>`).join(''):'<li style="list-style:none;color:var(--muted)">Pas encore d\'indice.</li>';
+ const q=Object.values(PR.qc); $('#qcList').innerHTML=q.length?q.map(([w,s,e])=>`<dt>${esc(w)}</dt><dd>${esc(s)} · <i>${esc(e)}</i></dd>`).join(''):'<dd style="grid-column:1/-1">Pas encore d\'expression.</dd>';
+ $('#carnet').hidden=false; $('#closeCarnet').focus();
+}
+$('#btnCarnet').addEventListener('click',openCarnet);
+$('#closeCarnet').addEventListener('click',()=>{ $('#carnet').hidden=true; $('#btnCarnet').focus(); });
+$('#carnet').addEventListener('click',e=>{ if(e.target.id==='carnet') $('#carnet').hidden=true; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ $('#carnet').hidden=true; $('#pop').hidden=true; } });
+$('#optEn').addEventListener('change',e=>{ document.body.classList.toggle('showEn',e.target.checked); try{localStorage.setItem('jeuxFr20.en',e.target.checked?'1':'0');}catch(_){} });
+$('#optVoice').addEventListener('change',e=>{ if(!e.target.checked&&'speechSynthesis' in window) speechSynthesis.cancel(); try{localStorage.setItem('jeuxFr20.voice',e.target.checked?'1':'0');}catch(_){} });
+try{ if(localStorage.getItem('jeuxFr20.en')==='1'){ $('#optEn').checked=true; document.body.classList.add('showEn'); } if(localStorage.getItem('jeuxFr20.voice')==='0') $('#optVoice').checked=false; }catch(_){}
+
+/* ---------- start ---------- */
+$('#eyebrow').textContent=GAME.eyebrow; $('#title').textContent=GAME.title;
+ensureProfile(()=>{
+ P.prog=P.prog||{}; PR=P.prog[GAME.id]||{i:0,stars:{},clues:[],qc:{},cur:0};
+ PR.qc=PR.qc||{}; PR.clues=PR.clues||[]; PR.stars=PR.stars||{};
+ updateCount();
+ if(PR.i===0) runStop(0);
+ else if(PR.i>=ALL.length) endScreen();
+ else renderMap();
+});
+window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id};}};
+})();

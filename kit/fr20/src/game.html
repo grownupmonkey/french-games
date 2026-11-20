@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>/*TITLE*/</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@500;600;700&display=swap">
+<style>
+/*BASE_CSS*/
+/*GAME_CSS*/
+</style></head><body>
+<!--DEFS-->
+<div class="wrap">
+ <header class="top">
+  <div><p class="eyebrow" id="eyebrow"></p><h1 id="title"></h1></div>
+  <div class="toolbar">
+   <label class="pill"><input type="checkbox" id="optEn"> Aide en anglais</label>
+   <label class="pill"><input type="checkbox" id="optVoice" checked> Voix</label>
+   <button class="pill" id="btnCarnet" type="button">Carnet <span class="count" id="carnetCount">0</span></button>
+   <a class="pill" href="voyage.html">Mon voyage</a>
+  </div>
+ </header>
+ <section id="scrCreate" hidden></section>
+ <section id="scrMap" hidden>
+  <div class="mapgrid">
+   <div class="card stage"><div class="stagebox"><svg viewBox="0 0 960 540" id="mapSvg" role="img" aria-label="Carte de Québec et de Lévis"></svg><div class="overlay" id="mapOverlay"></div></div></div>
+   <div class="card missions"><h2>Ta mission</h2><p class="mlede" id="mapLede"></p><ol id="missionList"></ol><div id="mapAction"></div></div>
+  </div>
+ </section>
+ <section id="scrStop" hidden>
+  <div class="game">
+   <div class="card stage"><div class="stagebox"><svg viewBox="0 0 960 540" id="stageSvg" role="img"></svg><div class="overlay" id="stageOverlay"></div></div>
+    <div class="stagecap"><b id="stopName"></b><span id="stopSub"></span><span class="stars" id="stopStars"></span></div></div>
+   <div class="card chat">
+    <div class="chathead"><div class="face" id="npcFace"></div><div><b id="npcName"></b><span id="npcRole"></span></div></div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="act" id="act"></div>
+   </div>
+  </div>
+ </section>
+ <section id="scrEnd" hidden></section>
+</div>
+<div class="drawer" id="carnet" hidden role="dialog" aria-modal="true" aria-labelledby="carnetTitle">
+ <div class="drawer-in card">
+  <div class="drawer-head"><h2 id="carnetTitle">Mon carnet</h2><button class="btn" id="closeCarnet" type="button">Fermer</button></div>
+  <h3>Indices</h3><ol id="clueList" class="clues"></ol>
+  <h3>Expressions québécoises</h3><p class="note">Touche un mot souligné dans la conversation pour voir ce qu'il veut dire.</p><dl id="qcList" class="qclist"></dl>
+ </div>
+</div>
+<div class="pop" id="pop" hidden role="tooltip"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/*ART*/
+/*PROFILE*/
+/*JOURNEY*/
+/*SCENES*/
+/*DATA*/
+/*ENGINE*/
+</script>
+</body></html>
