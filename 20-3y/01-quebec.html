@@ -997,12 +997,17 @@ document.addEventListener('click',e=>{
 /* ---------- voice ---------- */
 let VOICE=null;
 function pickVoice(){ if(!('speechSynthesis' in window)) return; const v=speechSynthesis.getVoices();
- VOICE=v.find(x=>/fr[-_]CA/i.test(x.lang))||v.find(x=>/^fr/i.test(x.lang))||null; }
+ // Only a real French voice is ever used. Without one, Chrome reads French with an English voice, so reading is switched off instead.
+ const fr=v.filter(x=>/^fr/i.test(x.lang));
+ VOICE=fr.find(x=>/^fr[-_]CA/i.test(x.lang))||fr.find(x=>/^fr[-_]FR/i.test(x.lang))||fr[0]||null; }
 if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+let noVoiceWarned=false;
 function speak(text,who){
  if(!('speechSynthesis' in window)) return;
+ pickVoice();
+ if(!VOICE){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Aucune voix française sur cet appareil : la lecture est désactivée.'); } return; }
  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(text));
- u.lang=VOICE?VOICE.lang:'fr-CA'; if(VOICE) u.voice=VOICE; u.rate=.92; u.pitch=who==='leo'?1.4:who==='patrice'?.85:1;
+ u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; u.pitch=who==='leo'?1.4:who==='patrice'?.85:1;
  speechSynthesis.speak(u);
 }
 
