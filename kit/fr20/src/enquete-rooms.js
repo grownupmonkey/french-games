@@ -274,9 +274,9 @@ const ROOMS={
      async onWalk(A){ return A.say('Le quai de chargement n\'est pas encore construit. Revenez au prochain brouillon. (Fin de la salle d\'essai.)'); } }
   ],
   async onEnter(A){ if(A.G.seen.musee) return; A.G.seen.musee=1;
-   await A.say('Lafayette, Louisiane. Le musée, salle des Trésors. Quelqu\'un a volé la **parure d\'Évangéline**. Le reste de l\'exposition est intact, ce qui est soit une bonne nouvelle, soit une insulte.');
-   await A.say('Sauvegardez souvent. Les criminels, eux, ne vous attendront pas.');
-   await A.say('Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Clic droit pour changer d\'action. Tab pour passer d\'une zone à l\'autre.'); }
+   await A.say(['Lafayette, Louisiane. Le musée, salle des Trésors. Quelqu\'un a volé la **parure d\'Évangéline**. Le reste de l\'exposition est intact, ce qui est soit une bonne nouvelle, soit une insulte.','Lafayette, Louisiana. The museum, Treasures Room. Someone has stolen the Évangéline jewellery set. The rest of the exhibition is untouched, which is either good news or an insult.']);
+   await A.say(['Sauvegardez souvent. Les criminels, eux, ne vous attendront pas.','Save often. Criminals will not wait for you.']);
+   await A.say(['Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Clic droit pour changer d\'action. Tab pour passer d\'une zone à l\'autre.','Move the mouse to the top of the screen to see the icon bar. Right-click to change action. Tab moves from one spot to the next.']); }
  }
 };
 function clockNow(A){ const c=A.G.clock, h=Math.floor(c/60)%24, m=c%60; return `${h} h ${String(m).padStart(2,'0')}`; }

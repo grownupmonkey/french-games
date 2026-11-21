@@ -20,6 +20,7 @@ const ADV=(()=>{
  function speak(t){ if(!('speechSynthesis' in window)){ toast('La lecture à voix haute n\'est pas disponible dans ce navigateur.'); return; } pickVoice();
    if(!VOICE){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Aucune voix française sur cet appareil : la lecture est désactivée.'); } return; }
    speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(t)); u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; speechSynthesis.speak(u); }
+ function markEn(){ if(!G.usedEn){ G.usedEn=true; } }
  function hush(){ if('speechSynthesis' in window) speechSynthesis.cancel(); }
  function toast(t){ const el=$('#advToast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,3200); }
 
@@ -78,8 +79,9 @@ const ADV=(()=>{
  function rich(s){ return esc(T(s)).replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g,(m,w,g)=>`<span class="gl" tabindex="0" data-g="${g}">${w}</span>`)
    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>'); }
  let msgQ=Promise.resolve();
- function say(text,o={}){ msgQ=msgQ.then(()=>new Promise(res=>{ const m=$('#msg');
-   m.innerHTML=`<div class="box${o.who?' talk':''}" role="dialog" aria-live="assertive">${o.icon?`<div class="mi"><svg viewBox="0 0 48 48">${o.icon}</svg></div>`:''}<div class="mt">${o.who?`<p class="who">${esc(T(o.who))}</p>`:''}<p>${rich(text)}</p></div><button class="spk" type="button" aria-label="Écouter en français" title="Écouter"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button></div>`;
+ function say(text,o={}){ if(Array.isArray(text)){ o=Object.assign({en:text[1]},o); text=text[0]; }
+   msgQ=msgQ.then(()=>new Promise(res=>{ const m=$('#msg'); const showEn=!!(prefs().en&&o.en); if(showEn) markEn();
+   m.innerHTML=`<div class="box${o.who?' talk':''}" role="dialog" aria-live="assertive">${o.icon?`<div class="mi"><svg viewBox="0 0 48 48">${o.icon}</svg></div>`:''}<div class="mt">${o.who?`<p class="who">${esc(T(o.who))}</p>`:''}<p>${rich(text)}</p>${showEn?`<p class="men">${esc(T(o.en))}</p>`:''}</div><button class="spk" type="button" aria-label="Écouter en français" title="Écouter"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button></div>`;
    m.querySelector('.spk').addEventListener('pointerdown',e=>{ e.stopPropagation(); speak(text); });
    if(prefs().voice) speak(text);
    m.hidden=false; hideBar(); setCursor();
@@ -136,7 +138,7 @@ const ADV=(()=>{
  };
  async function run(h,verb){ let fn=verb==='item'?(h.use&&(h.use[G.sel]||h.use['*'])):h[verb];
    if(fn==null) fn=verb==='item'?DEFAULTS.item:DEFAULTS[verb];
-   if(typeof fn==='string') return say(fn);
+   if(typeof fn==='string'||Array.isArray(fn)) return say(fn);
    return fn(API, verb==='item'?G.sel:undefined); }
  async function act(p){ if(busy) return;
    return actOn(hsAt(p),p); }
@@ -173,13 +175,13 @@ const ADV=(()=>{
     <button class="sbtn" type="button" data-o="hint">Demander de l'aide (−${CFG.hintCost||2} points)</button><button class="sbtn" type="button" data-o="restart">Recommencer</button></div>
     <label class="opt"><input type="checkbox" id="optZones" ${showZones?'checked':''}> Montrer les zones (gratuit)</label>
     <label class="opt"><input type="checkbox" id="optVoice" ${pr.voice?'checked':''}> Lire les textes à voix haute (voix française)</label>
-    <label class="opt"><input type="checkbox" id="optEn" ${pr.en?'checked':''}> Aide en anglais dans les dossiers</label>
+    <label class="opt"><input type="checkbox" id="optEn" ${pr.en?'checked':''}> Aide en anglais (texte seulement : score −10 % et mention sur le diplôme)</label>
     <p class="small">Clavier : Tab pour passer d'une zone à l'autre, Entrée pour agir, clic droit pour changer d'action, Échap pour la barre d'icônes.</p>`,
    [['Reprendre',()=>{ applyOpts(); closeDlg(); }]]);
    $('#dlg').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{ applyOpts(); const o=b.dataset.o;
      if(o==='save') openSave(); else if(o==='restore') openRestore(); else if(o==='hint'){ closeDlg(); hint(); }
      else if(o==='restart'){ dialog('Recommencer?','<p>Recommencer l\'enquête depuis le début? Vos sauvegardes sont conservées.</p>',[['Oui, recommencer',()=>{ closeDlg(); newGame(); }],['Non',openOpts]]); } }); }
- function applyOpts(){ const z=$('#optZones'); if(!z) return; showZones=z.checked; setPref('voice',$('#optVoice').checked); setPref('en',$('#optEn').checked);
+ function applyOpts(){ const z=$('#optZones'); if(!z) return; showZones=z.checked; setPref('voice',$('#optVoice').checked); setPref('en',$('#optEn').checked); if($('#optEn').checked) markEn();
    if(!$('#optVoice').checked) hush(); document.body.classList.toggle('showEn',$('#optEn').checked); drawZones(); }
 
  /* ---------- save / restore (several slots, plus an automatic save at each act) ---------- */
@@ -204,10 +206,11 @@ const ADV=(()=>{
  async function hint(){ const h=CFG.hint?CFG.hint(G,API):null;
    if(!h) return say('Le capitaine hausse les épaules. « Vous êtes l\'enquêt{eur|rice} principal{|e}. Enquêtez. »');
    const cost=CFG.hintCost||2; G.score=Math.max(0,G.score-cost); G.hints=(G.hints||0)+1; updBar();
-   return say(h.text,{who:h.who||'Agent Thibodeaux'}); }
+   return say(h.text,{who:h.who||'Agent Thibodeaux',en:h.en}); }
 
  /* ---------- dossier: learning tasks (steps.js) in a manila folder over the scene ---------- */
  function task(steps,o={}){ steps=Array.isArray(steps)?steps:[steps]; hideBar(); hush();
+   if(prefs().en) markEn();
    return new Promise(res=>{ const d=$('#dossier'); let i=0, mistakes=0;
     d.innerHTML=`<div class="folder" role="dialog" aria-modal="true" aria-label="${esc(T(o.title||'Dossier'))}">
       <div class="ftab">${esc(T(o.kind||'Dossier'))}</div>
@@ -273,7 +276,8 @@ const ADV=(()=>{
   note(title,text){ G.notes.push({title,text}); },
   redraw(){ G.px=player.x; G.py=player.y; G.face=player.face; enter(G.roomId,true); },
   face(f){ player.face=f; draw(player); }, T, task, autosave, toast, speak,
-  rank(){ const r=G.score/(CFG.maxScore||300); const R=CFG.ranks||[]; let out=R[0]; R.forEach(x=>{ if(r>=x.min) out=x; }); return out?T(out.name):''; } };
+  finalScore(){ return Math.round(G.score*(G.usedEn?.9:1)); }, usedEnglish:()=>!!G.usedEn,
+  rank(){ const r=API.finalScore()/(CFG.maxScore||300); const R=CFG.ranks||[]; let out=R[0]; R.forEach(x=>{ if(r>=x.min) out=x; }); return out?T(out.name):''; } };
 
  /* ---------- input ---------- */
  function toLogical(e){ const r=$('#stage').getBoundingClientRect(); return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]; }

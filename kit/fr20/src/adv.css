@@ -129,3 +129,4 @@ body.adv{background:#07080C;min-height:100vh;display:grid;place-items:center;ove
 /* character creator when no traveller exists yet */
 #create{position:fixed;inset:0;z-index:70;background:#E8EDF1;overflow:auto;padding:24px}
 #create .cwrap{max-width:900px;margin:0 auto}
+#msg .men{margin-top:calc(var(--u)*10)!important;font:italic 400 calc(var(--u)*19)/1.45 var(--font-body)!important;color:#4A4438}
