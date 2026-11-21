@@ -63,6 +63,9 @@ function advDefs2(){ const lg=(id,stops,x2=1,y2=0)=>`<linearGradient id="${id}" 
   +lg('cuWall',['#E6D8B8','#D2C19C','#B9A680','#A8956E'])+lg('dhWall',['#8A5634','#6E4226','#56321C'])+lg('curtain',['#9B2F2F','#7A2020','#5A1616'])
   +lg('hoWall',['#4E6E5E','#3E5A4C','#30483C'])+lg('hoWain',['#5E3A22','#4A2C18','#3A2212'])+lg('parch',['#F2E6C8','#E6D6AE'],1,1)+lg('river2',['#7FA6C9','#5E86AE'])
   +lg('bookA',['#9B2F2F','#6E1F1F'])+lg('bookB',['#2F4F86','#1F3560'])+lg('bookC',['#5E8C4A','#3E6A30'])+lg('bookD',['#C9952F','#9C6A1C'])
+  +lg('skyMorning',['#8EB4D6','#B8D0E2','#E8E2CC'],0,1)+lg('shopA',['#C9A878','#B08A5C'])+lg('shopB',['#8EA6B0','#6E8892'])+lg('shopC',['#D9C8A8','#BFAA86'])
+  +lg('sidewalk',['#B9B3A6','#9C968A'],0,1)+lg('road',['#6E7074','#55575B'],0,1)+lg('carGrey',['#A9AFB5','#7E858C','#5A6168'],0,1)+lg('vanRed',['#C9483A','#A0352A','#6E2018'],0,1)
+  +lg('water',['#6E9A8E','#4E7A6E'],0,1)+lg('bridgeGreen',['#5E8A6A','#3E6A4A'])+lg('shopWall',['#D9C7A2','#C2AE86','#A8946C'])+lg('glassCase',['#E4EEF4','#B9C9D4'],1,1)
   +`<radialGradient id="bulb"><stop offset="0" stop-color="#FFF2C0"/><stop offset=".4" stop-color="#FFD070" stop-opacity=".8"/><stop offset="1" stop-color="#FFB040" stop-opacity="0"/></radialGradient>`
   +`<radialGradient id="sodiumPool" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFB45A" stop-opacity=".42"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient>`
   +`<radialGradient id="lampPool" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE2A0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE2A0" stop-opacity="0"/></radialGradient>`

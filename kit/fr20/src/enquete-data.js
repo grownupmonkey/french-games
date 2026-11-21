@@ -18,6 +18,7 @@ const CAST={
  commis:{name:'Le réceptionniste', look:{skin:4,hair:'#1E1612',style:'short',coat:'emerald',collar:'#F4F1E8'}},
  dancer1:{name:'', look:{skin:2,hair:'#A2502B',style:'long',coat:'magenta'}}, dancer2:{name:'', look:{skin:3,hair:'#1E1612',style:'short',coat:'blue'}},
  dancer3:{name:'', look:{skin:5,hair:'#1E1612',style:'mid',coat:'saffron'}}, dancer4:{name:'', look:{skin:1,hair:'#C7A160',style:'short',coat:'olive'}},
+ fontenot:{name:'M. Fontenot, prêteur sur gages', look:{skin:1,hair:'#9A958C',style:'short',coat:'olive',glasses:true,mustache:true,collar:'#E9E3D8'}},
  hebert:{name:'Mme Odile Hébert', look:{skin:0,hair:'#D8D4CC',style:'mid',coat:'plum',glasses:true,collar:'#F4F1E8'}}
 };
 const who=k=>CAST[k].name;
@@ -51,12 +52,16 @@ const ITEMS={
  peinture:{ name:'Peinture rouge (pièce n° 2)',
   icon:`<g><path d="M10,8 H38 L39,42 H9 Z" fill="#E4EEF4" opacity=".85"/><path d="M10,8 H38 L39,42 H9 Z" fill="none" stroke="#8CA2B2" stroke-width="1.4"/><rect x="10" y="8" width="28" height="5" fill="#B9C9D4"/><path d="M18,20 l8,-3 l5,5 l-6,6 l-8,-2 z" fill="#B8443A"/><path d="M19,21 l6,-2" stroke="#E07A6A" stroke-width="1.2"/><rect x="14" y="32" width="20" height="7" rx="1" fill="#F7F1E3"/><rect x="14" y="32" width="20" height="2.5" fill="#B8443A"/></g>`,
   look:'Des éclats de peinture rouge, grattés sur la borne du quai. Étiquette : « Pièce n° 2. » À apporter au greffier.' },
+ moitie:{ name:'Bijoux (pièce n° 3)',
+  icon:`<g><path d="M10,8 H38 L39,42 H9 Z" fill="#E4EEF4" opacity=".85"/><path d="M10,8 H38 L39,42 H9 Z" fill="none" stroke="#8CA2B2" stroke-width="1.4"/><rect x="10" y="8" width="28" height="5" fill="#B9C9D4"/><path d="M15,20 C20,30 28,30 33,20" stroke="#E6C676" stroke-width="2.4" fill="none"/>${[17,21,25,29,33].map((x,i)=>`<circle cx="${x}" cy="${[22,27,28.5,27,22][i]}" r="2.2" fill="url(#pearlG)"/>`).join('')}<rect x="14" y="32" width="20" height="7" rx="1" fill="#F7F1E3"/><rect x="14" y="32" width="20" height="2.5" fill="#B8443A"/></g>`,
+  look:'La moitié de la parure : un bracelet, une broche et une boucle d\'oreille. Il manque le collier et l\'autre boucle. Étiquette : « Pièce n° 3. »' },
  perle:{ name:'Perle (pièce n° 1)',
   icon:`<g><path d="M10,8 H38 L39,42 H9 Z" fill="#E4EEF4" opacity=".85"/><path d="M10,8 H38 L39,42 H9 Z" fill="none" stroke="#8CA2B2" stroke-width="1.4"/><rect x="10" y="8" width="28" height="5" fill="#B9C9D4"/><circle cx="24" cy="24" r="6" fill="url(#pearlG)"/><circle cx="22" cy="22" r="1.6" fill="#fff"/><rect x="14" y="32" width="20" height="7" rx="1" fill="#F7F1E3"/><rect x="14" y="32" width="20" height="2.5" fill="#B8443A"/></g>`,
   look:'La perle, dans son sachet. Étiquette : « Pièce n° 1. Perle trouvée sous la vitrine. » Elle devra aller à la salle des preuves. Ne l\'oubliez pas, ou elle disparaîtra comme le café de l\'équipe.' }
 };
 function clockNow(A){ const c=A.G.clock, h=Math.floor(c/60)%24, m=c%60; return `${h} h ${String(m).padStart(2,'0')}`; }
 const FAIL_ART={
+ rights:`<ellipse cx="100" cy="106" rx="70" ry="7" fill="#fff" opacity=".08"/><g fill="none" stroke="#E9E4D6" stroke-width="7"><circle cx="72" cy="66" r="24"/><circle cx="128" cy="66" r="24"/></g><path d="M96,66 h8" stroke="#E9E4D6" stroke-width="7"/><path d="M60,92 l80,-52" stroke="#B8443A" stroke-width="6" stroke-linecap="round"/>`,
  tires:`<ellipse cx="100" cy="104" rx="80" ry="8" fill="#fff" opacity=".08"/><g fill="none" stroke="#E9E4D6" stroke-width="6" opacity=".85"><path d="M10,70 C60,60 120,90 190,70"/><path d="M10,92 C60,82 120,112 190,92"/></g><g fill="none" stroke="#6E8BA8" stroke-width="8" opacity=".9"><path d="M30,40 C70,90 110,30 160,100"/><path d="M50,30 C90,80 130,20 180,90"/></g>`,
  coffee:`<ellipse cx="100" cy="104" rx="50" ry="7" fill="#fff" opacity=".08"/><path d="M70,40 h60 l-6,60 h-48 z" fill="#E9E4D6"/><path d="M130,52 q18,2 16,18 q-2,14 -18,12" stroke="#E9E4D6" stroke-width="6" fill="none"/><ellipse cx="100" cy="40" rx="30" ry="6" fill="#3B1E0C"/><text x="100" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="#3B1E0C">?</text>`,
  step:`<ellipse cx="100" cy="104" rx="70" ry="8" fill="#fff" opacity=".08"/><g transform="translate(100 72) rotate(-8)"><path d="M-26,-40 C-10,-50 22,-46 26,-20 C30,4 18,24 10,34 C-2,46 -24,40 -28,22 C-32,4 -36,-28 -26,-40 Z" fill="#6B4A30"/><path d="M-18,-26 h30 M-22,-10 h38 M-22,6 h34" stroke="#3A2716" stroke-width="3"/></g><g transform="translate(150 98)"><ellipse rx="12" ry="5" fill="#ECE6DA"/><path d="M-12,0 L-18,-4 M12,0 L18,-5 M0,-5 L2,-11" stroke="#ECE6DA" stroke-width="2"/></g>`,
@@ -66,6 +71,7 @@ const FAIL_ART={
 
 /* ---------- help from the team: the next useful thing to do (costs points) ---------- */
 function HINT(G){ const b='Agente Broussard', t='Agent Thibodeaux', r=G.roomId;
+ if(G.flags.act3) return HINT3(G);
  if(G.flags.act2) return HINT2(G);
  if(!G.flags.tools) return {who:b,text:'Ton matériel est dans le tiroir de ton bureau. Utilise la main sur le tiroir.'};
  if(!G.flags.procedure) return {who:b,text:'Va voir M. Landry à la salle des preuves, par la porte « PREUVES » du briefing. Parle-lui.'};
@@ -109,6 +115,11 @@ const GLOSSARY={
  'sonnette':['bell'], 'étagère':['shelf'], 'boîte à clés':['key box'], 'clé maîtresse':['master key'], 'crochet':['hook'], 'déclaration':['statement'],
  'étiquettes':['labels'], 'cuillères':['spoons'], 'théière':['teapot'], 'bol':['bowl'], 'billet':['ticket'], 'veillée':['evening gathering with music'],
  'galerie':['porch (Acadian / Cajun)'], 'robe de chambre':['bathrobe'], 'tutoyer':['to say « tu » to someone'], 'livraisons':['deliveries'], 'cadenassé':['padlocked'],
+ 'prêteur sur gages':['pawnbroker'], 'boutique':['shop'], 'vitrine (de magasin)':['shop window'], 'alligator empaillé':['stuffed alligator'],
+ 'planque':['stakeout'], 'voiture banalisée':['unmarked car'], 'bloquer':['to block'], 'laisser partir':['to let go'], 'droits':['rights (legal)'],
+ 'garder le silence':['to remain silent'], 'avocat':['lawyer'], 'utilisé contre vous':['used against you'], 'texto':['text message'], 'moitié':['half'],
+ 'broche':['brooch'], 'bracelet':['bracelet'], 'collier':['necklace'], 'boucle d\'oreille':['earring'], 'pédales':['pedals'], 'aube':['dawn'],
+ 'piste':['lead (investigation)'], 'écarté':['ruled out'], 'mandat':['warrant'], 'pont':['bridge'], 'quincaillerie':['hardware store'],
  'conservatrice':['curator (woman)'], 'vernissage':['exhibition opening night'], 'foulard':['scarf'], 'portemanteau':['coat rack'],
  'armoire à clés':['key cabinet'], 'clé de secours':['spare key'], 'dictionnaire':['dictionary'], 'derrière':['behind'], 'sous':['under'], 'sur':['on'],
  'carte de visite':['business card'], 'cellulaire':['cell phone','québécois / cajun'], 'liste du personnel':['staff list'], 'catalogue':['catalogue'],

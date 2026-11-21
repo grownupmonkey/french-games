@@ -18,15 +18,17 @@ ROOMS.carte={
   <rect x="60" y="56" width="360" height="72" rx="4" fill="#FFFDF6" stroke="#8C7A54" stroke-width="1.5"/>${txt(240,88,'LAFAYETTE — DE NUIT',22,{mid:1,serif:1,ls:1})}${txt(240,114,'Choisissez une destination.',14,{mid:1,w:600,fill:'#6E5A40'})}
   <g transform="translate(1140 680)"><circle r="34" fill="#FFFDF6" stroke="#8C7A54" stroke-width="1.5"/><path d="M0,-28 L8,0 L0,28 L-8,0 Z" fill="#9B2F2F"/><path d="M0,-28 L8,0 L0,0 Z" fill="#6E1F1F"/>${txt(0,-38,'N',13,{mid:1})}</g>
   ${pin(220,560,'Poste de police',false,'Le capitaine, le tableau')}
-  ${pin(560,340,'Musée de Lafayette',v.curator,'Bureau de la conservatrice')}
+  ${G.flags.morning?pin(1060,420,'Breaux Bridge',v.rue,'Prêteur sur gages Fontenot'):`${pin(560,340,'Musée de Lafayette',v.curator,'Bureau de la conservatrice')}
   ${pin(900,580,'Chez Babineaux',v.babineaux,'Bal cajun')}
-  ${pin(760,170,'Hôtel Evangeline',v.hotel,'Le collectionneur')}`; },
+  ${pin(760,170,'Hôtel Evangeline',v.hotel,'Le collectionneur')}`}
+  ${G.flags.morning?`<rect x="0" y="0" width="1280" height="800" fill="#FFF4D8" opacity=".08"/>${txt(240,140,'Samedi matin',13,{mid:1,w:600,fill:'#6E5A40'})}`:''}`; },
  props:[], npcs:[],
  hotspots:[
   { id:'p-poste', name:'Poste de police', ell:[220,530,120,70], exit:['briefing','fromParking',10] },
-  { id:'p-musee', name:'Musée de Lafayette', ell:[560,310,130,70], exit:['bureauG','fromHall',10] },
-  { id:'p-bal', name:'Chez Babineaux', ell:[900,550,120,70], exit:['babineaux','door',10] },
-  { id:'p-hotel', name:'Hôtel Evangeline', ell:[760,140,130,70], exit:['hotel','door',10] }
+  { id:'p-musee', name:'Musée de Lafayette', when:G=>!G.flags.morning, ell:[560,310,130,70], exit:['bureauG','fromHall',10] },
+  { id:'p-bal', name:'Chez Babineaux', when:G=>!G.flags.morning, ell:[900,550,120,70], exit:['babineaux','door',10] },
+  { id:'p-hotel', name:'Hôtel Evangeline', when:G=>!G.flags.morning, ell:[760,140,130,70], exit:['hotel','door',10] },
+  { id:'p-bb', name:'Breaux Bridge', when:G=>G.flags.morning, ell:[1060,390,130,70], exit:['rue','car',15] }
  ]
 };
 
@@ -377,7 +379,7 @@ async function RECO2(A){ const cap=who('arceneaux'), G=A.G; G.recos2=G.recos2||[
  }
  return ACT2_END(A); }
 async function ACT2_BOARD(A){ const w=who('arceneaux'), G=A.G;
- if(G.flags.act3) return A.say('Allez dormir trois heures, enquêt{eur|rice}. Les rapports arrivent à l\'aube. (Brouillon : l\'acte 3 arrive bientôt.)',{who:w});
+ if(G.flags.act3) return ACT3(A);
  if(G.flags.board) return RECO2(A);
  const todo=[];
  if(!G.flags.curatorStmt) todo.push('la déclaration de la conservatrice (au musée)');
@@ -400,7 +402,7 @@ async function ACT2_BOARD(A){ const w=who('arceneaux'), G=A.G;
 async function ACT2_END(A){ const w=who('arceneaux'); A.G.flags.act3=true; A.autosave();
  await A.say('Trois missions, trois agents. Il est trois heures du matin. Le capitaine éteint la lumière du tableau.',{who:w});
  await A.say('« Allez dormir trois heures. Les rapports arrivent à l\'aube. Et ne rêvez pas d\'accordéon. »',{who:w});
- await A.say('Fin de l\'acte 2. (Brouillon : l\'acte 3 arrive bientôt. Votre partie est sauvegardée.)'); }
+ await A.say('Fin de l\'acte 2. Parlez au capitaine quand vous êtes prêt{|e} pour le matin.'); }
 function HINT2(G){ const b='Agente Broussard';
  if(!G.seen.curator||!G.flags.curatorStmt) return {who:b,text:'Va au musée parler à Mme Gagnon. La voiture est au parking, en bas de la salle de briefing.'};
  if(!G.flags.setlist) return {who:b,text:'Chez Babineaux, lis l\'affiche du groupe, à côté de la scène.'};
