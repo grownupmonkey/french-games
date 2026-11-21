@@ -23,21 +23,31 @@ common = {'/*BASE_CSS*/': r('base.css'), '<!--DEFS-->': defs, '/*ART*/': r('art.
 (OUT / 'voyage.html').write_text(page('voyage.html', **common))
 (OUT / '01-quebec.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La ceinture fléchée — Escale 1 : Québec', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('quebec-scenes.js'), '/*DATA*/': r('quebec-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('quebec-scenes.js'), '/*DATA*/': r('quebec-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 (OUT / '02-montreal.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'Le grand spectacle — Escale 2 : Montréal', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('montreal-scenes.js'), '/*DATA*/': r('montreal-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('montreal-scenes.js'), '/*DATA*/': r('montreal-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 (OUT / '03-acadie.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La veillée — Escale 3 : Acadie', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('acadie-scenes.js'), '/*DATA*/': r('acadie-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('acadie-scenes.js'), '/*DATA*/': r('acadie-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 (OUT / '04-dakar.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La teranga — Escale 4 : Dakar', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('dakar-scenes.js'), '/*DATA*/': r('dakar-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('dakar-scenes.js'), '/*DATA*/': r('dakar-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 (OUT / '05-bretagne.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La semaine bretonne — Escale 5 : Bretagne', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('bretagne-scenes.js'), '/*DATA*/': r('bretagne-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('bretagne-scenes.js'), '/*DATA*/': r('bretagne-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 (OUT / '06-bruxelles.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': "La BD de l'été — Escale 6 : Bruxelles", '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
+    '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
+# ---- Escale 8: L'enquête (Sierra-style adventure; its own engine) ----
+adv_js = r('art.js') + r('adv-art.js') + r('enquete-rooms.js')
+adv_parts = json.loads(subprocess.run(['node', '-e', adv_js + "\nprocess.stdout.write(JSON.stringify({defs:advDefs(), icons:ICONS}));"],
+    capture_output=True, text=True, check=True).stdout)
+adv_page = page('adventure.html', **common, **{
+    '/*TITLE*/': "L'enquête — Escale 8 : Louisiane", '/*ADV_CSS*/': r('adv.css'), '/*GAME_CSS*/': r('game.css'), '/*STEPS*/': r('steps.js'), '<!--ADV_DEFS-->': adv_parts['defs'],
+    '/*ADV_ART*/': r('adv-art.js'), '/*ADV_ENGINE*/': r('adv-engine.js'), '/*ROOMS*/': r('enquete-rooms.js') + r('enquete-boot.js')})
+for k, v in adv_parts['icons'].items():
+    adv_page = adv_page.replace('<!--I_%s-->' % k, v)
+(OUT / '08-enquete.html').write_text(adv_page)
 for f in sorted(OUT.iterdir()):
     print(f.name, f.stat().st_size)

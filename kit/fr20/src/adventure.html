@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>/*TITLE*/</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/*BASE_CSS*/
+/*GAME_CSS*/
+/*ADV_CSS*/
+</style></head><body class="adv">
+<!--DEFS-->
+<!--ADV_DEFS-->
+<main id="stage" aria-label="L'enquête">
+ <svg id="scene" viewBox="0 0 1280 800" role="img" aria-label="La scène">
+  <g id="bg"></g><g id="world"></g><g id="fg"></g><g id="zones"></g>
+ </svg>
+ <nav id="bar" aria-label="Barre d'icônes">
+  <div class="vbs">
+   <button class="vb" data-verb="walk" type="button" title="Marcher"><svg viewBox="0 0 48 48"><!--I_walk--></svg><span>Marcher</span></button>
+   <button class="vb" data-verb="look" type="button" title="Regarder"><svg viewBox="0 0 48 48"><!--I_look--></svg><span>Regarder</span></button>
+   <button class="vb" data-verb="hand" type="button" title="Prendre / Utiliser"><svg viewBox="0 0 48 48"><!--I_hand--></svg><span>Prendre / Utiliser</span></button>
+   <button class="vb" data-verb="talk" type="button" title="Parler"><svg viewBox="0 0 48 48"><!--I_talk--></svg><span>Parler</span></button>
+   <button class="vb" data-verb="item" id="vbItem" type="button" title="Objet choisi"></button>
+   <button class="vb" data-act="inv" type="button" title="Inventaire"><svg viewBox="0 0 48 48"><!--I_inv--></svg><span>Inventaire</span></button>
+   <button class="vb" data-act="note" type="button" title="Carnet"><svg viewBox="0 0 48 48"><!--I_note--></svg><span>Carnet</span></button>
+   <button class="vb" data-act="opt" type="button" title="Options"><svg viewBox="0 0 48 48"><!--I_opt--></svg><span>Options</span></button>
+  </div>
+  <div class="status"><span id="scoreTxt">Points : 0 sur 300</span><span id="clockTxt">22 h 47</span></div>
+ </nav>
+ <div id="bartab" aria-hidden="true"></div>
+ <div id="cur" hidden></div><div id="tag" hidden></div>
+ <div id="msg" hidden></div>
+ <div id="dlg" hidden></div>
+ <div id="fail" hidden></div>
+ <div id="title" hidden></div>
+ <div id="advToast" hidden role="status"></div>
+</main>
+<div id="dossier" hidden></div>
+<div id="create" hidden><div class="cwrap"></div></div>
+<div id="printArea"></div>
+<script>
+/*ART*/
+/*PROFILE*/
+/*JOURNEY*/
+/*STEPS*/
+/*ADV_ART*/
+/*ADV_ENGINE*/
+/*ROOMS*/
+</script>
+</body></html>
