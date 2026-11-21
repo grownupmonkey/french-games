@@ -78,7 +78,8 @@ ROOMS.briefing={
   <rect x="376" y="330" width="428" height="7" rx="2" fill="#9AA0A6"/><rect x="430" y="324" width="22" height="6" rx="2" fill="#2F6CB3"/><rect x="460" y="324" width="22" height="6" rx="2" fill="#B8443A"/>
   ${call?`${txt(590,150,'AFFAIRE : PARURE D\'ÉVANGÉLINE',20,{mid:1,fill:'#9B2F2F',ls:1})}<path d="M400,162 H780" stroke="#9B2F2F" stroke-width="2"/>
     ${txt(400,196,'Musée de Lafayette · salle des Trésors',14,{w:600,fill:'#2F4F86'})}${txt(400,222,'Vol signalé à 22 h 32 par le gardien',14,{w:600,fill:'#2F4F86'})}
-    <rect x="640" y="236" width="150" height="72" fill="#F7E98A" transform="rotate(2 715 272)"/>${txt(652,262,'Suspects : ?',14,{w:600})}${txt(652,286,'Preuves : ?',14,{w:600})}`
+    ${G.flags.act2?`<rect x="610" y="232" width="190" height="84" fill="#F7E98A" transform="rotate(2 705 274)"/>${txt(622,256,'1. conservatrice',14,{w:600})}${txt(622,278,'2. musicien',14,{w:600})}${txt(622,300,'3. collectionneur',14,{w:600})}`
+     :`<rect x="640" y="236" width="150" height="72" fill="#F7E98A" transform="rotate(2 715 272)"/>${txt(652,262,'Suspects : ?',14,{w:600})}${txt(652,286,'Preuves : ?',14,{w:600})}`}`
    :`${txt(590,150,'BRIEFING DU SOIR',20,{mid:1,fill:'#2F4F86',ls:1})}<path d="M440,162 H740" stroke="#2F4F86" stroke-width="2"/>
     ${txt(400,198,'Festival : circulation fermée rue Jefferson',14,{w:600,fill:'#2F4F86'})}${txt(400,224,'Machine à café : NE PAS TOUCHER',14,{w:600,fill:'#9B2F2F'})}
     <rect x="652" y="240" width="140" height="66" fill="#F7E98A" transform="rotate(-3 722 273)"/>${txt(664,270,'Bienvenue',14,{w:600})}${txt(664,292,'au poste!',14,{w:600})}`}
@@ -114,6 +115,7 @@ ROOMS.briefing={
   { id:'arceneaux', name:'Capitaine Arceneaux', poly:[[356,330],[424,330],[430,570],[350,570]], walkTo:[460,590], face:'left',
     look:'Le capitaine Arceneaux. Trente ans de service. Il a tout vu, et il n\'a rien aimé.',
     async talk(A){ const w=who('arceneaux');
+      if(A.G.flags.act2) return ACT2_BOARD(A);
       if(A.G.flags.arrived) return ACT1_END(A);
       if(A.G.flags.call) return A.say('Le musée, enquêt{eur|rice}. Pas la cafétéria. Pas votre bureau. Le musée. Le parking est par là.',{who:w});
       if(!A.G.flags.tools) return A.say('Vous n\'avez même pas vos gants? Votre matériel est dans votre bureau. Dans le tiroir. Là où on range le matériel. En général.',{who:w});
@@ -122,7 +124,7 @@ ROOMS.briefing={
   { id:'p-bureau', name:'La porte des enquêtes', rect:[70,206,110,232], walkTo:[124,488], face:'back', exit:['bureau','fromBriefing'] },
   { id:'p-preuves', name:'La salle des preuves', rect:[1000,206,100,232], walkTo:[1050,488], face:'back', exit:['preuves','fromBriefing'] },
   { id:'p-cafe', name:'La cafétéria', rect:[1140,206,100,232], walkTo:[1190,488], face:'back', exit:['cafe','fromBriefing'] },
-  { id:'parking', name:'Vers le parking', when:G=>G.flags.call, rect:[540,760,200,40], walkTo:[640,780], face:'front', exit:G=>G.flags.arrived?['quai','fromCar',12]:['musee','arrive',12],
+  { id:'parking', name:'Vers le parking', when:G=>G.flags.call, rect:[540,760,200,40], walkTo:[640,780], face:'front', exit:G=>G.flags.act2?['carte']:G.flags.arrived?['quai','fromCar',12]:['musee','arrive',12],
     async canExit(A){ if(!A.has('radio')){ await A.say('« Vous oubliez la radio, enquêt{eur|rice}. Sans radio, vous êtes juste quelqu\'un qui se promène la nuit. » Elle est sur la table.',{who:who('arceneaux')}); return false; } return true; } }
  ],
  async onEnter(A){ if(A.G.flags.call||!A.G.flags.tools||!A.G.flags.procedure) return;

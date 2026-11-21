@@ -40,7 +40,7 @@ common = {'/*BASE_CSS*/': r('base.css'), '<!--DEFS-->': defs, '/*ART*/': r('art.
     '/*TITLE*/': "La BD de l'été — Escale 6 : Bruxelles", '/*GAME_CSS*/': r('game.css'),
     '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
 # ---- Escale 8: L'enquête (Sierra-style adventure; its own engine) ----
-ADV_GAME = ['adv-props.js', 'enquete-data.js', 'rooms-station.js', 'rooms-musee.js']
+ADV_GAME = ['adv-props.js', 'enquete-data.js', 'rooms-station.js', 'rooms-musee.js', 'rooms-act2.js']
 adv_game_js = ''.join(r(n) for n in ADV_GAME)
 adv_js = r('art.js') + r('adv-art.js') + adv_game_js
 adv_parts = json.loads(subprocess.run(['node', '-'], input=adv_js + "\nprocess.stdout.write(JSON.stringify({defs:advDefs(), icons:ICONS}));",

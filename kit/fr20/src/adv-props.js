@@ -60,6 +60,10 @@ function advDefs2(){ const lg=(id,stops,x2=1,y2=0)=>`<linearGradient id="${id}" 
   +lg('brickWall',['#7E4A3A','#6A3C2F','#552E24'])+lg('asphalt',['#3A3E44','#2A2D32','#1E2125'],0,1)+lg('concrete',['#8C8A84','#706E68'],0,1)
   +lg('carBody',['#E9ECEF','#C3C9CE','#8E969D'],0,1)+lg('carBlue',['#3F5E9A','#2A4372','#1A2C4E'],0,1)+lg('glassDark',['#3A4A5E','#1A2433'],1,1)
   +lg('sodium',['#FFC870','#FFC870'])+lg('house',['#C9B79A','#A99678'])+lg('roofDark',['#3A3A44','#24242C'])
+  +lg('cuWall',['#E6D8B8','#D2C19C','#B9A680','#A8956E'])+lg('dhWall',['#8A5634','#6E4226','#56321C'])+lg('curtain',['#9B2F2F','#7A2020','#5A1616'])
+  +lg('hoWall',['#4E6E5E','#3E5A4C','#30483C'])+lg('hoWain',['#5E3A22','#4A2C18','#3A2212'])+lg('parch',['#F2E6C8','#E6D6AE'],1,1)+lg('river2',['#7FA6C9','#5E86AE'])
+  +lg('bookA',['#9B2F2F','#6E1F1F'])+lg('bookB',['#2F4F86','#1F3560'])+lg('bookC',['#5E8C4A','#3E6A30'])+lg('bookD',['#C9952F','#9C6A1C'])
+  +`<radialGradient id="bulb"><stop offset="0" stop-color="#FFF2C0"/><stop offset=".4" stop-color="#FFD070" stop-opacity=".8"/><stop offset="1" stop-color="#FFB040" stop-opacity="0"/></radialGradient>`
   +`<radialGradient id="sodiumPool" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFB45A" stop-opacity=".42"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient>`
   +`<radialGradient id="lampPool" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE2A0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE2A0" stop-opacity="0"/></radialGradient>`
   +`<radialGradient id="fluoGlow" cx=".5" cy="0" r=".9"><stop offset="0" stop-color="#F4F8E8" stop-opacity=".35"/><stop offset="1" stop-color="#F4F8E8" stop-opacity="0"/></radialGradient>`

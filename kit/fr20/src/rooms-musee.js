@@ -152,7 +152,7 @@ ROOMS.musee={
        A.flag('labels',true); A.score(Math.max(4,8-r.mistakes),'labels'); A.tickClock(4); A.redraw();
        await A.say('Toutes les étiquettes sont à leur place. Sauf une chose : l\'étiquette de la planche de BD est sur le mur… à un mètre du cadre.');
        await A.say('Le cadre, lui, est accroché juste devant la caméra de surveillance. Quelqu\'un a déplacé la planche pour cacher la caméra. Quelqu\'un qui savait où était la caméra.');
-       A.note('La planche cache la caméra','Quelqu\'un a déplacé la planche de BD devant la caméra. Cette personne savait où était la caméra.'); } },
+       A.note('La planche cache la caméra','Quelqu\'un a déplacé la planche de BD devant la caméra. Cette personne savait où était la caméra.','camera'); } },
    { id:'bd', name:'Une planche de BD', rect:[856,172,156,162], walkTo:[930,500], face:'back',
      async look(A){ await A.say('Une planche de bande dessinée de Bruxelles, prêtée par un collectionneur belge.');
        await A.say('Tiens. Il y a un rectangle plus clair sur le mur, à gauche du cadre. Quelqu\'un a **déplacé** la planche. Récemment.');
@@ -391,7 +391,7 @@ ROOMS.poste={
   { id:'cles', name:'La boîte à clés', rect:[180,160,104,142], walkTo:[232,500], face:'back',
     async look(A){ await A.say('La boîte à clés. Il manque une clé : celle du bureau de la conservatrice, sur le deuxième crochet. La clé maîtresse du gardien est à sa place.');
       await A.say('Le petit registre des clés dit : « Clé maîtresse : aucune sortie ce soir. » Le gardien n\'a pas ouvert la vitrine avec sa clé.');
-      if(!A.G.scored.cles){ A.note('La clé du gardien','La clé maîtresse n\'est jamais sortie ce soir. Le gardien n\'a pas ouvert la vitrine avec sa clé.'); A.score(3,'cles'); } },
+      if(!A.G.scored.cles){ A.note('La clé du gardien','La clé maîtresse n\'est jamais sortie ce soir. Le gardien n\'a pas ouvert la vitrine avec sa clé.','cleGardien'); A.score(3,'cles'); } },
     hand:'Ce ne sont pas vos clés. Et vous avez déjà assez de responsabilités.' },
   { id:'cameras', name:'Les écrans de surveillance', rect:[404,128,344,210], walkTo:[576,600], face:'back',
     async look(A){ await A.say('Quatre caméras. Entrée, escalier, quai… et la salle des Trésors. Sur l\'écran de la salle des Trésors, on ne voit que le dos d\'un cadre.');
@@ -402,11 +402,11 @@ ROOMS.poste={
       const r=await A.task([BADGES,BADGE_Q],{title:'Le registre des badges',kind:'Dossier · Document',cancel:true});
       if(r.cancelled) return;
       A.flag('badges',true); A.score(Math.max(2,4-r.mistakes),'badges'); A.tickClock(3);
-      A.note('Badge n° 3 à 22 h 18','La porte de service s\'est ouverte à 22 h 18 avec le badge n° 3. Le gardien a le badge n° 2. À qui est le badge n° 3?'); },
+      A.note('Badge n° 3 à 22 h 18','La porte de service s\'est ouverte à 22 h 18 avec le badge n° 3. Le gardien a le badge n° 2. À qui est le badge n° 3?','badge3'); },
     hand:'Vous touchez l\'écran. Il affiche « ACCÈS REFUSÉ ». Il a raison.' },
   { id:'tel', name:'Le téléphone', rect:[450,522,44,34], walkTo:[470,676], face:'back',
     async look(A){ await A.say('Le journal des appels du téléphone : « Vendredi, 22 h 15, appel reçu du 337-555-0144. Durée : 42 secondes. » Un seul appel ce soir.');
-      if(!A.G.scored.tel){ A.note('Appel de 22 h 15','Le gardien a reçu un appel du 337-555-0144 à 22 h 15. À qui est ce numéro?'); A.score(2,'tel'); } },
+      if(!A.G.scored.tel){ A.note('Appel de 22 h 15','Le gardien a reçu un appel du 337-555-0144 à 22 h 15. À qui est ce numéro?','tel'); A.score(2,'tel'); } },
     hand:'Vous décrochez. Tonalité. Vous raccrochez. Une enquête téléphonique très courte.' },
   { id:'sandwich', name:'Le sandwich', rect:[612,530,64,24], walkTo:[640,676], face:'back', look:'Un demi-sandwich au jambon. Il a été interrompu à 22 h 15, comme son propriétaire.', hand:'Ce n\'est pas une preuve. C\'est le dîner de quelqu\'un. Le respect, c\'est important.' },
   { id:'tele', name:'La télévision', rect:[944,168,132,82], look:'Un match de football, sans le son. Les Tigers perdent. Le gardien aussi a passé une mauvaise soirée.' },
@@ -422,7 +422,7 @@ ROOMS.poste={
       const o=await A.menu('Parler au gardien',[ {txt:'Qui vous a téléphoné à 22 h 15?'}, {txt:'Qui a une clé de la vitrine?'}, {txt:'Vous avez vu quelqu\'un?'} ]);
       if(!o) return;
       if(o.txt.startsWith('Qui vous')){ await A.say('Une voix de femme, je pense. Avec un accent du Nord. J\'ai pas fait attention, j\'étais en train de manger.',{who:w}); if(!A.G.scored.voix){ A.note('La voix au téléphone','Le gardien pense que c\'était une femme, avec un accent « du Nord ».'); A.score(2,'voix'); } return; }
-      if(o.txt.startsWith('Qui a')){ await A.say('Moi, avec la clé maîtresse. Et la conservatrice, Mme Gagnon. Elle a sa propre clé. Elle est partie à 20 h. Elle m\'a dit bonsoir.',{who:w}); if(!A.G.scored.cle2){ A.note('Les clés de la vitrine','Deux personnes ont une clé : le gardien (clé maîtresse) et la conservatrice, Mme Gagnon.'); A.score(2,'cle2'); } return; }
+      if(o.txt.startsWith('Qui a')){ await A.say('Moi, avec la clé maîtresse. Et la conservatrice, Mme Gagnon. Elle a sa propre clé. Elle est partie à 20 h. Elle m\'a dit bonsoir.',{who:w}); if(!A.G.scored.cle2){ A.note('Les clés de la vitrine','Deux personnes ont une clé : le gardien (clé maîtresse) et la conservatrice, Mme Gagnon.','cles2'); A.score(2,'cle2'); } return; }
       return A.say('Personne. Quand je suis descendu, il n\'y avait plus personne. Juste de la boue par terre. Et moi, je n\'ai pas de boue sur mes souliers. Regardez.',{who:w}); },
     use:{ '*':'Le gardien regarde l\'objet. « Je suis gardien, pas détective, [[cher]]. »' } },
   { id:'porte', name:'La porte du quai', rect:[1120,206,100,232], walkTo:[1170,488], face:'back', exit:['quai','fromPoste'] }
@@ -497,6 +497,8 @@ async function ACT1_END(A){ const w=who('arceneaux'), G=A.G;
  if(todo.length) return A.say('Prêt{|e}? Il vous manque encore : '+todo.join(', ')+'. Revenez quand c\'est fait.',{who:w});
  const unlogged=['perle','peinture'].filter(id=>A.has(id));
  if(unlogged.length) return A.fail({ art:FAIL_ART.coffee, text:'Vous commencez le briefing avec les preuves dans votre poche. Le lendemain, elles ont disparu dans la salle des preuves. Comme la moitié du café de l\'équipe.', lesson:'Procédure : il faut apporter chaque preuve au greffier avant de continuer.' });
- A.G.flags.act2=true; A.autosave();
+ A.G.flags.act2=true; A.redraw(); A.autosave();
  await A.say('Bon travail, enquêt{eur|rice}. Deux preuves enregistrées, un témoin, une déclaration, et une piste. Pour une troisième journée, c\'est presque inquiétant.',{who:w});
- await A.say('Fin de l\'acte 1. (Brouillon : l\'acte 2 arrive bientôt. Votre partie est sauvegardée.)'); }
+ await A.say('Acte 2. Il est tard, mais Lafayette ne dort pas : c\'est le festival. Le capitaine écrit trois mots au tableau : « conservatrice », « musicien », « collectionneur ».');
+ await A.say('Allez parler à ces trois personnes. La conservatrice est revenue au musée, dans son bureau. Le groupe joue encore Chez Babineaux. Le collectionneur loge à l\'hôtel Evangeline. Votre voiture est au parking.',{who:w});
+ await A.say('Quand vous aurez leurs déclarations, revenez ici. On fera la ligne du temps au tableau. Et prenez des notes : dans votre carnet, vous pouvez relier deux indices pour faire une déduction.',{who:w}); }

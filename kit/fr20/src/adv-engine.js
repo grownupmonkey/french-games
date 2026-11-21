@@ -56,7 +56,7 @@ const ADV=(()=>{
    if(key!==a.key){ a.g.innerHTML=`<ellipse cx="0" cy="1" rx="36" ry="7" fill="#0B1020" opacity=".34" filter="url(#blur)"/><g class="fig">${svg}</g>`; a.key=key; }
    a.g.querySelector('.fig').setAttribute('transform', a.face==='left'?'scale(-1 1)':'');
    a.g.setAttribute('transform',`translate(${a.x.toFixed(1)} ${a.y.toFixed(1)}) scale(${sc.toFixed(3)})`); a.base=a.y; }
- function sortWorld(){ const w=$('#world'); const items=[...props,...npcs,player].sort((p,q)=>p.base-q.base);
+ function sortWorld(){ const w=$('#world'); const items=[...props,...npcs,...(room.noPlayer?[]:[player])].sort((p,q)=>p.base-q.base);
    items.forEach(it=>{ if(w.lastChild!==it.g) w.appendChild(it.g); }); }
 
  /* ---------- walking ---------- */
@@ -64,6 +64,7 @@ const ADV=(()=>{
  function walkTo(x,y,face){ return new Promise(res=>{ if(walkDone) walkDone(false);
    player.path=findPath([player.x,player.y],[x,y]); player.endFace=face; walkDone=res; }); }
  function tick(t){ const dt=Math.min(.05,(t-(last||t))/1000); last=t;
+   npcs.forEach(n=>{ if(n.dance){ n.phase=((n.phase||0)+dt*n.dance)%1; n.x=n.x0+Math.sin((n.phase+n.off)*Math.PI*2)*n.sway; n.face=Math.sin((n.phase+n.off)*Math.PI*2)>0?'right':'left'; draw(n); } });
    if(player && player.path.length){ const [tx,ty]=player.path[0], dx=tx-player.x, dy=ty-player.y, dist=Math.hypot(dx,dy);
      const sc=depth(player.y), sp=200*sc*(Math.abs(dy)>Math.abs(dx)?.72:1), step=sp*dt;
      player.face = Math.abs(dx)>Math.abs(dy)*1.1 ? (dx<0?'left':'right') : (dy<0?'back':'front');
@@ -156,6 +157,7 @@ const ADV=(()=>{
  async function act(p){ if(busy) return;
    return actOn(hsAt(p),p); }
  async function actOn(h,p){ if(busy) return; checkpoint=snap();
+   if(room.noPlayer){ if(!h) return; busy=true; setCursor(); try{ await run(h,G.verb==='look'?'look':(G.verb==='walk'?'walk':G.verb)); } finally{ busy=false; setCursor(); } return; }
    if(G.verb==='walk'){ if(h&&h.exit&&!h.onWalk){ busy=true; setCursor(); const wt=h.walkTo||p; const ok=await walkTo(wt[0],wt[1],h.face); busy=false; if(ok) await run(h,'walk'); setCursor(); return; }
      if(h&&h.onWalk){ busy=true; setCursor(); const wt=h.walkTo||p; const ok=await walkTo(wt[0],wt[1],h.face); if(ok) await h.onWalk(API); busy=false; setCursor(); return; }
      walkTo(p[0],p[1]); return; }
@@ -182,7 +184,17 @@ const ADV=(()=>{
    dialog('Inventaire', body(), btns);
    $('#dlg').querySelectorAll('.slot').forEach(s=>s.onclick=()=>{ pick=s.dataset.id; $('#dlg').querySelectorAll('.slot').forEach(x=>x.classList.toggle('on',x===s)); });
  }
- function openNotes(){ dialog('Carnet', G.notes.length?`<ol class="notes">${G.notes.map(n=>`<li><b>${rich(n.title)}</b><span>${rich(n.text)}</span></li>`).join('')}</ol>`:'<p>Votre carnet est vide. Pour l\'instant.</p>', [['Lexique',()=>openLexique()],['Fermer',closeDlg]]); }
+ function openNotes(){ const linkable=G.notes.some(n=>n.id);
+   dialog('Carnet', G.notes.length?`${linkable?'<p class="small notehelp">Pour relier deux indices, cochez-les, puis « Relier ». Une bonne déduction devient un nouvel indice.</p>':''}<ol class="notes">${G.notes.map((n,i)=>`<li${n.link?' class="ded"':''}>${n.id?`<label class="nchk"><input type="checkbox" data-i="${i}" aria-label="Choisir cet indice"></label>`:''}<b>${rich(n.title)}</b><span>${rich(n.text)}</span></li>`).join('')}</ol>`:'<p>Votre carnet est vide. Pour l\'instant.</p>',
+     [['Relier',()=>linkNotes()],['Lexique',()=>openLexique()],['Fermer',closeDlg]]); }
+ async function linkNotes(){ const sel=[...$('#dlg').querySelectorAll('.nchk input:checked')].map(c=>G.notes[+c.dataset.i]);
+   if(sel.length!==2){ toast('Cochez exactement deux indices.'); return; }
+   const ids=sel.map(n=>n.id).sort(); const L=(CFG.links||[]).find(l=>l.pair.slice().sort().join('|')===ids.join('|'));
+   closeDlg();
+   if(!L){ G.linkTries=(G.linkTries||0)+1; return say('Vous relisez les deux indices. Ils ne disent rien ensemble. Pour l\'instant.'); }
+   if(G.notes.some(n=>n.id===L.id)) return say('Vous avez déjà fait cette déduction. Elle est dans votre carnet.');
+   G.notes.push({title:L.title,text:L.text,id:L.id,link:true}); score(L.points||5,'link_'+L.id);
+   return say('**Déduction.** '+L.text); }
  /* lexique: word-level glossary only (French word → English word); never English sentences */
  function openLexique(){ const L=$('#lexique'), entries=Object.entries(CFG.glossary||{}).sort((a,b)=>a[0].localeCompare(b[0],'fr'));
    const row=([w,v])=>{ const [en,note]=Array.isArray(v)?v:[v]; return `<li data-w="${esc(STEPS.deaccent(w.toLowerCase()))}"><b>${esc(w)}</b><span>${esc(en)}</span>${note?`<i>${esc(note)}</i>`:''}</li>`; };
@@ -288,7 +300,7 @@ const ADV=(()=>{
  function enter(id,restoring,entry){ room=ROOMS[id]; G.roomId=id;
    $('#bg').innerHTML=room.bg(G); $('#fg').innerHTML=room.fg?room.fg(G):''; $('#world').innerHTML='';
    props=(room.props||[]).filter(p=>!p.when||p.when(G)).map(p=>{ const g=document.createElementNS(NS,'g'); g.innerHTML=p.svg(G); return {g,base:p.base}; });
-   npcs=(room.npcs||[]).filter(n=>!n.when||n.when(G)).map(n=>{ const a=mkActor(n.look,n.x,n.y,n.face,{size:n.size,block:n.block}); return a; });
+   npcs=(room.npcs||[]).filter(n=>!n.when||n.when(G)).map(n=>{ const a=mkActor(n.look,n.x,n.y,n.face,{size:n.size,block:n.block,dance:n.dance,sway:n.sway||14,off:n.off||0,x0:n.x}); return a; });
    const st=restoring?{x:G.px,y:G.py,face:G.face}:((entry&&room.entries&&room.entries[entry])||room.start);
    player=mkActor(Object.assign({},CFG.playerLook,G.wearing.gants?{glove:'#4E8FD9'}:{}),st.x,st.y,st.face); G.px=st.x; G.py=st.y;
    npcs.forEach(draw); draw(player); sortWorld(); focusIdx=-1; drawZones(); updBar();
@@ -304,7 +316,8 @@ const ADV=(()=>{
   give(id){ if(!G.inv.includes(id)) G.inv.push(id); updBar(); },
   drop(id){ G.inv=G.inv.filter(x=>x!==id); if(G.sel===id){ G.sel=null; if(G.verb==='item') G.verb='walk'; } updBar(); },
   has:id=>G.inv.includes(id), flag:(k,v)=>{ if(v===undefined) return G.flags[k]; G.flags[k]=v; },
-  note(title,text){ G.notes.push({title,text}); },
+  note(title,text,id){ if(id&&G.notes.some(n=>n.id===id)) return; G.notes.push({title,text,id}); },
+  hasNote:id=>G.notes.some(n=>n.id===id),
   redraw(){ G.px=player.x; G.py=player.y; G.face=player.face; enter(G.roomId,true); },
   face(f){ player.face=f; draw(player); }, T, task, autosave, toast, speak,
   finalScore(){ return G.score; },

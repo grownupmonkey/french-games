@@ -9,9 +9,27 @@ const CAST={
  landry:{name:'M. Landry, greffier', look:{skin:0,hair:'#5A4030',style:'short',coat:'olive',glasses:true,collar:'#E9E3D8'}},
  boudreaux:{name:'Mme Boudreaux', look:{skin:2,hair:'#3A2418',style:'mid',coat:'cream',collar:'#B8443A'}},
  guidry:{name:'Roland Guidry, gardien de nuit', look:{skin:1,hair:'#B8B4AC',style:'short',coat:'navy',cap:true,mustache:true,collar:'#C9D2DE'}},
+ gagnon:{name:'Geneviève Gagnon, conservatrice', look:{skin:0,hair:'#4A2E1C',style:'long',coat:'plum',glasses:true,collar:'#F4F1E8'}},
+ cedric:{name:'Cédric Thériot, accordéoniste', look:{skin:1,hair:'#6B4428',style:'mid',coat:'rust',collar:'#E9E3D8'}},
+ violon:{name:'La violoneuse', look:{skin:3,hair:'#1E1612',style:'long',coat:'teal',collar:'#E9E3D8'}},
+ triangle:{name:'Le joueur de triangle', look:{skin:4,hair:'#1E1612',style:'short',coat:'yellow',collar:'#E9E3D8'}},
+ tipaul:{name:'Ti-Paul, barman', look:{skin:2,hair:'#3A2418',style:'short',coat:'cream',mustache:true,collar:'#9B2F2F'}},
+ peeters:{name:'Didier Peeters, collectionneur', look:{skin:0,hair:'#A8A39A',style:'short',coat:'navy',glasses:true,collar:'#F4F1E8'}},
+ commis:{name:'Le réceptionniste', look:{skin:4,hair:'#1E1612',style:'short',coat:'emerald',collar:'#F4F1E8'}},
+ dancer1:{name:'', look:{skin:2,hair:'#A2502B',style:'long',coat:'magenta'}}, dancer2:{name:'', look:{skin:3,hair:'#1E1612',style:'short',coat:'blue'}},
+ dancer3:{name:'', look:{skin:5,hair:'#1E1612',style:'mid',coat:'saffron'}}, dancer4:{name:'', look:{skin:1,hair:'#C7A160',style:'short',coat:'olive'}},
  hebert:{name:'Mme Odile Hébert', look:{skin:0,hair:'#D8D4CC',style:'mid',coat:'plum',glasses:true,collar:'#F4F1E8'}}
 };
 const who=k=>CAST[k].name;
+/* deductions: linking two notebook cards (« Relier » in the carnet) */
+const LINKS=[
+ {pair:['badge3','badgelist'], id:'L_badge', points:3, title:'Le badge n° 3 est à Mme Gagnon', text:'Le badge n° 3 est celui de Mme Gagnon. C\'est son badge qui a ouvert la porte de service à 22 h 18.'},
+ {pair:['tel','carte'], id:'L_tel', points:3, title:'L\'appel venait de Mme Gagnon', text:'Le 337-555-0144 est le cellulaire de Mme Gagnon. C\'est elle qui a appelé le gardien à 22 h 15.'},
+ {pair:['setlist','tipaul'], id:'L_pause', points:3, title:'Cédric est parti pendant la pause', text:'La pause a duré de 22 h 10 à 22 h 50, et Cédric est parti avec la camionnette pendant la pause.'},
+ {pair:['hotelclerk','foulard'], id:'L_foulard', points:3, title:'La femme au foulard vert', text:'La femme au foulard vert, à l\'hôtel, ressemble beaucoup à Mme Gagnon sur la photo du vernissage.'},
+ {pair:['peeters','camera'], id:'L_camera', points:3, title:'Qui a choisi l\'endroit de la planche?', text:'C\'est Mme Gagnon qui a suggéré le nouvel endroit de la planche : juste devant la caméra.'},
+ {pair:['cles2','caseKey'], id:'L_cle', points:3, title:'La clé de la vitrine a disparu', text:'Seuls le gardien et Mme Gagnon ont une clé de la vitrine. La clé du gardien n\'est pas sortie. Celle de Mme Gagnon n\'est pas dans l\'armoire.'}
+];
 /* ---------- items ---------- */
 const ITEMS={
  gants:{ name:'Gants en nitrile',
@@ -48,6 +66,7 @@ const FAIL_ART={
 
 /* ---------- help from the team: the next useful thing to do (costs points) ---------- */
 function HINT(G){ const b='Agente Broussard', t='Agent Thibodeaux', r=G.roomId;
+ if(G.flags.act2) return HINT2(G);
  if(!G.flags.tools) return {who:b,text:'Ton matériel est dans le tiroir de ton bureau. Utilise la main sur le tiroir.'};
  if(!G.flags.procedure) return {who:b,text:'Va voir M. Landry à la salle des preuves, par la porte « PREUVES » du briefing. Parle-lui.'};
  if(!G.flags.call) return {who:b,text:'Le capitaine t\'attend dans la salle de briefing.'};
@@ -90,6 +109,14 @@ const GLOSSARY={
  'sonnette':['bell'], 'étagère':['shelf'], 'boîte à clés':['key box'], 'clé maîtresse':['master key'], 'crochet':['hook'], 'déclaration':['statement'],
  'étiquettes':['labels'], 'cuillères':['spoons'], 'théière':['teapot'], 'bol':['bowl'], 'billet':['ticket'], 'veillée':['evening gathering with music'],
  'galerie':['porch (Acadian / Cajun)'], 'robe de chambre':['bathrobe'], 'tutoyer':['to say « tu » to someone'], 'livraisons':['deliveries'], 'cadenassé':['padlocked'],
+ 'conservatrice':['curator (woman)'], 'vernissage':['exhibition opening night'], 'foulard':['scarf'], 'portemanteau':['coat rack'],
+ 'armoire à clés':['key cabinet'], 'clé de secours':['spare key'], 'dictionnaire':['dictionary'], 'derrière':['behind'], 'sous':['under'], 'sur':['on'],
+ 'carte de visite':['business card'], 'cellulaire':['cell phone','québécois / cajun'], 'liste du personnel':['staff list'], 'catalogue':['catalogue'],
+ 'salle de danse':['dance hall'], 'set':['set (of songs)'], 'pause':['break'], 'violon':['fiddle, violin'], 'violoneuse':['fiddler (woman)'], 'triangle':['triangle (instrument)'],
+ 'accordéon':['accordion'], 'barman':['bartender'], 'cigarettes':['cigarettes'], 'fumer':['to smoke'], 'souliers':['shoes','cajun / québécois'], 'bottes':['boots'],
+ 'réceptionniste':['hotel clerk'], 'chambre':['room (hotel)'], 'reçu':['receipt'], 'addition':['bill (restaurant)'], 'stationnement':['parking lot','québécois / cajun'],
+ 'monter':['to go up'], 'descendre':['to come down'], 'ligne du temps':['timeline'], 'contredire':['to contradict'], 'déduction':['deduction'], 'relier':['to link'],
+ 'pas pantoute':['not at all','québécois'], 'pis':['and then','québécois (puis)'], 'nonante':['ninety','Belgium'], 'septante-cinq':['seventy-five','Belgium'],
  'beignets':['doughnuts, beignets'], 'boudin':['Cajun rice sausage'], 'noix de pécan':['pecans'], 'quai':['loading dock (here)','also: platform, wharf'], 'sauvegarder':['to save (a game)'], 'restaurer':['to restore (a saved game)']
 };
 
