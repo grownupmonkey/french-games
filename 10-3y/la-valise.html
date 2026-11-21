@@ -1353,9 +1353,10 @@ window.SceneTest = { S, checkWear, closeCase, packItem, submitWear, ready, wear,
 /* ===== Jetons: shared reward hook for "Le grand voyage" (index.html) =====
    Every game page calls GVJetons.award(gameId, ratio) when a student finishes.
    ratio is 0–1 (score). Reward: 2–5 jetons by score, +5 the first time a game is finished.
+   After 2 finishes of the same game in one day, each further finish gives 1 jeton.
    Saved in localStorage key 'gv.v1', which the picker page reads (same site = same storage). */
 window.GVJetons = (function () {
-  var KEY = 'gv.v1', BASE = 2, RANGE = 3, FIRST = 5, last = 0;
+  var KEY = 'gv.v1', BASE = 2, RANGE = 3, FIRST = 5, DAILY_FULL = 2, last = 0;
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
   function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
   function home() { return location.pathname.replace(/\/(10|20)-3y\/[^\/]*$/, '/') || '../'; }
@@ -1378,9 +1379,12 @@ window.GVJetons = (function () {
     if (now - last < 8000) return 0;          // ignore a double call from the same finish
     last = now;
     ratio = Math.max(0, Math.min(1, +ratio || 0));
-    var s = load(), played = s.played || {}, g = played[gameId] || { n: 0, best: 0 };
-    var first = g.n === 0, n = BASE + Math.round(RANGE * ratio) + (first ? FIRST : 0);
-    g.n += 1; g.best = Math.max(g.best, ratio); played[gameId] = g;
+    var s = load(), played = s.played || {}, g = played[gameId] || { n: 0, best: 0, day: '', today: 0 };
+    var day = new Date().toLocaleDateString('en-CA');
+    if (g.day !== day) { g.day = day; g.today = 0; }   // the daily count resets each day
+    var first = g.n === 0;
+    var n = g.today >= DAILY_FULL ? 1 : BASE + Math.round(RANGE * ratio) + (first ? FIRST : 0);
+    g.today += 1; g.n += 1; g.best = Math.max(g.best, ratio); played[gameId] = g;
     s.played = played; s.tokens = (s.tokens || 0) + n;
     s.gain = { n: n, game: gameId, at: now };   // the picker shows this when the student returns
     save(s);
