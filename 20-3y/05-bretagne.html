@@ -1080,7 +1080,8 @@ const STEPS=(()=>{
     const txt=joinTiles(built.map(o=>o.t));
     const hit=(s.answers||[s.answer]).find(a=>normTxt(fmt(a,P))===normTxt(txt));
     if(hit!==undefined){ act.querySelectorAll('button').forEach(b=>b.disabled=true); ctx.me(txt); ctx.onTilesOk&&ctx.onTilesOk(s,txt,hit); fb('ok',s.okMsg||praise()); setTimeout(()=>ctx.done(txt,hit),850); return; }
-    ctx.wrong(); const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
+    ctx.wrong(); const dg=s.diagnose&&s.diagnose(txt); const h=!dg&&built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
+    if(dg){ fb('err',dg); return; }
     fb('err',h?s.hints[h]:(built.length<(s.min||3)?'Ta phrase n\'est pas complète.':(s.why||'Pas tout à fait. Vérifie la forme du verbe et l\'ordre des mots.')),h?null:s.whyEn);
    });
   }

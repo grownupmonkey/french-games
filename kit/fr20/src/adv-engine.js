@@ -136,14 +136,16 @@ const ADV=(()=>{
   nothingHand:'Il n\'y a rien à prendre ici.',
   nothingTalk:'Parler tout{|e} seul{|e}, déjà? La nuit sera longue.'
  };
- async function run(h,verb){ let fn=verb==='item'?(h.use&&(h.use[G.sel]||h.use['*'])):h[verb];
+ async function run(h,verb){ if(h.exit&&(verb==='hand'||verb==='walk')){ if(h.canExit&&!(await h.canExit(API))) return; const ex=typeof h.exit==='function'?h.exit(G):h.exit; return go(ex[0],ex[1],ex[2]); }
+   let fn=verb==='item'?(h.use&&(h.use[G.sel]||h.use['*'])):h[verb];
    if(fn==null) fn=verb==='item'?DEFAULTS.item:DEFAULTS[verb];
    if(typeof fn==='string') return say(fn);
    return fn(API, verb==='item'?G.sel:undefined); }
  async function act(p){ if(busy) return;
    return actOn(hsAt(p),p); }
  async function actOn(h,p){ if(busy) return; checkpoint=snap();
-   if(G.verb==='walk'){ if(h&&h.onWalk){ busy=true; setCursor(); const wt=h.walkTo||p; const ok=await walkTo(wt[0],wt[1],h.face); if(ok) await h.onWalk(API); busy=false; setCursor(); return; }
+   if(G.verb==='walk'){ if(h&&h.exit&&!h.onWalk){ busy=true; setCursor(); const wt=h.walkTo||p; const ok=await walkTo(wt[0],wt[1],h.face); busy=false; if(ok) await run(h,'walk'); setCursor(); return; }
+     if(h&&h.onWalk){ busy=true; setCursor(); const wt=h.walkTo||p; const ok=await walkTo(wt[0],wt[1],h.face); if(ok) await h.onWalk(API); busy=false; setCursor(); return; }
      walkTo(p[0],p[1]); return; }
    if(!h){ return say(G.verb==='look'?DEFAULTS.nothingLook:G.verb==='talk'?DEFAULTS.nothingTalk:G.verb==='hand'?DEFAULTS.nothingHand:DEFAULTS.item); }
    busy=true; setCursor();
@@ -271,16 +273,22 @@ const ADV=(()=>{
  function restore(s){ Object.assign(G,JSON.parse(JSON.stringify(s))); enter(G.roomId,true); }
 
  /* ---------- rooms ---------- */
- function enter(id,restoring){ room=ROOMS[id]; G.roomId=id;
+ function enter(id,restoring,entry){ room=ROOMS[id]; G.roomId=id;
    $('#bg').innerHTML=room.bg(G); $('#fg').innerHTML=room.fg?room.fg(G):''; $('#world').innerHTML='';
    props=(room.props||[]).filter(p=>!p.when||p.when(G)).map(p=>{ const g=document.createElementNS(NS,'g'); g.innerHTML=p.svg(G); return {g,base:p.base}; });
    npcs=(room.npcs||[]).filter(n=>!n.when||n.when(G)).map(n=>{ const a=mkActor(n.look,n.x,n.y,n.face,{size:n.size,block:n.block}); return a; });
-   const st=restoring?{x:G.px,y:G.py,face:G.face}:room.start;
+   const st=restoring?{x:G.px,y:G.py,face:G.face}:((entry&&room.entries&&room.entries[entry])||room.start);
    player=mkActor(Object.assign({},CFG.playerLook,G.wearing.gants?{glove:'#4E8FD9'}:{}),st.x,st.y,st.face); G.px=st.x; G.py=st.y;
    npcs.forEach(draw); draw(player); sortWorld(); focusIdx=-1; drawZones(); updBar();
    if(!restoring){ checkpoint=snap(); if(room.onEnter) room.onEnter(API); }
  }
- const API={ G, say, score, tickClock, walkTo, fail, enter, get player(){return player;},
+ function fade(on){ const f=$('#fade'); f.classList.toggle('on',on); return new Promise(r=>setTimeout(r,on?260:20)); }
+ async function go(id,entry,min){ busy=true; setCursor(); hush(); await fade(true); if(min) tickClock(min); enter(id,false,entry); await new Promise(r=>setTimeout(r,60)); await fade(false); busy=false; setCursor(); }
+ /* Sierra-style conversation menu: choose what to say or ask; returns the chosen option */
+ function menu(title,opts){ opts=opts.filter(o=>!o.when||o.when(G)); return new Promise(res=>{ hideBar();
+   dialog(T(title), `<div class="mlist">${opts.map((o,i)=>`<button class="mrow" type="button" data-i="${i}">${rich(o.txt)}</button>`).join('')}</div>`, [['Rien',()=>{ closeDlg(); res(null); }]]);
+   $('#dlg').querySelectorAll('.mrow').forEach(b=>b.onclick=()=>{ closeDlg(); res(opts[+b.dataset.i]); }); $('#dlg .mrow')&&$('#dlg .mrow').focus(); }); }
+ const API={ G, say, score, tickClock, walkTo, fail, enter, go, menu, get player(){return player;},
   give(id){ if(!G.inv.includes(id)) G.inv.push(id); updBar(); },
   drop(id){ G.inv=G.inv.filter(x=>x!==id); if(G.sel===id){ G.sel=null; if(G.verb==='item') G.verb='walk'; } updBar(); },
   has:id=>G.inv.includes(id), flag:(k,v)=>{ if(v===undefined) return G.flags[k]; G.flags[k]=v; },
@@ -321,5 +329,7 @@ const ADV=(()=>{
    if(!profile||!profile.name){ const c=$('#create'); c.hidden=false; mountCreator(c.querySelector('.cwrap'),p=>{ profile=p; CFG.playerLook=cfg.lookFor(p); c.hidden=true; go(); }); }
    else go(); }
  function enterQuiet(id){ const f=ROOMS[id].onEnter; ROOMS[id].onEnter=null; enter(id); ROOMS[id].onEnter=f; }
- return { start, API, G, _task:task, _findPath:(a,b)=>findPath(a,b), _act:p=>act(p) };
+ /* test hooks (automated playthroughs) */
+ const _hs=(id,verb,sel)=>{ G.verb=verb; if(sel){ G.sel=sel; G.verb='item'; } const h=hsList().find(x=>x.id===id); if(!h) return 'nohs:'+id; actOn(h,h.walkTo||center(h)); return 'ok'; };
+ return { start, API, G, _task:task, _hs, _busy:()=>busy||anyModal(), _room:()=>G.roomId, _findPath:(a,b)=>findPath(a,b), _act:p=>act(p) };
 })();

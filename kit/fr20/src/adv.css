@@ -140,3 +140,8 @@ body.adv{background:#07080C;min-height:100vh;display:grid;place-items:center;ove
 #lexique .lexlist li{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:4px 12px;padding:7px 8px;border-bottom:1px solid #EFE6D0}
 #lexique .lexlist li b{font-weight:700}#lexique .lexlist li i{grid-column:2;font-size:13px;color:var(--muted)}
 #dossier .fbtns{display:flex;gap:8px}
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .25s;z-index:34}
+#fade.on{opacity:1}
+.mlist{display:grid;gap:calc(var(--u)*8);min-width:calc(var(--u)*640)}
+.mrow{text-align:left;padding:calc(var(--u)*12) calc(var(--u)*16);background:#D8D1BE;cursor:pointer;border:calc(var(--u)*2) solid;border-color:#FFFDF6 #6E6858 #6E6858 #FFFDF6;font:400 calc(var(--u)*20)/1.35 var(--serif);color:#14120F}
+.mrow:hover,.mrow:focus-visible{background:#F2E2B4;outline:calc(var(--u)*3) solid #8C6A2E}
