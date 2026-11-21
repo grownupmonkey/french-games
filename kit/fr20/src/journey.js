@@ -5,7 +5,7 @@ const JOURNEY=[
  {id:'acadie',     place:'Acadie',     sub:'Le Tintamarre',        code:'YQM', file:'03-acadie.html',     ready:true , color:'#2F4F86'},
  {id:'dakar',      place:'Dakar',      sub:'La famille d\'accueil',code:'DSS', file:'04-dakar.html',      ready:true , color:'#B36A1F'},
  {id:'bretagne',   place:'Bretagne',   sub:'Le lycée',             code:'RNS', file:'05-bretagne.html',   ready:true , color:'#1F5F7A'},
- {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:false, color:'#7A5B1F'},
+ {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:true , color:'#7A5B1F'},
  {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:false, color:'#2E7A55'},
  {id:'louisiane',  place:'Louisiane',  sub:'Le concours d\'histoires', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
 ];

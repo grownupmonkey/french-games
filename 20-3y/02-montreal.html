@@ -248,6 +248,18 @@ table.doctable tbody th{color:#F2C46D;font-size:12px;letter-spacing:0;text-trans
 .letter p,.printLetter p{margin:0 0 10px}.lplace{text-align:right;font-style:italic}.lsign{font-weight:700}
 @media print{ .printLetter{border:0;box-shadow:none;font-size:13pt;padding:0} }
 @media (max-width:640px){ .numrow{grid-template-columns:1fr 90px 30px} }
+/* comic arrange */
+.caps{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:8px}
+.caps li{display:grid;grid-template-columns:28px 1fr 120px;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.capn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#FFE98A;border:2px solid var(--ink);font-weight:700;font-size:13px}
+.capt{font-size:15px;line-height:1.35}
+.capslot{min-height:64px;padding:2px;display:grid;place-items:center;font-size:13px;text-align:center}
+.capslot svg,.thumb svg{display:block;width:100%;height:auto}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:6px 0}
+.thumb{padding:3px;border-radius:8px;border:2px solid var(--line);background:#fff;cursor:grab}
+.thumb.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,94,103,.25)}
+.thumb:active{cursor:grabbing}
+@media (max-width:640px){ .caps li{grid-template-columns:24px 1fr 90px} }
 
 </style></head><body>
 <svg class="svgdefs" aria-hidden="true" focusable="false"><defs><linearGradient id="skin0" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F6D9C4"/><stop offset="0.50" stop-color="#E9BC9E"/><stop offset="1.00" stop-color="#CB967C"/></linearGradient><linearGradient id="skin1" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F0C9A8"/><stop offset="0.50" stop-color="#DDA884"/><stop offset="1.00" stop-color="#C08966"/></linearGradient><linearGradient id="skin2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#DCA77F"/><stop offset="0.50" stop-color="#C38862"/><stop offset="1.00" stop-color="#A06A49"/></linearGradient><linearGradient id="skin3" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#BC8762"/><stop offset="0.50" stop-color="#9C6946"/><stop offset="1.00" stop-color="#7C4F32"/></linearGradient><linearGradient id="skin4" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#92603F"/><stop offset="0.50" stop-color="#77492D"/><stop offset="1.00" stop-color="#58341F"/></linearGradient><linearGradient id="skin5" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#6C4532"/><stop offset="0.50" stop-color="#543424"/><stop offset="1.00" stop-color="#3B2318"/></linearGradient><linearGradient id="coat-teal" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3F7D86"/><stop offset="0.50" stop-color="#2C5E67"/><stop offset="1.00" stop-color="#1B3E45"/></linearGradient><linearGradient id="coat-rust" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8C4A3A"/><stop offset="0.50" stop-color="#6E3428"/><stop offset="1.00" stop-color="#4A2119"/></linearGradient><linearGradient id="coat-navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4A5C8A"/><stop offset="0.50" stop-color="#33436A"/><stop offset="1.00" stop-color="#202B47"/></linearGradient><linearGradient id="coat-plum" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#7A4E6E"/><stop offset="0.50" stop-color="#5C3753"/><stop offset="1.00" stop-color="#3C2236"/></linearGradient><linearGradient id="coat-olive" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#77804F"/><stop offset="0.50" stop-color="#5A633A"/><stop offset="1.00" stop-color="#3C4226"/></linearGradient><linearGradient id="coat-grey" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#7D8590"/><stop offset="0.50" stop-color="#5D646E"/><stop offset="1.00" stop-color="#3D434B"/></linearGradient><linearGradient id="coat-cream" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#EFE6D6"/><stop offset="0.50" stop-color="#D8CCB8"/><stop offset="1.00" stop-color="#B3A58E"/></linearGradient><linearGradient id="coat-yellow" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F2C94C"/><stop offset="0.50" stop-color="#D9A82B"/><stop offset="1.00" stop-color="#9C7414"/></linearGradient><linearGradient id="coat-blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4E7FB8"/><stop offset="0.50" stop-color="#355E91"/><stop offset="1.00" stop-color="#223F66"/></linearGradient><linearGradient id="coat-saffron" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#F2B84B"/><stop offset="0.50" stop-color="#D9922A"/><stop offset="1.00" stop-color="#9C6414"/></linearGradient><linearGradient id="coat-emerald" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3FA36B"/><stop offset="0.50" stop-color="#2A7A4E"/><stop offset="1.00" stop-color="#1B5233"/></linearGradient><linearGradient id="coat-magenta" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#C2477A"/><stop offset="0.50" stop-color="#9A2F5C"/><stop offset="1.00" stop-color="#6A1E3E"/></linearGradient><linearGradient id="hat-mustard" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D9A84A"/><stop offset="1.00" stop-color="#A97A26"/></linearGradient><linearGradient id="hat-slate" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#5B6680"/><stop offset="1.00" stop-color="#363E52"/></linearGradient><linearGradient id="hat-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B8443A"/><stop offset="1.00" stop-color="#7E2620"/></linearGradient><linearGradient id="hat-cream" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#EFE6D4"/><stop offset="1.00" stop-color="#C9BEA8"/></linearGradient><linearGradient id="hat-green" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#5E8C6A"/><stop offset="1.00" stop-color="#3B5E45"/></linearGradient><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#5E7CA3"/><stop offset="0.33" stop-color="#8FA6C2"/><stop offset="0.67" stop-color="#C9D1DC"/><stop offset="1.00" stop-color="#EAD7C3"/></linearGradient><linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#0E1630"/><stop offset="0.33" stop-color="#1D2B52"/><stop offset="0.67" stop-color="#34497A"/><stop offset="1.00" stop-color="#4E5F8E"/></linearGradient><linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#7FA3C9"/><stop offset="0.50" stop-color="#AFC6DC"/><stop offset="1.00" stop-color="#DCE6EE"/></linearGradient><linearGradient id="snowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#F4F6F8"/><stop offset="1.00" stop-color="#C9D5E1"/></linearGradient><linearGradient id="snowNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#9AA9C6"/><stop offset="1.00" stop-color="#5F6F93"/></linearGradient><linearGradient id="snowTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBFCFD"/><stop offset="1" stop-color="#C7D3E0"/></linearGradient><linearGradient id="chWall" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B98B80"/><stop offset="1.00" stop-color="#93695F"/></linearGradient><linearGradient id="chRoof" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8DB3A6"/><stop offset="1.00" stop-color="#5F8A7D"/></linearGradient><linearGradient id="stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D3C8B8"/><stop offset="1.00" stop-color="#A99B88"/></linearGradient><linearGradient id="ochre" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#D8C29A"/><stop offset="1.00" stop-color="#B09670"/></linearGradient><linearGradient id="greyStone" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#BFC5C9"/><stop offset="1.00" stop-color="#8E979E"/></linearGradient><linearGradient id="slate" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4E5568"/><stop offset="1.00" stop-color="#2C3140"/></linearGradient><linearGradient id="redRoof" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#8A4238"/><stop offset="1.00" stop-color="#5E2B25"/></linearGradient><linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#FFE3A3"/><stop offset="1.00" stop-color="#E9A54E"/></linearGradient><radialGradient id="glow"><stop offset="0" stop-color="#FFD98A" stop-opacity=".55"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient><radialGradient id="glowStrong"><stop offset="0" stop-color="#FFE7B0" stop-opacity=".9"/><stop offset="1" stop-color="#FFD98A" stop-opacity="0"/></radialGradient><linearGradient id="logGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#9C6E46"/><stop offset="0.50" stop-color="#7E5534"/><stop offset="1.00" stop-color="#5A3A20"/></linearGradient><pattern id="logs" width="40" height="17" patternUnits="userSpaceOnUse"><rect width="40" height="17" fill="url(#logGrad)"/><rect y="15.8" width="40" height="1.2" fill="#3B2412" opacity=".6"/><path d="M8,6 h10 M26,10 h7" stroke="#3B2412" stroke-width=".7" opacity=".3"/></pattern><pattern id="brick" width="12" height="6" patternUnits="userSpaceOnUse"><path d="M0,6 H12 M6,0 V3 M0,3 H12 M0,3 V6" stroke="#7E5A51" stroke-width=".6" opacity=".35" fill="none"/></pattern><pattern id="blocks" width="28" height="14" patternUnits="userSpaceOnUse"><path d="M0,14 H28 M0,7 H28 M14,0 V7 M0,7 V14 M28,7 V14" stroke="#5E5446" stroke-width=".7" opacity=".22" fill="none"/></pattern><pattern id="planks" width="60" height="12" patternUnits="userSpaceOnUse"><rect width="60" height="12" fill="#A4794F"/><rect y="11" width="60" height="1" fill="#5E4129" opacity=".5"/><rect x="38" width="1" height="12" fill="#5E4129" opacity=".35"/></pattern><linearGradient id="interior" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#2E1E14"/><stop offset="1.00" stop-color="#4E3423"/></linearGradient><linearGradient id="counterTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#D3A475"/><stop offset="1.00" stop-color="#AD7F52"/></linearGradient><linearGradient id="counterFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#7F532F"/><stop offset="1.00" stop-color="#58371C"/></linearGradient><linearGradient id="pastry" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDC67E"/><stop offset=".55" stop-color="#C98A3D"/><stop offset="1" stop-color="#93591E"/></linearGradient><linearGradient id="cup" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#FAF7F1"/><stop offset="0.50" stop-color="#E3DCCF"/><stop offset="1.00" stop-color="#B9AF9E"/></linearGradient><linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#A36D3F"/><stop offset="1.00" stop-color="#6E4524"/></linearGradient><linearGradient id="syrup" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DE9C46"/><stop offset=".5" stop-color="#B66A1F"/><stop offset="1" stop-color="#7A410F"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#906340"/><stop offset="1.00" stop-color="#5F3D22"/></linearGradient><linearGradient id="woodH" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B07F55"/><stop offset="1.00" stop-color="#7A5233"/></linearGradient><linearGradient id="pole" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4A5060"/><stop offset="1.00" stop-color="#1A1D26"/></linearGradient><linearGradient id="pantsDark" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#3B3F4C"/><stop offset="1.00" stop-color="#22252E"/></linearGradient><linearGradient id="pantsDenim" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#4D6286"/><stop offset="1.00" stop-color="#2D3B57"/></linearGradient><linearGradient id="boot" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#6B4A30"/><stop offset="1.00" stop-color="#36251A"/></linearGradient><linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#5F8FB0"/><stop offset="0.50" stop-color="#3D6A8C"/><stop offset="1.00" stop-color="#2C5070"/></linearGradient><linearGradient id="riverNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#2B4166"/><stop offset="1.00" stop-color="#1A2A47"/></linearGradient><linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0.00" stop-color="#F5F8FA"/><stop offset="1.00" stop-color="#C9D8E4"/></linearGradient><linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#FFFFFF"/><stop offset="0.50" stop-color="#DCE2E8"/><stop offset="1.00" stop-color="#AEB8C2"/></linearGradient><linearGradient id="metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#9BA4AE"/><stop offset="1.00" stop-color="#5E6772"/></linearGradient><linearGradient id="sash" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#B3322B"/><stop offset="1.00" stop-color="#7E211C"/></linearGradient><linearGradient id="sled" x1="0" y1="0" x2="0" y2="1"><stop offset="0.00" stop-color="#C99A62"/><stop offset="1.00" stop-color="#8F6236"/></linearGradient><linearGradient id="trunk" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#6E5A4A"/><stop offset="1.00" stop-color="#3E3128"/></linearGradient><linearGradient id="float" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#2F5DA8"/><stop offset="1.00" stop-color="#1C3A70"/></linearGradient><filter id="blur" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="4"/></filter><filter id="blurS" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="1.4"/></filter><filter id="blurL" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter></defs></svg>
@@ -565,7 +577,7 @@ const JOURNEY=[
  {id:'acadie',     place:'Acadie',     sub:'Le Tintamarre',        code:'YQM', file:'03-acadie.html',     ready:true , color:'#2F4F86'},
  {id:'dakar',      place:'Dakar',      sub:'La famille d\'accueil',code:'DSS', file:'04-dakar.html',      ready:true , color:'#B36A1F'},
  {id:'bretagne',   place:'Bretagne',   sub:'Le lycée',             code:'RNS', file:'05-bretagne.html',   ready:true , color:'#1F5F7A'},
- {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:false, color:'#7A5B1F'},
+ {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:true , color:'#7A5B1F'},
  {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:false, color:'#2E7A55'},
  {id:'louisiane',  place:'Louisiane',  sub:'Le concours d\'histoires', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
 ];
@@ -1116,7 +1128,9 @@ function runStop(i){
  stop=ALL[i]; stepI=0; mistakes=0; PR.cur=i;
  show('scrStop');
  const svg=$('#stageSvg');
- svg.innerHTML = stop.scene==='map' ? sceneMap() : SCENES[stop.id](P);
+ svg.ondrop=svg.onclick=svg.ondragover=null;
+ if(stop.page){ PR.comic=PR.comic||{}; PR.comic[stop.id]={placed:[null,null,null,null],bubbles:{}}; }
+ svg.innerHTML = stop.scene==='map' ? sceneMap() : stop.page ? comicSVG() : SCENES[stop.id](P);
  svg.setAttribute('aria-label', stop.name);
  const ov=$('#stageOverlay');
  ov.innerHTML = stop.scene==='map' ? MAP_LABELS : '';
@@ -1150,6 +1164,33 @@ function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.create
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
 
+/* ---------- comic pages (Bruxelles): stage shows a 2x2 page; panels and bubbles fill in ---------- */
+const FRAMES=[[20,20],[490,20],[20,280],[490,280]], FW=450, FH=240;
+function comicState(){ PR.comic=PR.comic||{}; return PR.comic[stop.id]=PR.comic[stop.id]||{placed:[null,null,null,null],bubbles:{}}; }
+function wrapWords(t,n){ const w=String(t).split(' '), out=[]; let line=''; w.forEach(x=>{ if((line+' '+x).trim().length>n){ if(line) out.push(line); line=x; } else line=(line+' '+x).trim(); }); if(line) out.push(line); return out; }
+function bubbleSVG(b,txt,solved){
+ const fs=b.fs||16, lines=wrapWords(txt,b.chars||Math.round(b.w/(fs*.52))), h=lines.length*fs*1.18+16, tx=b.tail==='r'?b.x+b.w-30:b.x+30;
+ return `<g class="bub"><path d="M${b.x+12},${b.y} H${b.x+b.w-12} Q${b.x+b.w},${b.y} ${b.x+b.w},${b.y+12} V${b.y+h-12} Q${b.x+b.w},${b.y+h} ${b.x+b.w-12},${b.y+h} H${tx+10} L${tx+(b.tail==='r'?14:-6)},${b.y+h+18} L${tx-4},${b.y+h} H${b.x+12} Q${b.x},${b.y+h} ${b.x},${b.y+h-12} V${b.y+12} Q${b.x},${b.y} ${b.x+12},${b.y} Z" fill="#fff" stroke="#1F2433" stroke-width="2"/>
+ <text font-family="'Comic Neue','Comic Sans MS','Chalkboard SE',Inter,sans-serif" font-size="${fs}" font-weight="${solved?700:400}" fill="${solved?'#1F2433':'#9AA3AE'}">${lines.map((l,i)=>`<tspan x="${b.x+10}" y="${b.y+8+fs*(i+1)*1.1}">${esc(l)}</tspan>`).join('')}</text></g>`;
+}
+function panelSVG(p,withBubbles,cs,pi,caption){
+ let s=`<svg x="0" y="0" width="${FW}" height="${FH}" viewBox="0 0 ${FW} ${FH}" overflow="hidden">${PANEL_ART[p.art](P)}`;
+ if(withBubbles) (p.bubbles||[]).forEach((b,j)=>{ const solved=cs.bubbles[`${pi}-${j}`]; s+=bubbleSVG(b,solved?fmt((b.lead||'')+b.text,P):(b.lead?fmt(b.lead,P)+'…':'…'),solved); });
+ const cap=wrapWords(fmt(caption||p.caption||'',P),46); const ch=cap.length*17+10;
+ s+=`<rect x="0" y="0" width="${Math.min(FW,Math.max(...cap.map(l=>l.length))*8.2+20)}" height="${ch}" fill="#FFE98A" stroke="#1F2433" stroke-width="2"/><text font-family="Inter,Arial,sans-serif" font-size="14" font-weight="600" fill="#1F2433">${cap.map((l,i)=>`<tspan x="9" y="${19+i*17}">${esc(l)}</tspan>`).join('')}</text>`;
+ return s+'</svg>';
+}
+function comicSVG(pg,cs){
+ pg=pg||stop.page; cs=cs||comicState(); const arranged=!!cs.done;
+ let s=`<rect width="960" height="540" fill="#F4F1E8"/><rect width="960" height="540" fill="url(#bdDots)" opacity=".5"/>`;
+ FRAMES.forEach(([x,y],k)=>{ const id=cs.placed[k], p=id&&pg.panels.concat(pg.decoys||[]).find(q=>q.id===id);
+  s+=`<g transform="translate(${x} ${y})" data-frame="${k}"><rect x="4" y="5" width="${FW}" height="${FH}" fill="#1F2433" opacity=".25"/>`;
+  s+= p ? panelSVG(p,arranged,cs,k,pg.panels[k].caption) : `<rect width="${FW}" height="${FH}" fill="#FFFFFF"/><rect x="10" y="10" width="${FW-20}" height="${FH-20}" fill="none" stroke="#C3CCD6" stroke-width="2" stroke-dasharray="8 8"/><text x="${FW/2}" y="${FH/2+16}" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="48" font-weight="700" fill="#D5DCE3">${k+1}</text>`;
+  s+=`<rect width="${FW}" height="${FH}" fill="none" stroke="#1F2433" stroke-width="4"/></g>`; });
+ return s;
+}
+function renderComic(){ $('#stageSvg').innerHTML=comicSVG(); }
+function thumbSVG(p){ return `<svg viewBox="0 0 ${FW} ${FH}" aria-hidden="true"><svg width="${FW}" height="${FH}" viewBox="0 0 ${FW} ${FH}" overflow="hidden">${PANEL_ART[p.art](P)}</svg><rect width="${FW}" height="${FH}" fill="none" stroke="#1F2433" stroke-width="6"/></svg>`; }
 /* ---------- helpers for the newer step types ---------- */
 const DOCS=[];
 function docLink(){ return document.querySelector('#log .doc')?`<p class="doclink"><button type="button" class="linkbtn" onclick="document.querySelector('#log .doc:last-of-type')?.scrollIntoView({behavior:'smooth',block:'center'})">Relire le document</button></p>`:''; }
@@ -1263,7 +1304,7 @@ function step(){
   act.querySelector('.check').addEventListener('click',()=>{
    const txt=joinTiles(built.map(o=>o.t));
    if((s.answers||[s.answer]).map(a=>normTxt(fmt(a,P))).includes(normTxt(txt))){
-    act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
+    act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); if(s.bubble){ comicState().bubbles[s.bubble.join('-')]=1; save(); renderComic(); } feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
    wrong(); const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
    feedback('err',h?s.hints[h]:(built.length<(s.min||3)?'Ta phrase n\'est pas complète.':(s.why||'Pas tout à fait. Vérifie la forme du verbe et l\'ordre des mots.')),h?null:s.whyEn);
   });
@@ -1330,6 +1371,39 @@ function step(){
   window.scrollTo({top:0,behavior:'smooth'});
   if(s.text) npcBubble(s.who||stop.who,s.text,s.en);
   contBtn(s.btn||'Continuer',()=>{ if(f.stop) f.stop(); next(); });
+  if(f.download){ const d=document.createElement('button'); d.type='button'; d.className='btn accent'; d.textContent=s.downloadLabel||'Télécharger'; d.style.marginRight='8px'; d.addEventListener('click',()=>f.download(P,PR)); $('#act').prepend(d); }
+ }
+ /* ----- comic: drag (or tap) each picture into the frame whose caption it shows ----- */
+ else if(s.t==='arrange'){
+  const cs=comicState(), pg=stop.page, all=shuffle(pg.panels.concat(pg.decoys||[])); let sel=null;
+  act.innerHTML=promptHTML(s)+`<ol class="caps">${pg.panels.map((p,k)=>`<li><span class="capn">${k+1}</span><span class="capt">${esc(fmt(p.caption,P))}</span><button type="button" class="slot capslot" data-k="${k}"></button></li>`).join('')}</ol><p class="muted">Glisse chaque image dans la bonne case de la planche (ou touche une image, puis une case). ${pg.decoys&&pg.decoys.length?'Attention : il y a une image de trop!':''}</p><div class="thumbs"></div><div class="row2"><button class="btn primary check" type="button">Vérifier la planche</button></div>`;
+  const thumbs=act.querySelector('.thumbs');
+  const placeAt=(id,k)=>{ const old=cs.placed.indexOf(id); if(old>-1) cs.placed[old]=null; cs.placed[k]=id; sel=null; act.querySelector('.fb')?.remove(); save(); render(); };
+  const render=()=>{
+   thumbs.innerHTML=''; all.forEach(p=>{ if(cs.placed.includes(p.id)) return; const b=document.createElement('button'); b.type='button'; b.className='thumb'+(sel===p.id?' sel':''); b.draggable=true; b.innerHTML=thumbSVG(p); b.setAttribute('aria-label','Image : '+fmt(p.alt||p.caption,P)); b.setAttribute('aria-pressed',sel===p.id);
+    b.addEventListener('click',()=>{ sel=sel===p.id?null:p.id; render(); });
+    b.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',p.id); sel=p.id; }); thumbs.appendChild(b); });
+   act.querySelectorAll('.capslot').forEach(b=>{ const k=+b.dataset.k, id=cs.placed[k], p=all.find(q=>q.id===id); b.classList.toggle('full',!!p); b.classList.toggle('ready',!p&&!!sel); b.innerHTML=p?thumbSVG(p):(sel?'Placer ici':'Case vide'); });
+   renderComic();
+  };
+  act.querySelectorAll('.capslot').forEach(b=>{ const k=+b.dataset.k;
+   b.addEventListener('click',()=>{ if(sel) placeAt(sel,k); else if(cs.placed[k]){ cs.placed[k]=null; save(); render(); } });
+   b.addEventListener('dragover',e=>e.preventDefault()); b.addEventListener('drop',e=>{ e.preventDefault(); placeAt(e.dataTransfer.getData('text/plain'),k); }); });
+  const svg=$('#stageSvg');
+  const frameAt=e=>{ const r=svg.getBoundingClientRect(), x=(e.clientX-r.left)*960/r.width, y=(e.clientY-r.top)*540/r.height; return FRAMES.findIndex(([fx,fy])=>x>=fx&&x<=fx+FW&&y>=fy&&y<=fy+FH); };
+  svg.ondragover=e=>e.preventDefault();
+  svg.ondrop=e=>{ e.preventDefault(); const k=frameAt(e); if(k>-1) placeAt(e.dataTransfer.getData('text/plain'),k); };
+  svg.onclick=e=>{ if(stop.page&&sel&&!cs.done){ const k=frameAt(e); if(k>-1) placeAt(sel,k); } };
+  render();
+  act.querySelector('.check').addEventListener('click',()=>{
+   if(cs.placed.some(x=>!x)){ feedback('err','Remplis les quatre cases avant de vérifier.','Fill all four frames first.'); return; }
+   const badK=cs.placed.map((id,k)=>id===pg.panels[k].id?-1:k).filter(k=>k>-1);
+   act.querySelectorAll('.capslot').forEach((b,k)=>b.classList.toggle('bad',badK.includes(k)));
+   if(badK.length){ wrong(); const k=badK[0], id=cs.placed[k], p=all.find(q=>q.id===id);
+    feedback('err',`Case ${k+1} : ${p.decoy?p.why:(pg.panels[k].why||'Relis la légende : qui fait quoi?')}`+(badK.length>1?` (Encore ${badK.length-1} autre${badK.length>2?'s':''} à revoir.)`:''),p.decoy?p.whyEn:pg.panels[k].whyEn); return; }
+   cs.done=true; save(); svg.ondrop=svg.onclick=null; renderComic();
+   act.querySelectorAll('button').forEach(b=>b.disabled=true); feedback('ok',s.done||'Bravo! La planche est dans le bon ordre.'); setTimeout(next,1100);
+  });
  }
  else if(s.t==='clue'){
   if(!PR.clues.includes(s.text)) PR.clues.push(s.text); save(); updateCount();
@@ -1357,11 +1431,12 @@ function endScreen(){
   <p>${esc(fmt(GAME.endText,P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
-  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button><button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
   <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
  $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
  $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
  $('#printStamp').addEventListener('click',()=>printStamp(me,avg));
+ if(GAME.endDownload) $('#dlExtra').addEventListener('click',()=>FINALES[GAME.endDownload.finale].download(P,PR));
 }
 
 /* ---------- printable passport stamp ---------- */
@@ -1421,6 +1496,7 @@ ensureProfile(()=>{
  else if(PR.i>=ALL.length) endScreen();
  else renderMap();
 });
+window.__comic={page:(pg,cs)=>comicSVG(pg,cs),thumb:p=>thumbSVG(p)};
 window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id,step:stop&&stop.steps[stepI]};}};
 })();
 

@@ -79,7 +79,9 @@ function runStop(i){
  stop=ALL[i]; stepI=0; mistakes=0; PR.cur=i;
  show('scrStop');
  const svg=$('#stageSvg');
- svg.innerHTML = stop.scene==='map' ? sceneMap() : SCENES[stop.id](P);
+ svg.ondrop=svg.onclick=svg.ondragover=null;
+ if(stop.page){ PR.comic=PR.comic||{}; PR.comic[stop.id]={placed:[null,null,null,null],bubbles:{}}; }
+ svg.innerHTML = stop.scene==='map' ? sceneMap() : stop.page ? comicSVG() : SCENES[stop.id](P);
  svg.setAttribute('aria-label', stop.name);
  const ov=$('#stageOverlay');
  ov.innerHTML = stop.scene==='map' ? MAP_LABELS : '';
@@ -113,6 +115,33 @@ function feedback(kind,fr,en){ let fb=$('#act .fb'); if(!fb){ fb=document.create
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 const PRAISE=['Bravo!','Excellent!','Parfait!','Super!','Bien joué!','Exactement!'];
 
+/* ---------- comic pages (Bruxelles): stage shows a 2x2 page; panels and bubbles fill in ---------- */
+const FRAMES=[[20,20],[490,20],[20,280],[490,280]], FW=450, FH=240;
+function comicState(){ PR.comic=PR.comic||{}; return PR.comic[stop.id]=PR.comic[stop.id]||{placed:[null,null,null,null],bubbles:{}}; }
+function wrapWords(t,n){ const w=String(t).split(' '), out=[]; let line=''; w.forEach(x=>{ if((line+' '+x).trim().length>n){ if(line) out.push(line); line=x; } else line=(line+' '+x).trim(); }); if(line) out.push(line); return out; }
+function bubbleSVG(b,txt,solved){
+ const fs=b.fs||16, lines=wrapWords(txt,b.chars||Math.round(b.w/(fs*.52))), h=lines.length*fs*1.18+16, tx=b.tail==='r'?b.x+b.w-30:b.x+30;
+ return `<g class="bub"><path d="M${b.x+12},${b.y} H${b.x+b.w-12} Q${b.x+b.w},${b.y} ${b.x+b.w},${b.y+12} V${b.y+h-12} Q${b.x+b.w},${b.y+h} ${b.x+b.w-12},${b.y+h} H${tx+10} L${tx+(b.tail==='r'?14:-6)},${b.y+h+18} L${tx-4},${b.y+h} H${b.x+12} Q${b.x},${b.y+h} ${b.x},${b.y+h-12} V${b.y+12} Q${b.x},${b.y} ${b.x+12},${b.y} Z" fill="#fff" stroke="#1F2433" stroke-width="2"/>
+ <text font-family="'Comic Neue','Comic Sans MS','Chalkboard SE',Inter,sans-serif" font-size="${fs}" font-weight="${solved?700:400}" fill="${solved?'#1F2433':'#9AA3AE'}">${lines.map((l,i)=>`<tspan x="${b.x+10}" y="${b.y+8+fs*(i+1)*1.1}">${esc(l)}</tspan>`).join('')}</text></g>`;
+}
+function panelSVG(p,withBubbles,cs,pi,caption){
+ let s=`<svg x="0" y="0" width="${FW}" height="${FH}" viewBox="0 0 ${FW} ${FH}" overflow="hidden">${PANEL_ART[p.art](P)}`;
+ if(withBubbles) (p.bubbles||[]).forEach((b,j)=>{ const solved=cs.bubbles[`${pi}-${j}`]; s+=bubbleSVG(b,solved?fmt((b.lead||'')+b.text,P):(b.lead?fmt(b.lead,P)+'…':'…'),solved); });
+ const cap=wrapWords(fmt(caption||p.caption||'',P),46); const ch=cap.length*17+10;
+ s+=`<rect x="0" y="0" width="${Math.min(FW,Math.max(...cap.map(l=>l.length))*8.2+20)}" height="${ch}" fill="#FFE98A" stroke="#1F2433" stroke-width="2"/><text font-family="Inter,Arial,sans-serif" font-size="14" font-weight="600" fill="#1F2433">${cap.map((l,i)=>`<tspan x="9" y="${19+i*17}">${esc(l)}</tspan>`).join('')}</text>`;
+ return s+'</svg>';
+}
+function comicSVG(pg,cs){
+ pg=pg||stop.page; cs=cs||comicState(); const arranged=!!cs.done;
+ let s=`<rect width="960" height="540" fill="#F4F1E8"/><rect width="960" height="540" fill="url(#bdDots)" opacity=".5"/>`;
+ FRAMES.forEach(([x,y],k)=>{ const id=cs.placed[k], p=id&&pg.panels.concat(pg.decoys||[]).find(q=>q.id===id);
+  s+=`<g transform="translate(${x} ${y})" data-frame="${k}"><rect x="4" y="5" width="${FW}" height="${FH}" fill="#1F2433" opacity=".25"/>`;
+  s+= p ? panelSVG(p,arranged,cs,k,pg.panels[k].caption) : `<rect width="${FW}" height="${FH}" fill="#FFFFFF"/><rect x="10" y="10" width="${FW-20}" height="${FH-20}" fill="none" stroke="#C3CCD6" stroke-width="2" stroke-dasharray="8 8"/><text x="${FW/2}" y="${FH/2+16}" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="48" font-weight="700" fill="#D5DCE3">${k+1}</text>`;
+  s+=`<rect width="${FW}" height="${FH}" fill="none" stroke="#1F2433" stroke-width="4"/></g>`; });
+ return s;
+}
+function renderComic(){ $('#stageSvg').innerHTML=comicSVG(); }
+function thumbSVG(p){ return `<svg viewBox="0 0 ${FW} ${FH}" aria-hidden="true"><svg width="${FW}" height="${FH}" viewBox="0 0 ${FW} ${FH}" overflow="hidden">${PANEL_ART[p.art](P)}</svg><rect width="${FW}" height="${FH}" fill="none" stroke="#1F2433" stroke-width="6"/></svg>`; }
 /* ---------- helpers for the newer step types ---------- */
 const DOCS=[];
 function docLink(){ return document.querySelector('#log .doc')?`<p class="doclink"><button type="button" class="linkbtn" onclick="document.querySelector('#log .doc:last-of-type')?.scrollIntoView({behavior:'smooth',block:'center'})">Relire le document</button></p>`:''; }
@@ -226,7 +255,7 @@ function step(){
   act.querySelector('.check').addEventListener('click',()=>{
    const txt=joinTiles(built.map(o=>o.t));
    if((s.answers||[s.answer]).map(a=>normTxt(fmt(a,P))).includes(normTxt(txt))){
-    act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
+    act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); if(s.bubble){ comicState().bubbles[s.bubble.join('-')]=1; save(); renderComic(); } feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
    wrong(); const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
    feedback('err',h?s.hints[h]:(built.length<(s.min||3)?'Ta phrase n\'est pas complète.':(s.why||'Pas tout à fait. Vérifie la forme du verbe et l\'ordre des mots.')),h?null:s.whyEn);
   });
@@ -293,6 +322,39 @@ function step(){
   window.scrollTo({top:0,behavior:'smooth'});
   if(s.text) npcBubble(s.who||stop.who,s.text,s.en);
   contBtn(s.btn||'Continuer',()=>{ if(f.stop) f.stop(); next(); });
+  if(f.download){ const d=document.createElement('button'); d.type='button'; d.className='btn accent'; d.textContent=s.downloadLabel||'Télécharger'; d.style.marginRight='8px'; d.addEventListener('click',()=>f.download(P,PR)); $('#act').prepend(d); }
+ }
+ /* ----- comic: drag (or tap) each picture into the frame whose caption it shows ----- */
+ else if(s.t==='arrange'){
+  const cs=comicState(), pg=stop.page, all=shuffle(pg.panels.concat(pg.decoys||[])); let sel=null;
+  act.innerHTML=promptHTML(s)+`<ol class="caps">${pg.panels.map((p,k)=>`<li><span class="capn">${k+1}</span><span class="capt">${esc(fmt(p.caption,P))}</span><button type="button" class="slot capslot" data-k="${k}"></button></li>`).join('')}</ol><p class="muted">Glisse chaque image dans la bonne case de la planche (ou touche une image, puis une case). ${pg.decoys&&pg.decoys.length?'Attention : il y a une image de trop!':''}</p><div class="thumbs"></div><div class="row2"><button class="btn primary check" type="button">Vérifier la planche</button></div>`;
+  const thumbs=act.querySelector('.thumbs');
+  const placeAt=(id,k)=>{ const old=cs.placed.indexOf(id); if(old>-1) cs.placed[old]=null; cs.placed[k]=id; sel=null; act.querySelector('.fb')?.remove(); save(); render(); };
+  const render=()=>{
+   thumbs.innerHTML=''; all.forEach(p=>{ if(cs.placed.includes(p.id)) return; const b=document.createElement('button'); b.type='button'; b.className='thumb'+(sel===p.id?' sel':''); b.draggable=true; b.innerHTML=thumbSVG(p); b.setAttribute('aria-label','Image : '+fmt(p.alt||p.caption,P)); b.setAttribute('aria-pressed',sel===p.id);
+    b.addEventListener('click',()=>{ sel=sel===p.id?null:p.id; render(); });
+    b.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',p.id); sel=p.id; }); thumbs.appendChild(b); });
+   act.querySelectorAll('.capslot').forEach(b=>{ const k=+b.dataset.k, id=cs.placed[k], p=all.find(q=>q.id===id); b.classList.toggle('full',!!p); b.classList.toggle('ready',!p&&!!sel); b.innerHTML=p?thumbSVG(p):(sel?'Placer ici':'Case vide'); });
+   renderComic();
+  };
+  act.querySelectorAll('.capslot').forEach(b=>{ const k=+b.dataset.k;
+   b.addEventListener('click',()=>{ if(sel) placeAt(sel,k); else if(cs.placed[k]){ cs.placed[k]=null; save(); render(); } });
+   b.addEventListener('dragover',e=>e.preventDefault()); b.addEventListener('drop',e=>{ e.preventDefault(); placeAt(e.dataTransfer.getData('text/plain'),k); }); });
+  const svg=$('#stageSvg');
+  const frameAt=e=>{ const r=svg.getBoundingClientRect(), x=(e.clientX-r.left)*960/r.width, y=(e.clientY-r.top)*540/r.height; return FRAMES.findIndex(([fx,fy])=>x>=fx&&x<=fx+FW&&y>=fy&&y<=fy+FH); };
+  svg.ondragover=e=>e.preventDefault();
+  svg.ondrop=e=>{ e.preventDefault(); const k=frameAt(e); if(k>-1) placeAt(e.dataTransfer.getData('text/plain'),k); };
+  svg.onclick=e=>{ if(stop.page&&sel&&!cs.done){ const k=frameAt(e); if(k>-1) placeAt(sel,k); } };
+  render();
+  act.querySelector('.check').addEventListener('click',()=>{
+   if(cs.placed.some(x=>!x)){ feedback('err','Remplis les quatre cases avant de vérifier.','Fill all four frames first.'); return; }
+   const badK=cs.placed.map((id,k)=>id===pg.panels[k].id?-1:k).filter(k=>k>-1);
+   act.querySelectorAll('.capslot').forEach((b,k)=>b.classList.toggle('bad',badK.includes(k)));
+   if(badK.length){ wrong(); const k=badK[0], id=cs.placed[k], p=all.find(q=>q.id===id);
+    feedback('err',`Case ${k+1} : ${p.decoy?p.why:(pg.panels[k].why||'Relis la légende : qui fait quoi?')}`+(badK.length>1?` (Encore ${badK.length-1} autre${badK.length>2?'s':''} à revoir.)`:''),p.decoy?p.whyEn:pg.panels[k].whyEn); return; }
+   cs.done=true; save(); svg.ondrop=svg.onclick=null; renderComic();
+   act.querySelectorAll('button').forEach(b=>b.disabled=true); feedback('ok',s.done||'Bravo! La planche est dans le bon ordre.'); setTimeout(next,1100);
+  });
  }
  else if(s.t==='clue'){
   if(!PR.clues.includes(s.text)) PR.clues.push(s.text); save(); updateCount();
@@ -320,11 +382,12 @@ function endScreen(){
   <p>${esc(fmt(GAME.endText,P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
-  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button><button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
   <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
  $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
  $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
  $('#printStamp').addEventListener('click',()=>printStamp(me,avg));
+ if(GAME.endDownload) $('#dlExtra').addEventListener('click',()=>FINALES[GAME.endDownload.finale].download(P,PR));
 }
 
 /* ---------- printable passport stamp ---------- */
@@ -384,5 +447,6 @@ ensureProfile(()=>{
  else if(PR.i>=ALL.length) endScreen();
  else renderMap();
 });
+window.__comic={page:(pg,cs)=>comicSVG(pg,cs),thumb:p=>thumbSVG(p)};
 window.__game={runStop,renderMap,endScreen,get state(){return {P,PR,stepI,stop:stop&&stop.id,step:stop&&stop.steps[stepI]};}};
 })();

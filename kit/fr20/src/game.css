@@ -191,3 +191,15 @@ table.doctable tbody th{color:#F2C46D;font-size:12px;letter-spacing:0;text-trans
 .letter p,.printLetter p{margin:0 0 10px}.lplace{text-align:right;font-style:italic}.lsign{font-weight:700}
 @media print{ .printLetter{border:0;box-shadow:none;font-size:13pt;padding:0} }
 @media (max-width:640px){ .numrow{grid-template-columns:1fr 90px 30px} }
+/* comic arrange */
+.caps{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:8px}
+.caps li{display:grid;grid-template-columns:28px 1fr 120px;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.capn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#FFE98A;border:2px solid var(--ink);font-weight:700;font-size:13px}
+.capt{font-size:15px;line-height:1.35}
+.capslot{min-height:64px;padding:2px;display:grid;place-items:center;font-size:13px;text-align:center}
+.capslot svg,.thumb svg{display:block;width:100%;height:auto}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:6px 0}
+.thumb{padding:3px;border-radius:8px;border:2px solid var(--line);background:#fff;cursor:grab}
+.thumb.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,94,103,.25)}
+.thumb:active{cursor:grabbing}
+@media (max-width:640px){ .caps li{grid-template-columns:24px 1fr 90px} }

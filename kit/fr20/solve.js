@@ -19,6 +19,13 @@
   for(let guard=0;guard<30&&rest.length;guard++){ rest=rest.replace(/^\s+/,''); const b=$$('#act .tilebank .tile:not(:disabled)').sort((a,b)=>b.textContent.length-a.textContent.length).find(b=>rest.startsWith(b.textContent)); if(!b) break; rest=rest.slice(b.textContent.length); b.click(); }
   $('#act .check')?.click(); return 'tiles';
  }
+ if(s.t==='arrange'){
+  const pg=window.__game.state.PR && document.querySelector('#act .caps') && null;
+  const stopObj=STOPS.find(x=>x.id===st.stop), page=stopObj.page;
+  const place=(alt,k)=>{ const b=$$('#act .thumb').find(t=>t.getAttribute('aria-label')==='Image : '+fmt(alt,P)); if(b){ b.click(); $$('#act .capslot')[k].click(); } };
+  if(mode==='wrong' && !window.__wrongArr){ window.__wrongArr=1; page.panels.forEach((p,k)=>place(k===2&&page.decoys?page.decoys[0].alt:p.alt,k)); $('#act .check').click(); return 'arrange-wrong'; }
+  page.panels.forEach((p,k)=>place(p.alt,k)); $('#act .check')?.click(); return 'arrange';
+ }
  if(s.t==='pack'){ $$('#act .pack').forEach((b,k)=>{ const need=s.items[k]?.need; if(b.classList.contains('on')!==!!need) b.click(); }); $('#act .check')?.click(); return 'pack'; }
  if(s.t==='number'){ $$('#act input').forEach(inp=>{ inp.value=String(s.rows[+inp.dataset.k].ans).replace('.',','); }); $('#act .check')?.click(); return 'number'; }
  if(s.t==='letter'){
