@@ -23,21 +23,21 @@ common = {'/*BASE_CSS*/': r('base.css'), '<!--DEFS-->': defs, '/*ART*/': r('art.
 (OUT / 'voyage.html').write_text(page('voyage.html', **common))
 (OUT / '01-quebec.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La ceinture fléchée — Escale 1 : Québec', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('quebec-scenes.js'), '/*DATA*/': r('quebec-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('quebec-scenes.js'), '/*DATA*/': r('quebec-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 (OUT / '02-montreal.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'Le grand spectacle — Escale 2 : Montréal', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('montreal-scenes.js'), '/*DATA*/': r('montreal-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('montreal-scenes.js'), '/*DATA*/': r('montreal-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 (OUT / '03-acadie.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La veillée — Escale 3 : Acadie', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('acadie-scenes.js'), '/*DATA*/': r('acadie-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('acadie-scenes.js'), '/*DATA*/': r('acadie-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 (OUT / '04-dakar.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La teranga — Escale 4 : Dakar', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('dakar-scenes.js'), '/*DATA*/': r('dakar-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('dakar-scenes.js'), '/*DATA*/': r('dakar-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 (OUT / '05-bretagne.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': 'La semaine bretonne — Escale 5 : Bretagne', '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('bretagne-scenes.js'), '/*DATA*/': r('bretagne-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('bretagne-scenes.js'), '/*DATA*/': r('bretagne-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 (OUT / '06-bruxelles.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': "La BD de l'été — Escale 6 : Bruxelles", '/*GAME_CSS*/': r('game.css'),
-    '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('engine.js')}))
+    '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('engine.js')}))
 for f in sorted(OUT.iterdir()):
     print(f.name, f.stat().st_size)

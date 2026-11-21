@@ -374,6 +374,7 @@ function finishStop(){
 function endScreen(){
  show('scrEnd');
  const vals=STOPS.map(s=>PR.stars[s.id]||1), avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+ window.GVJetons && GVJetons.award('fr20-'+GAME.id, avg/3);
  const d=new Date(), date=d.toLocaleDateString('fr-CA',{day:'numeric',month:'short',year:'numeric'});
  P.done=P.done||{}; if(!P.done[GAME.id]) P.done[GAME.id]=date; P.stars=P.stars||{}; P.stars[GAME.id]=Math.max(P.stars[GAME.id]||0,avg); save();
  const me=JOURNEY.find(j=>j.id===GAME.id), nx=nextStop(P);
