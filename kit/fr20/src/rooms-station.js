@@ -51,7 +51,7 @@ ROOMS.bureau={
         {txt:'On va où, maintenant?'}, {txt:'Tu as une recommandation pour moi?'} ]);
       if(!o) return;
       if(o.txt.startsWith('Comment')){ await A.say('Mets la souris en haut de l\'écran. Les icônes, c\'est comme un menu au restaurant, mais en moins bon.',{who:w});
-        return A.say('L\'œil pour regarder, la main pour prendre ou utiliser, la bouche pour parler. Et le clic droit pour changer d\'icône, si t\'es pressé{|e}.',{who:w}); }
+        return A.say('L\'œil pour regarder, la main pour prendre ou utiliser, la bouche pour parler. Et si t\'es pressé{|e} : les touches 1, 2, 3, 4. Ou tu gardes le bouton enfoncé, et une roue apparaît.',{who:w}); }
       if(o.txt.startsWith('Où')) return A.say('Dans le tiroir de ton bureau, cher. Tes gants, ton appareil photo, tes sachets. Sans ça, t\'es juste une personne qui regarde des choses.',{who:w});
       if(o.txt.startsWith('On va')) return A.say('Passe voir M. Landry à la salle des preuves. Il a une règle. Il a toujours une règle. Après, le capitaine veut te voir au briefing.',{who:w});
       return A.say('Je te recommande de manger quelque chose à la cafétéria. La nuit va être longue. Moi, je le sens.',{who:w}); } },
@@ -60,7 +60,7 @@ ROOMS.bureau={
  async onEnter(A){ if(A.G.seen.bureau) return; A.G.seen.bureau=1;
   await A.say('Lafayette, Louisiane. La veille des Festivals acadiens et créoles. Toute la ville danse. Sauf vous.');
   await A.say('Vous êtes enquêt{eur|rice} principal{|e} depuis exactement trois jours. Le café du poste, lui, est là depuis 1987.');
-  await A.say('Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Clic droit pour changer d\'action. Les mots soulignés ont une traduction : passez la souris dessus. Le lexique est dans le carnet.');
+  await A.say('Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Pour changer d\'action : les touches 1 à 4, ou un clic long sur la scène. Les mots soulignés ont une traduction : passez la souris dessus. Le lexique est dans le carnet.');
   await A.say('Sauvegardez souvent. Les criminels, eux, ne vous attendront pas.'); }
 };
 

@@ -104,7 +104,19 @@ const ADV=(()=>{
  function hideBar(){ $('#bar').classList.remove('down'); }
  function setVerb(v){ if(v==='item'&&!G.sel) return; G.verb=v; updBar(); setCursor(); }
  const VERB_ORDER=['walk','look','hand','talk','item'];
- function cycleVerb(){ let i=VERB_ORDER.indexOf(G.verb); do{ i=(i+1)%VERB_ORDER.length; }while(VERB_ORDER[i]==='item'&&!G.sel); setVerb(VERB_ORDER[i]); }
+ const VERB_NAMES={walk:'Marcher',look:'Regarder',hand:'Prendre / Utiliser',talk:'Parler',item:'Objet choisi'};
+ function pickVerb(v){ if(v==='item'&&!G.sel){ toast('Choisissez d\'abord un objet dans l\'inventaire.'); return; } setVerb(v); toast('Action : '+(v==='item'?T(ITEMS[G.sel].name):VERB_NAMES[v])); }
+ /* action wheel: long press (or right-click) opens the verbs around the pointer */
+ function openWheel(p){ const w=$('#wheel'); const verbs=VERB_ORDER.filter(v=>v!=='item'||G.sel); const n=verbs.length, R=78;
+   w.innerHTML=verbs.map((v,i)=>{ const a=-Math.PI/2+i*2*Math.PI/n, x=Math.cos(a)*R, y=Math.sin(a)*R; const icon=v==='item'?ITEMS[G.sel].icon:CURSORS[v][0];
+     return `<button class="wv${v===G.verb?' on':''}" type="button" data-v="${v}" style="--x:${x.toFixed(1)};--y:${y.toFixed(1)}" aria-label="${esc(v==='item'?T(ITEMS[G.sel].name):VERB_NAMES[v])}"><svg viewBox="0 0 48 48">${icon}</svg><span>${i+1}</span></button>`; }).join('')
+     +`<div class="wlab" aria-hidden="true"></div>`;
+   w.style.left=(Math.min(Math.max(p[0],110),W-110)/W*100)+'%'; w.style.top=(Math.min(Math.max(p[1],110),H-110)/H*100)+'%'; w.hidden=false; hideBar(); setCursor();
+   w.querySelectorAll('.wv').forEach(b=>{ b.onpointerenter=()=>{ w.querySelectorAll('.wv').forEach(x=>x.classList.toggle('hot',x===b)); w.querySelector('.wlab').textContent=b.getAttribute('aria-label'); };
+     b.onclick=e=>{ e.stopPropagation(); closeWheel(); pickVerb(b.dataset.v); }; });
+   wheelOpen=true; }
+ function closeWheel(){ const w=$('#wheel'); w.hidden=true; w.innerHTML=''; wheelOpen=false; setCursor(); }
+ let wheelOpen=false;
 
  /* ---------- cursor ---------- */
  function setCursor(){ const c=$('#cur'); const modal=anyModal();
@@ -115,7 +127,7 @@ const ADV=(()=>{
    const t=$('#tag'); if(hoverHs && !busy){ t.hidden=false; t.textContent=T(hoverHs.name); t.style.left=(ptr.x/W*100)+'%'; t.style.top=(ptr.y/H*100)+'%';
      t.classList.toggle('flipX',ptr.x>1040); t.classList.toggle('flipY',ptr.y>740); } else t.hidden=true; }
 
- function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create','#lexique'].some(q=>!$(q).hidden); }
+ function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create','#lexique','#wheel'].some(q=>!$(q).hidden); }
  /* ---------- hotspots ---------- */
  const hsList=()=>(room.hotspots||[]).filter(h=>!h.when||h.when(G));
  function inShape(h,p){ if(h.rect){ const [x,y,w,hh]=h.rect; return p[0]>=x&&p[0]<=x+w&&p[1]>=y&&p[1]<=y+hh; }
@@ -188,7 +200,7 @@ const ADV=(()=>{
     <button class="sbtn" type="button" data-o="hint">Demander de l'aide (−${CFG.hintCost||2} points)</button><button class="sbtn" type="button" data-o="restart">Recommencer</button></div>
     <label class="opt"><input type="checkbox" id="optZones" ${showZones?'checked':''}> Montrer les zones (gratuit)</label>
     <label class="opt"><input type="checkbox" id="optVoice" ${pr.voice?'checked':''}> Lire les textes à voix haute (voix française)</label>
-    <p class="small">Clavier : Tab pour passer d'une zone à l'autre, Entrée pour agir, clic droit pour changer d'action, Échap pour la barre d'icônes.</p>`,
+    <p class="small">Changer d'action : touches 1 à 4 (1 Marcher, 2 Regarder, 3 Prendre / Utiliser, 4 Parler, 5 l'objet choisi), ou gardez le bouton de la souris enfoncé pour ouvrir la roue des actions. Tab pour passer d'une zone à l'autre, Entrée pour agir, Échap pour la barre d'icônes.</p>`,
    [['Reprendre',()=>{ applyOpts(); closeDlg(); }]]);
    $('#dlg').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{ applyOpts(); const o=b.dataset.o;
      if(o==='save') openSave(); else if(o==='restore') openRestore(); else if(o==='hint'){ closeDlg(); hint(); }
@@ -257,7 +269,7 @@ const ADV=(()=>{
  function showTitle(){ const d=DB.get(), t=$('#title');
    t.innerHTML=`<div class="tcard"><p class="tkick">Le grand voyage · Escale 8 · Lafayette, Louisiane</p><h1>L'enquête</h1><p class="tsub">Une enquête de l'${T('enquêt{eur|rice}')} ${esc(profile.name||'')}</p>
     <div class="tbtns"><button class="sbtn" type="button" id="tNew">Nouvelle enquête</button>${d.auto?'<button class="sbtn" type="button" id="tCont">Continuer</button>':''}${(d.slots||[]).some(Boolean)?'<button class="sbtn" type="button" id="tRest">Restaurer</button>':''}</div>
-    <p class="tfoot">Un jeu d'aventure à la manière des années 90. Souris en haut de l'écran : la barre d'icônes. Clic droit : changer d'action.</p></div>`;
+    <p class="tfoot">Un jeu d'aventure à la manière des années 90. Souris en haut de l'écran : la barre d'icônes. Touches 1 à 4, ou un clic long : changer d'action.</p></div>`;
    t.hidden=false; $('#tNew').onclick=()=>{ if(!d.reminded){ const dd=DB.get(); dd.reminded=1; DB.set(dd); } newGame(); };
    if($('#tCont')) $('#tCont').onclick=()=>{ hideTitle(); restore(DB.get().auto.state); checkpoint=snap(); };
    if($('#tRest')) $('#tRest').onclick=()=>openRestore(); t.querySelector('.sbtn').focus(); }
@@ -305,12 +317,21 @@ const ADV=(()=>{
     if(p[1]<16 && !anyModal()) showBar(); else if(p[1]>110 && !$('#bar').matches(':focus-within')) hideBar();
     hoverHs = (e.target.closest('#scene')) ? hsAt(p) : null; setCursor(); });
   st.addEventListener('pointerleave',()=>{ ptr.in=false; setCursor(); });
-  sc.addEventListener('pointerdown',e=>{ if(e.button!==0) return; if(anyModal()) return; act(toLogical(e)); });
-  st.addEventListener('contextmenu',e=>{ e.preventDefault(); if(!anyModal()&&!busy){ cycleVerb(); } });
+  let press=null;
+  sc.addEventListener('pointerdown',e=>{ if(e.button!==0||anyModal()) return; const p=toLogical(e);
+    press={p,x:e.clientX,y:e.clientY,t:setTimeout(()=>{ if(press&&!busy){ press.wheel=true; openWheel(p); } },420)}; });
+  window.addEventListener('pointermove',e=>{ if(press&&!press.wheel&&Math.hypot(e.clientX-press.x,e.clientY-press.y)>10){ clearTimeout(press.t); } });
+  window.addEventListener('pointerup',e=>{ if(!press) return; clearTimeout(press.t); const pr=press; press=null;
+    if(pr.wheel){ const b=document.elementFromPoint(e.clientX,e.clientY); const v=b&&b.closest&&b.closest('.wv'); if(v){ closeWheel(); pickVerb(v.dataset.v); } return; }
+    if(!anyModal()&&e.target.closest&&e.target.closest('#scene')) act(pr.p); });
+  st.addEventListener('contextmenu',e=>{ e.preventDefault(); if(!anyModal()&&!busy) openWheel(toLogical(e)); });
+  $('#wheel').addEventListener('pointerdown',e=>{ if(e.target.id==='wheel'){ closeWheel(); } });
   document.querySelectorAll('.vb').forEach(b=>b.addEventListener('click',()=>{ const v=b.dataset.verb, a=b.dataset.act;
     if(v) setVerb(v); else if(a==='inv') openInv(); else if(a==='note') openNotes(); else if(a==='opt') openOpts(); hideBar(); }));
   $('#bar').addEventListener('pointerleave',()=>{ if(!$('#bar').matches(':focus-within')) hideBar(); });
-  document.addEventListener('keydown',e=>{ if(!$('#msg').hidden||!$('#fail').hidden||!$('#title').hidden||!$('#dossier').hidden||!$('#create').hidden||!$('#lexique').hidden) return;
+  document.addEventListener('keydown',e=>{ if(wheelOpen){ if(e.key==='Escape'){ e.preventDefault(); closeWheel(); } else if(/^[1-5]$/.test(e.key)){ closeWheel(); pickVerb(VERB_ORDER[+e.key-1]); } return; }
+    if(/^[1-5]$/.test(e.key)&&!anyModal()&&!e.target.closest('input,textarea')){ e.preventDefault(); pickVerb(VERB_ORDER[+e.key-1]); return; }
+    if(!$('#msg').hidden||!$('#fail').hidden||!$('#title').hidden||!$('#dossier').hidden||!$('#create').hidden||!$('#lexique').hidden) return;
     if(!$('#dlg').hidden){ if(e.key==='Escape') closeDlg(); return; }
     if(e.key==='Escape'){ e.preventDefault(); if($('#bar').classList.contains('down')){ hideBar(); document.activeElement.blur(); } else { showBar(); $('#bar .vb').focus(); } return; }
     if($('#bar').matches(':focus-within')) return;
