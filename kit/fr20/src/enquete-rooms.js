@@ -231,7 +231,7 @@ const ROOMS={
        lesson:'Procédure : on ne marche jamais sur une preuve. On la photographie, puis on la ramasse avec des gants.' }); } },
    { id:'boue', name:'Des traces de boue', poly:[[830,604],[880,584],[1150,462],[1170,478],[900,624],[840,628]], walkTo:[900,640], face:'right',
      async look(A){ await A.say('Des traces de boue séchée. Elles viennent de la porte de service et vont jusqu\'à la vitrine. Des bottes, pointure 42 à vue d\'œil.');
-       await A.say('La boue est grise et collante. Ce n\'est pas la boue du parking. C\'est de la boue de [[bayou|bayou (marécage)]].');
+       await A.say('La boue est grise et collante. Ce n\'est pas la boue du parking. C\'est de la boue de [[bayou]].');
        if(!A.G.scored.boue){ A.note('Des traces de boue','Des bottes, environ pointure 42, de la porte de service jusqu\'à la vitrine. De la boue de bayou.'); A.score(3,'boue'); } },
      hand:'Ramasser de la boue avec les doigts? Photographiez-la plutôt. C\'est plus propre, et plus légal.',
      use:{ appareil:async A=>{ if(A.G.flags.photoBoue) return A.say('Elles sont déjà photographiées. Elles ne vont pas changer de pointure.');
@@ -242,7 +242,7 @@ const ROOMS={
        if(A.G.scored.boue && !A.G.flags.recoBoue){
          await A.say('Enquêt{eur|rice}? Vous avez une recommandation pour moi?',{who});
          const r=await A.task([
-           { t:'tiles', prompt:'Recommandez à l\'agent Thibodeaux de suivre les traces de boue.', en:'Recommend that Officer Thibodeaux follow the mud tracks.',
+           { t:'tiles', prompt:'Recommandez à l\'agent Thibodeaux de suivre les traces de boue.',
              tiles:['Agent Thibodeaux,','je','vous','te','recommande','de','à','suivre','suivez','les traces de boue','.'],
              answer:'Agent Thibodeaux, je vous recommande de suivre les traces de boue.',
              hints:{ 'te':'Vous parlez à un agent en service : on utilise « vous », pas « te ».', 'à':'Après « recommander », on met « de » + l\'infinitif.', 'suivez':'Après « de », il faut l\'infinitif : « suivre ».' } },
@@ -259,8 +259,8 @@ const ROOMS={
          A.note('Rapport de l\'agent Thibodeaux','Les traces vont jusqu\'au quai. Traces de pneus. Un voisin a vu une camionnette rouge vers 23 h.');
          return;
        }
-       await A.say('Bonsoir, enquêt{eur|rice}. Le gardien vous [[espère|attend (cajun)]] dans son poste. Moi, j\'[[espère|attends]] le café.',{who});
-       if(!A.G.wearing.gants) await A.say('[[Asteur|maintenant (cajun)]], je vous recommande de mettre vos gants. Le capitaine a vu des gens perdre leur badge pour moins que ça.',{who});
+       await A.say('Bonsoir, enquêt{eur|rice}. Le gardien vous [[espère]] dans son poste. Moi, j\'[[espère]] le café.',{who});
+       if(!A.G.wearing.gants) await A.say('[[Asteur]], je vous recommande de mettre vos gants. Le capitaine a vu des gens perdre leur badge pour moins que ça.',{who});
        else if(A.G.flags.recoBoue) await A.say('Les traces de pneus sont photographiées. La camionnette rouge, elle, court toujours.',{who});
        else await A.say('Je vous recommande de photographier tout ce qui brille. Le capitaine aime les dossiers épais.',{who}); },
      hand:'Vous ne pouvez pas prendre l\'agent Thibodeaux. Il est syndiqué.',
@@ -274,9 +274,9 @@ const ROOMS={
      async onWalk(A){ return A.say('Le quai de chargement n\'est pas encore construit. Revenez au prochain brouillon. (Fin de la salle d\'essai.)'); } }
   ],
   async onEnter(A){ if(A.G.seen.musee) return; A.G.seen.musee=1;
-   await A.say(['Lafayette, Louisiane. Le musée, salle des Trésors. Quelqu\'un a volé la **parure d\'Évangéline**. Le reste de l\'exposition est intact, ce qui est soit une bonne nouvelle, soit une insulte.','Lafayette, Louisiana. The museum, Treasures Room. Someone has stolen the Évangéline jewellery set. The rest of the exhibition is untouched, which is either good news or an insult.']);
-   await A.say(['Sauvegardez souvent. Les criminels, eux, ne vous attendront pas.','Save often. Criminals will not wait for you.']);
-   await A.say(['Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Clic droit pour changer d\'action. Tab pour passer d\'une zone à l\'autre.','Move the mouse to the top of the screen to see the icon bar. Right-click to change action. Tab moves from one spot to the next.']); }
+   await A.say('Lafayette, Louisiane. Le musée, salle des Trésors. Quelqu\'un a volé la [[parure]] d\'Évangéline. Le reste de l\'exposition est intact, ce qui est soit une bonne nouvelle, soit une insulte.');
+   await A.say('Sauvegardez souvent. Les criminels, eux, ne vous attendront pas.');
+   await A.say('Amenez la souris en haut de l\'écran pour voir la barre d\'icônes. Clic droit pour changer d\'action. Tab pour passer d\'une zone à l\'autre. Les mots soulignés ont une traduction : passez la souris dessus.'); }
  }
 };
 function clockNow(A){ const c=A.G.clock, h=Math.floor(c/60)%24, m=c%60; return `${h} h ${String(m).padStart(2,'0')}`; }
@@ -296,3 +296,26 @@ function HINT(G){ const w='Agent Thibodeaux';
  if(!G.scored.bd) return {who:w,text:'Je vous recommande de regarder la planche de BD, au mur. Quelque chose a bougé.'};
  return {who:w,text:'Vous avez tout vu ici. La porte de service mène au quai. Enfin, elle y mènera.'};
 }
+
+/* ---------- lexique: difficult words, French → English (words only, never sentences) ---------- */
+const GLOSSARY={
+ 'asteur':['now','cajun'], 'espérer':['to wait','cajun; also « j\'espère » = I wait'], 'espère':['waits / wait','cajun, from espérer'],
+ 'char':['car','cajun and québécois'], 'cher':['dear','cajun, said to anyone'], 'fais do-do':['late-night dance party','cajun'],
+ 'bayou':['bayou, slow swampy river'], 'parure':['matching jewellery set'], 'vitrine':['display case'], 'couvercle':['lid'],
+ 'perle':['pearl'], 'preuve':['evidence, proof'], 'sachet à preuves':['evidence bag'], 'empreintes':['fingerprints'],
+ 'boue':['mud'], 'pointure':['shoe size'], 'trace':['track, mark'], 'cavalier':['evidence marker (here)','also: rider'],
+ 'greffier':['evidence clerk','in court: court clerk'], 'gardien':['guard'], 'conservatrice':['curator (woman)'],
+ 'collectionneur':['collector'], 'accordéoniste':['accordion player'], 'prêteur sur gages':['pawnbroker'],
+ 'quai de chargement':['loading dock'], 'camionnette':['van'], 'pneu':['tire'], 'témoin':['witness'],
+ 'mandat':['warrant'], 'procureure':['prosecutor (woman)'], 'rapport d\'enquête':['police report'],
+ 'enquêteur':['investigator (man)'], 'enquêtrice':['investigator (woman)'], 'agent':['officer (man)'], 'agente':['officer (woman)'],
+ 'syndiqué':['in a union'], 'planche':['comic page (here)','also: board, plank'], 'banderole':['banner'],
+ 'mousse espagnole':['Spanish moss'], 'chêne':['oak'], 'menaçant':['threatening'], 'insulte':['insult'],
+ 'enfiler':['to pull on (gloves, clothes)'], 'gants':['gloves'], 'nitrile':['nitrile (glove material)'],
+ 'appareil photo':['camera'], 'étiquette':['label'], 'ramasser':['to pick up'], 'photographier':['to photograph'],
+ 'déplacer':['to move (an object)'], 'glisser':['to slide'], 'forcer':['to force open'], 'serrure':['lock'], 'rayure':['scratch'],
+ 'immortaliser':['to capture forever (in a photo)'], 'photogénique':['photogenic'], 'quelque chose qui brille':['something shiny'],
+ 'chum':['boyfriend','québécois'], 'pantoute':['not at all','québécois'], 'plate':['boring','québécois'], 'ben voyons':['come on!','québécois'],
+ 'dépanneur':['corner store','québécois'], 'septante':['seventy','Belgium and Switzerland'], 'nonante':['ninety','Belgium and Switzerland'],
+ 'à tantôt':['see you later','Belgium'], 'sauvegarder':['to save (a game)'], 'restaurer':['to restore (a saved game)']
+};

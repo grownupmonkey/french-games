@@ -20,7 +20,6 @@ const ADV=(()=>{
  function speak(t){ if(!('speechSynthesis' in window)){ toast('La lecture à voix haute n\'est pas disponible dans ce navigateur.'); return; } pickVoice();
    if(!VOICE){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Aucune voix française sur cet appareil : la lecture est désactivée.'); } return; }
    speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(t)); u.lang=VOICE.lang; u.voice=VOICE; u.rate=.92; speechSynthesis.speak(u); }
- function markEn(){ if(!G.usedEn){ G.usedEn=true; } }
  function hush(){ if('speechSynthesis' in window) speechSynthesis.cancel(); }
  function toast(t){ const el=$('#advToast'); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,3200); }
 
@@ -76,12 +75,13 @@ const ADV=(()=>{
    requestAnimationFrame(tick); }
 
  /* ---------- text ---------- */
- function rich(s){ return esc(T(s)).replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g,(m,w,g)=>`<span class="gl" tabindex="0" data-g="${g}">${w}</span>`)
+ function gloss(w){ const g=CFG.glossary||{}; const k=Object.keys(g).find(x=>x.toLowerCase()===w.toLowerCase()); if(!k) return ''; const v=g[k]; return Array.isArray(v)?v[0]:v; }
+ function rich(s){ return esc(T(s)).replace(/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/g,(m,w,g)=>{ g=g||gloss(w); return g?`<span class="gl" tabindex="0" data-g="${esc(g)}">${w}</span>`:w; })
    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>'); }
  let msgQ=Promise.resolve();
- function say(text,o={}){ if(Array.isArray(text)){ o=Object.assign({en:text[1]},o); text=text[0]; }
-   msgQ=msgQ.then(()=>new Promise(res=>{ const m=$('#msg'); const showEn=!!(prefs().en&&o.en); if(showEn) markEn();
-   m.innerHTML=`<div class="box${o.who?' talk':''}" role="dialog" aria-live="assertive">${o.icon?`<div class="mi"><svg viewBox="0 0 48 48">${o.icon}</svg></div>`:''}<div class="mt">${o.who?`<p class="who">${esc(T(o.who))}</p>`:''}<p>${rich(text)}</p>${showEn?`<p class="men">${esc(T(o.en))}</p>`:''}</div><button class="spk" type="button" aria-label="Écouter en français" title="Écouter"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button></div>`;
+ function say(text,o={}){
+   msgQ=msgQ.then(()=>new Promise(res=>{ const m=$('#msg');
+   m.innerHTML=`<div class="box${o.who?' talk':''}" role="dialog" aria-live="assertive">${o.icon?`<div class="mi"><svg viewBox="0 0 48 48">${o.icon}</svg></div>`:''}<div class="mt">${o.who?`<p class="who">${esc(T(o.who))}</p>`:''}<p>${rich(text)}</p></div><button class="spk" type="button" aria-label="Écouter en français" title="Écouter"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button></div>`;
    m.querySelector('.spk').addEventListener('pointerdown',e=>{ e.stopPropagation(); speak(text); });
    if(prefs().voice) speak(text);
    m.hidden=false; hideBar(); setCursor();
@@ -115,7 +115,7 @@ const ADV=(()=>{
    const t=$('#tag'); if(hoverHs && !busy){ t.hidden=false; t.textContent=T(hoverHs.name); t.style.left=(ptr.x/W*100)+'%'; t.style.top=(ptr.y/H*100)+'%';
      t.classList.toggle('flipX',ptr.x>1040); t.classList.toggle('flipY',ptr.y>740); } else t.hidden=true; }
 
- function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create'].some(q=>!$(q).hidden); }
+ function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create','#lexique'].some(q=>!$(q).hidden); }
  /* ---------- hotspots ---------- */
  const hsList=()=>(room.hotspots||[]).filter(h=>!h.when||h.when(G));
  function inShape(h,p){ if(h.rect){ const [x,y,w,hh]=h.rect; return p[0]>=x&&p[0]<=x+w&&p[1]>=y&&p[1]<=y+hh; }
@@ -138,7 +138,7 @@ const ADV=(()=>{
  };
  async function run(h,verb){ let fn=verb==='item'?(h.use&&(h.use[G.sel]||h.use['*'])):h[verb];
    if(fn==null) fn=verb==='item'?DEFAULTS.item:DEFAULTS[verb];
-   if(typeof fn==='string'||Array.isArray(fn)) return say(fn);
+   if(typeof fn==='string') return say(fn);
    return fn(API, verb==='item'?G.sel:undefined); }
  async function act(p){ if(busy) return;
    return actOn(hsAt(p),p); }
@@ -168,21 +168,31 @@ const ADV=(()=>{
    dialog('Inventaire', body(), btns);
    $('#dlg').querySelectorAll('.slot').forEach(s=>s.onclick=()=>{ pick=s.dataset.id; $('#dlg').querySelectorAll('.slot').forEach(x=>x.classList.toggle('on',x===s)); });
  }
- function openNotes(){ dialog('Carnet', G.notes.length?`<ol class="notes">${G.notes.map(n=>`<li><b>${rich(n.title)}</b><span>${rich(n.text)}</span></li>`).join('')}</ol>`:'<p>Votre carnet est vide. Pour l\'instant.</p>', [['Fermer',closeDlg]]); }
+ function openNotes(){ dialog('Carnet', G.notes.length?`<ol class="notes">${G.notes.map(n=>`<li><b>${rich(n.title)}</b><span>${rich(n.text)}</span></li>`).join('')}</ol>`:'<p>Votre carnet est vide. Pour l\'instant.</p>', [['Lexique',()=>openLexique()],['Fermer',closeDlg]]); }
+ /* lexique: word-level glossary only (French word → English word); never English sentences */
+ function openLexique(){ const L=$('#lexique'), entries=Object.entries(CFG.glossary||{}).sort((a,b)=>a[0].localeCompare(b[0],'fr'));
+   const row=([w,v])=>{ const [en,note]=Array.isArray(v)?v:[v]; return `<li data-w="${esc(STEPS.deaccent(w.toLowerCase()))}"><b>${esc(w)}</b><span>${esc(en)}</span>${note?`<i>${esc(note)}</i>`:''}</li>`; };
+   L.innerHTML=`<div class="lexwin" role="dialog" aria-modal="true" aria-label="Lexique"><div class="lexhead"><h2>Lexique</h2><input type="search" id="lexQ" placeholder="Chercher un mot…" aria-label="Chercher un mot" autocomplete="off"><button class="btn" type="button" id="lexClose">Fermer</button></div>
+     <p class="lexnote">Des mots, pas des phrases. Pour le reste, votre dictionnaire est votre meilleur{|e} coéquipi{er|ère}.</p><ul class="lexlist">${entries.map(row).join('')}</ul></div>`.replace('{|e}',T('{|e}')).replace('{er|ère}',T('{er|ère}'));
+   L.hidden=false; setCursor(); const q=$('#lexQ'); q.focus();
+   q.oninput=()=>{ const v=STEPS.deaccent(q.value.toLowerCase().trim()); L.querySelectorAll('.lexlist li').forEach(li=>li.hidden=!!v&&!li.dataset.w.includes(v)); };
+   const close=()=>{ L.hidden=true; L.innerHTML=''; setCursor(); };
+   $('#lexClose').onclick=close; L.onkeydown=e=>{ if(e.key==='Escape'){ e.stopPropagation(); close(); } }; }
+ /* strip any English sentences from task data (teacher decision: words only, via the lexique and hover glosses) */
+ function noEnglish(x){ if(Array.isArray(x)) return x.map(noEnglish); if(x&&typeof x==='object'){ const o={}; for(const k in x){ if(/^(en|whyEn|missingEn)$/.test(k)) continue; o[k]=noEnglish(x[k]); } return o; } return x; }
  function openOpts(){ const pr=prefs();
    dialog('Options', `<div class="optgrid">
     <button class="sbtn" type="button" data-o="save">Sauvegarder</button><button class="sbtn" type="button" data-o="restore">Restaurer</button>
     <button class="sbtn" type="button" data-o="hint">Demander de l'aide (−${CFG.hintCost||2} points)</button><button class="sbtn" type="button" data-o="restart">Recommencer</button></div>
     <label class="opt"><input type="checkbox" id="optZones" ${showZones?'checked':''}> Montrer les zones (gratuit)</label>
     <label class="opt"><input type="checkbox" id="optVoice" ${pr.voice?'checked':''}> Lire les textes à voix haute (voix française)</label>
-    <label class="opt"><input type="checkbox" id="optEn" ${pr.en?'checked':''}> Aide en anglais (texte seulement : score −10 % et mention sur le diplôme)</label>
     <p class="small">Clavier : Tab pour passer d'une zone à l'autre, Entrée pour agir, clic droit pour changer d'action, Échap pour la barre d'icônes.</p>`,
    [['Reprendre',()=>{ applyOpts(); closeDlg(); }]]);
    $('#dlg').querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{ applyOpts(); const o=b.dataset.o;
      if(o==='save') openSave(); else if(o==='restore') openRestore(); else if(o==='hint'){ closeDlg(); hint(); }
      else if(o==='restart'){ dialog('Recommencer?','<p>Recommencer l\'enquête depuis le début? Vos sauvegardes sont conservées.</p>',[['Oui, recommencer',()=>{ closeDlg(); newGame(); }],['Non',openOpts]]); } }); }
- function applyOpts(){ const z=$('#optZones'); if(!z) return; showZones=z.checked; setPref('voice',$('#optVoice').checked); setPref('en',$('#optEn').checked); if($('#optEn').checked) markEn();
-   if(!$('#optVoice').checked) hush(); document.body.classList.toggle('showEn',$('#optEn').checked); drawZones(); }
+ function applyOpts(){ const z=$('#optZones'); if(!z) return; showZones=z.checked; setPref('voice',$('#optVoice').checked); 
+   if(!$('#optVoice').checked) hush(); drawZones(); }
 
  /* ---------- save / restore (several slots, plus an automatic save at each act) ---------- */
  const slotLabel=st=>`${T(ROOMS[st.roomId]?ROOMS[st.roomId].name:'')} · ${clockOf(st.clock)} · ${st.score} pts`;
@@ -206,15 +216,15 @@ const ADV=(()=>{
  async function hint(){ const h=CFG.hint?CFG.hint(G,API):null;
    if(!h) return say('Le capitaine hausse les épaules. « Vous êtes l\'enquêt{eur|rice} principal{|e}. Enquêtez. »');
    const cost=CFG.hintCost||2; G.score=Math.max(0,G.score-cost); G.hints=(G.hints||0)+1; updBar();
-   return say(h.text,{who:h.who||'Agent Thibodeaux',en:h.en}); }
+   return say(h.text,{who:h.who||'Agent Thibodeaux'}); }
 
  /* ---------- dossier: learning tasks (steps.js) in a manila folder over the scene ---------- */
  function task(steps,o={}){ steps=Array.isArray(steps)?steps:[steps]; hideBar(); hush();
-   if(prefs().en) markEn();
+   steps=noEnglish(steps);
    return new Promise(res=>{ const d=$('#dossier'); let i=0, mistakes=0;
     d.innerHTML=`<div class="folder" role="dialog" aria-modal="true" aria-label="${esc(T(o.title||'Dossier'))}">
       <div class="ftab">${esc(T(o.kind||'Dossier'))}</div>
-      <div class="fhead"><h2>${esc(T(o.title||'Dossier'))}</h2>${o.cancel?'<button class="btn" type="button" id="dosClose">Fermer le dossier</button>':''}</div>
+      <div class="fhead"><h2>${esc(T(o.title||'Dossier'))}</h2><span class="fbtns"><button class="btn" type="button" id="dosLex">Lexique</button>${o.cancel?'<button class="btn" type="button" id="dosClose">Fermer le dossier</button>':''}</span></div>
       ${o.intro?`<p class="fintro">${rich(o.intro)}</p>`:''}
       <div class="fbody"><div class="dlog" aria-live="polite"></div><div class="act"></div></div></div>`;
     d.hidden=false; setCursor();
@@ -222,11 +232,12 @@ const ADV=(()=>{
     if(o.docs) o.docs.forEach(x=>{ const c=document.createElement('div'); c.className='doc'; c.innerHTML=x; log.appendChild(c); });
     const close=(r)=>{ d.hidden=true; d.innerHTML=''; setCursor(); res(r); };
     if(o.cancel) d.querySelector('#dosClose').onclick=()=>close({cancelled:true,mistakes});
+    d.querySelector('#dosLex').onclick=()=>openLexique();
     const answers=[];
     const ctx={ act, P:profile, store:(G.writing=G.writing||{}), save:()=>{}, toast, wrong:()=>{ mistakes++; },
      docLink:()=>'', log:el=>{ log.appendChild(el); el.scrollIntoView({block:'nearest'}); },
      me:t=>{ const p=document.createElement('p'); p.className='mine'; p.textContent=fmt(t,profile); log.appendChild(p); p.scrollIntoView({block:'nearest'}); },
-     fb:(kind,fr,en)=>{ let f=act.querySelector('.fb'); if(!f){ f=document.createElement('div'); act.appendChild(f); } f.className='fb '+kind; f.innerHTML=esc(fmt(fr,profile))+(en?`<span class="en">${esc(fmt(en,profile))}</span>`:''); },
+     fb:(kind,fr)=>{ let f=act.querySelector('.fb'); if(!f){ f=document.createElement('div'); act.appendChild(f); } f.className='fb '+kind; f.innerHTML=esc(fmt(fr,profile)); },
      cont:(label,fn)=>{ act.innerHTML=''; const b=document.createElement('button'); b.className='btn primary cont'; b.type='button'; b.textContent=label||'Continuer'; b.onclick=fn; act.appendChild(b); b.focus({preventScroll:true}); },
      done:(txt,hit)=>{ answers.push({txt,hit}); i++; run(); } };
     const run=()=>{ const s=steps[i]; if(!s) return close({mistakes,answers});
@@ -234,7 +245,7 @@ const ADV=(()=>{
       if(s.t==='choose'){ act.innerHTML=`<p class="prompt">${esc(T(s.prompt))}</p><div class="opts"></div>`; const box=act.querySelector('.opts');
         STEPS.shuffle(s.opts).forEach(op=>{ const b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=op.icon?`<svg viewBox="0 0 48 48">${op.icon}</svg><span>${esc(T(op.txt))}</span>`:esc(T(op.txt));
           b.onclick=()=>{ if(op.ok||s.any){ box.querySelectorAll('button').forEach(x=>x.disabled=true); b.classList.add('right'); ctx.me(op.txt); setTimeout(()=>ctx.done(op.txt,op),500); }
-            else { b.classList.add('wrong'); b.disabled=true; mistakes++; ctx.fb('err',op.why||'Non. Relisez le dossier.',op.whyEn); } }; box.appendChild(b); }); return; }
+            else { b.classList.add('wrong'); b.disabled=true; mistakes++; ctx.fb('err',op.why||'Non. Relisez le dossier.'); } }; box.appendChild(b); }); return; }
       STEPS.run(s,ctx); };
     run(); }); }
 
@@ -276,7 +287,7 @@ const ADV=(()=>{
   note(title,text){ G.notes.push({title,text}); },
   redraw(){ G.px=player.x; G.py=player.y; G.face=player.face; enter(G.roomId,true); },
   face(f){ player.face=f; draw(player); }, T, task, autosave, toast, speak,
-  finalScore(){ return Math.round(G.score*(G.usedEn?.9:1)); }, usedEnglish:()=>!!G.usedEn,
+  finalScore(){ return G.score; },
   rank(){ const r=API.finalScore()/(CFG.maxScore||300); const R=CFG.ranks||[]; let out=R[0]; R.forEach(x=>{ if(r>=x.min) out=x; }); return out?T(out.name):''; } };
 
  /* ---------- input ---------- */
@@ -291,7 +302,7 @@ const ADV=(()=>{
   document.querySelectorAll('.vb').forEach(b=>b.addEventListener('click',()=>{ const v=b.dataset.verb, a=b.dataset.act;
     if(v) setVerb(v); else if(a==='inv') openInv(); else if(a==='note') openNotes(); else if(a==='opt') openOpts(); hideBar(); }));
   $('#bar').addEventListener('pointerleave',()=>{ if(!$('#bar').matches(':focus-within')) hideBar(); });
-  document.addEventListener('keydown',e=>{ if(!$('#msg').hidden||!$('#fail').hidden||!$('#title').hidden||!$('#dossier').hidden||!$('#create').hidden) return;
+  document.addEventListener('keydown',e=>{ if(!$('#msg').hidden||!$('#fail').hidden||!$('#title').hidden||!$('#dossier').hidden||!$('#create').hidden||!$('#lexique').hidden) return;
     if(!$('#dlg').hidden){ if(e.key==='Escape') closeDlg(); return; }
     if(e.key==='Escape'){ e.preventDefault(); if($('#bar').classList.contains('down')){ hideBar(); document.activeElement.blur(); } else { showBar(); $('#bar .vb').focus(); } return; }
     if($('#bar').matches(':focus-within')) return;
@@ -305,7 +316,6 @@ const ADV=(()=>{
  let INIT=null;
  function start(cfg){ CFG=cfg; ROOMS=cfg.rooms; ITEMS=cfg.items; profile=cfg.profile; Object.assign(G,cfg.state||{}); INIT=JSON.parse(JSON.stringify(G));
    const tag=document.createElement('div'); tag.id='kbTag'; tag.hidden=true; $('#stage').appendChild(tag);
-   document.body.classList.toggle('showEn',!!prefs().en);
    bind(); requestAnimationFrame(tick);
    const go=()=>{ room=ROOMS[cfg.first]; enterQuiet(cfg.first); showTitle(); };
    if(!profile||!profile.name){ const c=$('#create'); c.hidden=false; mountCreator(c.querySelector('.cwrap'),p=>{ profile=p; CFG.playerLook=cfg.lookFor(p); c.hidden=true; go(); }); }
