@@ -39,6 +39,11 @@ common = {'/*BASE_CSS*/': r('base.css'), '<!--DEFS-->': defs, '/*ART*/': r('art.
 (OUT / '06-bruxelles.html').write_text(page('game.html', **common, **{
     '/*TITLE*/': "La BD de l'été — Escale 6 : Bruxelles", '/*GAME_CSS*/': r('game.css'),
     '/*SCENES*/': r('bruxelles-scenes.js'), '/*DATA*/': r('bruxelles-data.js'), '/*ENGINE*/': r('../../jetons.js') + r('steps.js') + r('engine.js')}))
+# ---- Escale 7: La montagne Pelée (3D trail map; its own engine) ----
+(OUT / '07-martinique.html').write_text(page('martinique.html', **common, **{
+    '/*TITLE*/': 'La montagne Pelée — Escale 7 : Martinique', '/*GAME_CSS*/': r('game.css'), '/*MQ_CSS*/': r('martinique.css'),
+    '/*THREE*/': r('vendor/three-lite.js'), '/*STEPS*/': r('steps.js'), '/*JETONS*/': r('../../jetons.js'), '/*PELEE*/': r('pelee3d.js'),
+    '/*MQ_ENGINE*/': r('martinique-engine.js'), '/*MQ_DATA*/': r('martinique-data.js')}))
 # ---- Escale 8: L'enquête (Sierra-style adventure; its own engine) ----
 ADV_GAME = ['adv-props.js', 'enquete-data.js', 'rooms-station.js', 'rooms-musee.js', 'rooms-act2.js', 'rooms-act3.js', 'rooms-act4.js']
 adv_game_js = ''.join(r(n) for n in ADV_GAME)

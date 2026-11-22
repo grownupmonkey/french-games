@@ -1,5 +1,5 @@
-/* ===== Montagne Pelée in 3D: low-poly island terrain, sea, trail, hikers, clouds, follow camera.
-   PELEE3D.mount(el, opts) → api { setWeather(0..1), moveTo(nodeIndex) → Promise, focus(nodeIndex), setGroup(list), nodes, dispose() }
+/* ===== Montagne Pelée in 3D: low-poly island terrain, sea, trail, hikers, clouds, rain, helicopter, follow camera.
+   PELEE3D.mount(el, opts) → api (see the end of mount). PELEE2D.mount(el, opts) is the flat fallback with the same api.
    Light from the top left of the default view; flat-shaded with vertex colours (polished low-poly look). ===== */
 const PELEE3D=(()=>{
  const T=THREE;
@@ -63,7 +63,7 @@ const PELEE3D=(()=>{
   const cap=new T.Mesh(new T.CylinderGeometry(.27,.29,.14,8),M(hat)); cap.position.y=2.0;
   const brim=new T.Mesh(new T.CylinderGeometry(.3,.3,.03,8,1,false,0,Math.PI),M(hat)); brim.position.set(0,1.95,.12); brim.rotation.y=-Math.PI/2;
   [legL,legR,body,bag,head,cap,brim].forEach(o=>{ o.castShadow=true; g.add(o); });
-  g.userData.legs=[legL,legR]; g.scale.setScalar(1.5); return g; }
+  g.userData.legs=[legL,legR]; g.userData.up=[body,bag,head,cap,brim]; g.scale.setScalar(1.5); return g; }
  function signpost(){ const g=new T.Group(), wood=new T.MeshStandardMaterial({color:'#8A5A32',flatShading:true});
   const pole=new T.Mesh(new T.CylinderGeometry(.14,.17,3.6,6),wood); pole.position.y=1.8;
   const board=new T.Mesh(new T.BoxGeometry(2.4,.7,.14),new T.MeshStandardMaterial({color:'#E9D9B0',flatShading:true})); board.position.set(.6,3.1,0); const tip=new T.Mesh(new T.ConeGeometry(.35,.5,3),new T.MeshStandardMaterial({color:'#E9D9B0',flatShading:true})); tip.rotation.z=-Math.PI/2; tip.position.set(2.0,3.1,0); tip.scale.z=.4; g.add(tip); tip.castShadow=true;
@@ -79,18 +79,36 @@ const PELEE3D=(()=>{
  function cloud(){ const g=new T.Group(), mat=new T.MeshStandardMaterial({color:'#FFFFFF',flatShading:true,roughness:1,transparent:true,opacity:.92});
   const n=5+Math.floor(Math.random()*4); for(let i=0;i<n;i++){ const m=new T.Mesh(new T.IcosahedronGeometry(2+Math.random()*2.6,1),mat); m.position.set((i-n/2)*2.4+Math.random(),Math.random()*1.4,Math.random()*2.4-1.2); m.scale.y=.62; m.castShadow=false; g.add(m); }
   g.userData.mat=mat; return g; }
+
  /* the trail: from the Aileron car park (east-southeast flank) up to the summit dome */
  const TRAIL_XZ=[[44,30],[38,24],[33,17],[27,13],[24,6],[19,2],[15,-1],[11,-3],[7,-5],[4,-6]];
+ const ALT0=824, ALT1=1397;
+ function heli(){ const g=new T.Group(), M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,flatShading:true,roughness:.5,metalness:.1},o));
+  const body=new T.Mesh(new T.CapsuleGeometry(1.1,2.6,4,10),M('#D7262E')); body.rotation.z=Math.PI/2; g.add(body);
+  const belly=new T.Mesh(new T.CapsuleGeometry(1.0,2.2,4,10),M('#F2C230')); belly.rotation.z=Math.PI/2; belly.position.y=-.35; belly.scale.set(1,1,.95); g.add(belly);
+  const glass=new T.Mesh(new T.SphereGeometry(.95,10,8,0,Math.PI*2,0,Math.PI/2),M('#9FD3E8',{roughness:.1,metalness:.3})); glass.rotation.z=-Math.PI/2; glass.position.x=1.9; glass.position.y=.25; g.add(glass);
+  const tail=new T.Mesh(new T.CylinderGeometry(.18,.42,4.4,6),M('#D7262E')); tail.rotation.z=Math.PI/2; tail.position.set(-3.6,.35,0); g.add(tail);
+  const fin=new T.Mesh(new T.BoxGeometry(.9,1.3,.12),M('#F2C230')); fin.position.set(-5.6,.9,0); g.add(fin);
+  const skidM=M('#2B2D42'); for(const z of [-.9,.9]){ const sk=new T.Mesh(new T.CylinderGeometry(.07,.07,3.6,6),skidM); sk.rotation.z=Math.PI/2; sk.position.set(.2,-1.5,z); g.add(sk); for(const x of [-.8,1.1]){ const st=new T.Mesh(new T.CylinderGeometry(.06,.06,.6,5),skidM); st.position.set(x,-1.2,z*.9); g.add(st);} }
+  const rotor=new T.Group(); for(let i=0;i<4;i++){ const b=new T.Mesh(new T.BoxGeometry(6.4,.06,.32),M('#2B2D42')); b.rotation.y=i*Math.PI/4*2; rotor.add(b); } rotor.position.y=1.35; g.add(rotor);
+  const trot=new T.Group(); for(let i=0;i<2;i++){ const b=new T.Mesh(new T.BoxGeometry(1.4,.05,.16),M('#2B2D42')); b.rotation.z=i*Math.PI/2; trot.add(b);} trot.position.set(-5.6,.9,.2); trot.rotation.x=Math.PI/2; g.add(trot);
+  const cable=new T.Mesh(new T.CylinderGeometry(.03,.03,1,4),M('#E8E8E8')); cable.position.set(.4,-1.3,0); cable.visible=false; g.add(cable);
+  const litter=new T.Group(); const lb=new T.Mesh(new T.BoxGeometry(2.2,.18,.8),M('#F07A2A')); litter.add(lb); litter.visible=false; g.add(litter);
+  const rescuer=hiker('#D7262E','#2B2D42','#C38862','#F4F4F4'); rescuer.scale.setScalar(.75); rescuer.visible=false; g.add(rescuer);
+  g.traverse(o=>{ if(o.isMesh) o.castShadow=true; }); g.userData={rotor,trot,cable,litter,rescuer}; g.scale.setScalar(1.15); return g; }
+ function snake(){ const pts=[]; for(let i=0;i<14;i++) pts.push(new T.Vector3(i*.22,0,Math.sin(i*.9)*.25));
+  const m=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts),40,.09,6,false),new T.MeshStandardMaterial({color:'#7A6A3A',flatShading:true,roughness:.7}));
+  const head=new T.Mesh(new T.ConeGeometry(.16,.36,4),new T.MeshStandardMaterial({color:'#6A5A2E',flatShading:true})); head.rotation.z=-Math.PI/2; head.position.set(3.1,0,Math.sin(13*.9)*.25); const g=new T.Group(); g.add(m); g.add(head); g.traverse(o=>{if(o.isMesh)o.castShadow=true;}); return g; }
  function mount(el,opts={}){
-  const W=()=>el.clientWidth, H=()=>el.clientHeight;
+  const W=()=>el.clientWidth||1280, H=()=>el.clientHeight||800;
   const renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});
   renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); renderer.setSize(W(),H()); renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05; renderer.shadowMap.enabled=true; renderer.shadowMap.type=T.PCFSoftShadowMap;
-  el.appendChild(renderer.domElement); renderer.domElement.style.display='block';
-  const scene=new T.Scene(), sky=new T.Color('#9FD3E8'); scene.background=sky; scene.fog=new T.Fog(sky,120,420);
+  el.appendChild(renderer.domElement); renderer.domElement.style.display='block'; renderer.domElement.setAttribute('aria-hidden','true');
+  const scene=new T.Scene(), SKY=new T.Color('#9FD3E8'), GREY=new T.Color('#B9C2C6'); scene.background=SKY.clone(); scene.fog=new T.Fog(SKY.clone(),120,420);
   const cam=new T.PerspectiveCamera(42,W()/H(),.5,1200);
   scene.add(new T.HemisphereLight('#DDF2FF','#4A5A3A',.85));
-  const sun=new T.DirectionalLight('#FFF1D6',2.4); sun.position.set(-70,130,110); sun.castShadow=true;   // top left of the default view
+  const sun=new T.DirectionalLight('#FFF1D6',2.4); sun.position.set(-70,130,110); sun.castShadow=true;
   Object.assign(sun.shadow.camera,{left:-90,right:90,top:90,bottom:-90,near:10,far:400}); sun.shadow.mapSize.set(2048,2048); sun.shadow.bias=-.0008; sun.shadow.normalBias=.4; scene.add(sun);
   const ground=terrain(); scene.add(ground); const water=sea(); scene.add(water);
   /* vegetation (instanced: a few draw calls for the whole forest): rainforest low, tree ferns higher, bare mossy summit */
@@ -119,48 +137,139 @@ const PELEE3D=(()=>{
     for(const k of [-1,1]){ const x=sp[i].x+nx*k, z=sp[i].z+nz*k; pos.push(x,height(x,z)+.12,z); } if(i) idx.push((i-1)*2,(i-1)*2+1,i*2, (i-1)*2+1,i*2+1,i*2); }
    const rg=new T.BufferGeometry(); rg.setAttribute('position',new T.Float32BufferAttribute(pos,3)); rg.setIndex(idx); rg.computeVertexNormals();
    const rib=new T.Mesh(rg,new T.MeshStandardMaterial({color:'#E3C98F',roughness:1,side:T.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2})); rib.receiveShadow=true; scene.add(rib); }
-  const nodes=opts.nodes||[0,3,5,7,9];
-  const nodePos=nodes.map(i=>pts[i].clone());
-  nodePos.forEach((p,i)=>{ const s=signpost(); s.position.copy(p).add(new T.Vector3(1.4,-.25,0)); s.rotation.y=-.6; scene.add(s); });
-  /* group of hikers */
-  const looks=opts.group||[['#C8102E','#2B2D42','#8D5524','#F2C46D'],['#2A9D8F','#E9A93A','#5A3A22','#E9E4D6'],['#5B5F80','#7FD6C8','#C68642','#2B2D42']];
+  const at=u=>{ const p=curve.getPointAt(Math.max(0,Math.min(1,u))); p.y=height(p.x,p.z); return p; };
+  const hSum=height(SUMMIT.x,SUMMIT.z), h0=at(0).y;
+  /* signposts (clickable) */
+  const label=txt=>{ const c=document.createElement('canvas'); c.width=512; c.height=160; const x=c.getContext('2d'); x.fillStyle='#E9D9B0'; x.fillRect(0,0,512,160); x.strokeStyle='#8A5A32'; x.lineWidth=10; x.strokeRect(5,5,502,150);
+   x.fillStyle='#2B2D42'; x.textAlign='center'; x.font='700 58px Georgia,serif'; x.fillText(txt[0],256,72); x.font='600 44px Arial,sans-serif'; x.fillText(txt[1]||'',256,132); const t=new T.CanvasTexture(c); t.colorSpace=T.SRGBColorSpace; t.anisotropy=4; return t; };
+  const signs=(opts.signs||[]).map(sg=>{ const o=signpost(); if(sg.txt){ const pl=new T.Mesh(new T.PlaneGeometry(2.3,.66),new T.MeshBasicMaterial({map:label(sg.txt)})); pl.position.set(.6,3.1,.075); o.add(pl); const pl2=pl.clone(); pl2.rotation.y=Math.PI; pl2.position.z=-.075; o.add(pl2); } const p=at(sg.u); const q=at(Math.min(1,sg.u+.01)); const side=new T.Vector3(q.z-p.z,0,p.x-q.x).normalize().multiplyScalar(1.8);
+   o.position.set(p.x+side.x,height(p.x+side.x,p.z+side.z)-.2,p.z+side.z); o.lookAt(q.x,o.position.y,q.z); o.rotateY(Math.PI/2); o.userData.key=sg.key; scene.add(o);
+   const glow=new T.Mesh(new T.RingGeometry(1.2,1.7,24),new T.MeshBasicMaterial({color:'#F2C46D',transparent:true,opacity:0,side:T.DoubleSide,depthWrite:false})); glow.rotation.x=-Math.PI/2; glow.position.copy(o.position).add(new T.Vector3(0,.25,0)); scene.add(glow); o.userData.glow=glow; return o; });
+  /* hikers: the traveller first, then Joëlle, Kévin, M. Lefèvre */
+  const looks=opts.group||[['#C8102E','#2B2D42','#8D5524','#F2C46D'],['#2A9D8F','#E9A93A','#5A3A22','#E9E4D6'],['#5B5F80','#7FD6C8','#C68642','#2B2D42'],['#8C4A3A','#77804F','#F0C9A8','#E9E4D6']];
   const group=looks.map(l=>{ const h=hiker(...l); scene.add(h); return h; });
   const ring=new T.Mesh(new T.RingGeometry(1.1,1.45,28),new T.MeshBasicMaterial({color:'#F2C46D',transparent:true,opacity:.9,side:T.DoubleSide,depthWrite:false})); ring.rotation.x=-Math.PI/2; scene.add(ring);
-  let along=0; const placeGroup=(t,phase)=>{ group.forEach((h,i)=>{ const u=Math.max(0,Math.min(1,t-i*.022+(t<.03?.044:0))); const p=curve.getPointAt(u), q=curve.getPointAt(Math.min(1,u+.004));
-    p.y=height(p.x,p.z); h.position.copy(p); h.lookAt(q.x,p.y,q.z); 
+  const lamp=new T.PointLight('#FFF4C8',0,30,1.6); scene.add(lamp); const lampBulb=new T.Mesh(new T.SphereGeometry(.12,8,6),new T.MeshBasicMaterial({color:'#FFF4C8'})); lampBulb.visible=false; scene.add(lampBulb);
+  const pose={}; let dir=1;
+  let along=opts.start||0;
+  function placeGroup(t,phase){ group.forEach((h,i)=>{ if(h.userData.gone) return; const u=Math.max(0,Math.min(1,t-dir*i*.022)); const p=at(u), q=at(u+dir*.006);
+    if(pose[i]==='sit'){ const s=at(u); h.position.set(s.x+1.4,height(s.x+1.4,s.z)-.35,s.z); h.userData.up.forEach(o=>o.rotation.x=-.25); h.userData.legs.forEach(l=>{ l.rotation.x=-1.4; l.position.z=.35; }); return; }
+    h.position.copy(p); if(Math.hypot(q.x-p.x,q.z-p.z)>.01) h.lookAt(q.x,p.y,q.z);
     const sw=Math.sin(phase*9+i)*.5*(phase?1:0); h.userData.legs[0].rotation.x=sw; h.userData.legs[1].rotation.x=-sw; });
-   ring.position.copy(group[0].position); ring.position.y+=.15; };
-  placeGroup(0,0);
-  /* clouds that drift around the summit; more and lower in bad weather */
+   ring.position.copy(group[0].position); ring.position.y+=.15; lamp.position.copy(group[0].position).add(new T.Vector3(0,3.4,0)); lampBulb.position.copy(group[0].position).add(new T.Vector3(0,3.0,.3)); }
+  placeGroup(along,0);
+  /* clouds; rain */
   const clouds=[]; for(let i=0;i<16;i++){ const c=cloud(); const a=i/16*6.28, r=26+hash(i,9)*40; c.position.set(SUMMIT.x+Math.cos(a)*r,34+hash(i,8)*14,SUMMIT.z+Math.sin(a)*r); c.userData.a=a; c.userData.r=r; c.userData.y=c.position.y; scene.add(c); clouds.push(c); }
-  let weather=opts.weather||0;
-  function setWeather(w){ weather=Math.max(0,Math.min(1,w)); }
-  /* follow camera with drag-to-orbit */
-  let yaw=.72, pitch=.5, dist=62, tgt=new T.Vector3(), camGoal=new T.Vector3();
-  let drag=null; el.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,yaw,pitch}; el.setPointerCapture(e.pointerId); });
-  el.addEventListener('pointermove',e=>{ if(!drag) return; yaw=drag.yaw-(e.clientX-drag.x)*.006; pitch=Math.max(.25,Math.min(1.25,drag.pitch+(e.clientY-drag.y)*.005)); });
-  el.addEventListener('pointerup',()=>drag=null);
-  el.addEventListener('wheel',e=>{ e.preventDefault(); dist=Math.max(26,Math.min(120,dist*(e.deltaY>0?1.08:.93))); },{passive:false});
+  const RN=1400, rpos=new Float32Array(RN*6); const rainGeo=new T.BufferGeometry(); rainGeo.setAttribute('position',new T.BufferAttribute(rpos,3));
+  const rain=new T.LineSegments(rainGeo,new T.LineBasicMaterial({color:'#DDE6EE',transparent:true,opacity:.55})); rain.visible=false; rain.frustumCulled=false; scene.add(rain);
+  const rseed=[]; for(let i=0;i<RN;i++) rseed.push([(hash(i,21)-.5)*60,hash(i,22)*30,(hash(i,23)-.5)*60]);
+  let weather=opts.weather||0, raining=false;
+  /* helicopter and snake */
+  const hc=heli(); hc.visible=false; scene.add(hc); let heliAnim=null;
+  const sn=snake(); sn.visible=false; scene.add(sn); let snakeAnim=null;
+  /* camera: follows the traveller; drag to orbit, wheel to zoom */
+  let yaw=.72, pitch=.5, dist=62, tgt=new T.Vector3(), camGoal=new T.Vector3(), camOverride=null;
+  let drag=null, dragMoved=false;
+  el.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,yaw,pitch}; dragMoved=false; });
+  el.addEventListener('pointermove',e=>{ if(!drag) return; if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y)>5) dragMoved=true; yaw=drag.yaw-(e.clientX-drag.x)*.006; pitch=Math.max(.22,Math.min(1.25,drag.pitch+(e.clientY-drag.y)*.005)); });
+  el.addEventListener('pointerup',e=>{ const wasDrag=dragMoved; drag=null; if(!wasDrag) clickAt(e); });
+  el.addEventListener('wheel',e=>{ e.preventDefault(); dist=Math.max(22,Math.min(120,dist*(e.deltaY>0?1.08:.93))); },{passive:false});
+  const ray=new T.Raycaster(), mouse=new T.Vector2(); let pickRes=null, pickKeys=null;
+  function clickAt(e){ if(!pickRes) return; const r=renderer.domElement.getBoundingClientRect(); mouse.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(mouse,cam);
+   const hits=ray.intersectObjects(signs,true); if(!hits.length) return; let o=hits[0].object; while(o&&!o.userData.key) o=o.parent; if(o&&pickKeys.includes(o.userData.key)){ const r2=pickRes; pickRes=null; signs.forEach(s=>s.userData.glow.material.opacity=0); r2(o.userData.key); } }
   let walking=null, clock=new T.Clock(), running=true, phase=0;
-  function moveTo(k){ const to=curve.getUtoTmapping?0:0; const goal=k/(nodes.length-1)*0+(nodes[k]/(pts.length-1));
-   return new Promise(res=>{ walking={from:along,to:goal,t:0,dur:Math.max(1.2,Math.abs(goal-along)*14),res}; }); }
-  function focus(k){ along=nodes[k]/(pts.length-1); placeGroup(along,0); }
   function frame(){ if(!running) return; const dt=Math.min(.05,clock.getDelta()), t=clock.elapsedTime;
    if(walking){ walking.t+=dt/walking.dur; const e=walking.t<1?(1-Math.cos(walking.t*Math.PI))/2:1; along=walking.from+(walking.to-walking.from)*e; phase+=dt; placeGroup(along,phase);
     if(walking.t>=1){ const r=walking.res; walking=null; placeGroup(along,0); r(); } }
-   const lead=group[0].position; const look=new T.Vector3(lead.x+(SUMMIT.x-lead.x)*.3,lead.y+3,lead.z+(SUMMIT.z-lead.z)*.3); tgt.lerp(look,.06);
-   camGoal.set(tgt.x+Math.cos(yaw)*Math.cos(pitch)*dist, tgt.y+Math.sin(pitch)*dist, tgt.z+Math.sin(yaw)*Math.cos(pitch)*dist);
+   const lead=group[0].position;
+   if(camOverride){ tgt.lerp(camOverride.tgt,.04); camGoal.copy(camOverride.pos(t)); }
+   else { const look=new T.Vector3(lead.x+(SUMMIT.x-lead.x)*.3*dir,lead.y+3,lead.z+(SUMMIT.z-lead.z)*.3*dir); tgt.lerp(look,.06);
+    const dd=dist*(1-weather*.45); camGoal.set(tgt.x+Math.cos(yaw)*Math.cos(pitch)*dd, tgt.y+Math.sin(pitch)*dd, tgt.z+Math.sin(yaw)*Math.cos(pitch)*dd); }
    cam.position.lerp(camGoal,.08); cam.lookAt(tgt);
-   clouds.forEach((c,i)=>{ c.userData.a+=dt*.01*(1+weather); const r=c.userData.r*(1-weather*.45); c.position.x=SUMMIT.x+Math.cos(c.userData.a)*r; c.position.z=SUMMIT.z+Math.sin(c.userData.a)*r;
-    c.position.y+=((c.userData.y-weather*12)-c.position.y)*.02; c.userData.mat.color.setRGB(1-weather*.25,1-weather*.24,1-weather*.2); c.visible=c.position.distanceTo(cam.position)>26; });
-   const fc=new T.Color('#9FD3E8').lerp(new T.Color('#B9C2C6'),weather); scene.background=fc; scene.fog.color=fc; scene.fog.near=120-weather*110; scene.fog.far=420-weather*360;
+   clouds.forEach(c=>{ c.userData.a+=dt*.01*(1+weather); const r=c.userData.r*(1-weather*.45); c.position.x=SUMMIT.x+Math.cos(c.userData.a)*r; c.position.z=SUMMIT.z+Math.sin(c.userData.a)*r;
+    c.position.y+=((c.userData.y-weather*12)-c.position.y)*.02; c.userData.mat.color.setRGB(1-weather*.25,1-weather*.24,1-weather*.2); c.userData.mat.opacity=Math.max(.12,.92-weather*.85); c.visible=c.position.distanceTo(cam.position)>26&&c.userData.mat.opacity>.13; });
+   const fc=SKY.clone().lerp(GREY,weather); scene.background.copy(fc); scene.fog.color.copy(fc); scene.fog.near=120-weather*110; scene.fog.far=420-weather*362;
    sun.intensity=2.4-weather*1.7; const U=water.userData.mat.uniforms; U.uTime.value=t; U.uFog.value.copy(fc); U.uNear.value=scene.fog.near; U.uFar.value=scene.fog.far;
+   if(raining){ for(let i=0;i<RN;i++){ const s=rseed[i]; let y=(s[1]-t*22)%30; if(y<0) y+=30; const x=lead.x+s[0], z=lead.z+s[2], yy=lead.y+y-4; rpos.set([x,yy,z,x-.15,yy-1.1,z],i*6); } rainGeo.attributes.position.needsUpdate=true; }
+   if(pickRes) signs.forEach(s=>{ if(pickKeys.includes(s.userData.key)) s.userData.glow.material.opacity=.45+.4*Math.sin(t*5); });
+   if(heliAnim) heliAnim(dt,t); if(snakeAnim) snakeAnim(dt,t);
+   if(hc.visible){ hc.userData.rotor.rotation.y+=dt*28; hc.userData.trot.rotation.y+=dt*40; }
+   if(lampBulb.visible) lamp.intensity=40+8*Math.sin(t*20);
    renderer.render(scene,cam); requestAnimationFrame(frame); }
   { const lead=group[0].position; tgt.set(lead.x+(SUMMIT.x-lead.x)*.3,lead.y+3,lead.z+(SUMMIT.z-lead.z)*.3); cam.position.set(tgt.x+Math.cos(yaw)*Math.cos(pitch)*dist, tgt.y+Math.sin(pitch)*dist, tgt.z+Math.sin(yaw)*Math.cos(pitch)*dist); }
   frame();
   const ro=new ResizeObserver(()=>{ renderer.setSize(W(),H()); cam.aspect=W()/H(); cam.updateProjectionMatrix(); }); ro.observe(el);
-  return { setWeather, moveTo, focus, nodes:nodePos, get yaw(){return yaw;}, dispose(){ running=false; ro.disconnect(); renderer.dispose(); el.innerHTML=''; } };
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  return {
+   /* walk the group to trail position u (0 = car park, 1 = summit); resolves on arrival */
+   walkTo(u,speed=1){ dir=u>=along?1:-1; return new Promise(res=>{ walking={from:along,to:u,t:0,dur:Math.max(1.2,Math.abs(u-along)*16/speed),res}; }); },
+   setAt(u,d){ along=u; if(d) dir=d; placeGroup(along,0); },
+   get u(){ return along; },
+   altitude(){ const h=group[0].position.y; return Math.min(ALT1,Math.round(ALT0+(h-h0)/(hSum-h0)*(ALT1-ALT0))); },
+   setWeather(w){ weather=Math.max(0,Math.min(1,w)); }, get weather(){ return weather; },
+   rain(on){ raining=!!on; rain.visible=raining; },
+   /* highlight the given signposts; resolves with the key of the one clicked */
+   pickSign(keys){ pickKeys=keys; return new Promise(r=>pickRes=r); },
+   cancelPick(){ pickRes=null; signs.forEach(s=>s.userData.glow.material.opacity=0); },
+   _pick(k){ if(pickRes){ const r=pickRes; pickRes=null; signs.forEach(s=>s.userData.glow.material.opacity=0); r(k); } },
+   sit(i,on){ pose[i]=on?'sit':null; if(!on){ const h=group[i]; h.userData.up.forEach(o=>o.rotation.x=0); h.userData.legs.forEach(l=>{ l.rotation.x=0; l.position.z=0; }); } placeGroup(along,0); },
+   lamp(on){ lampBulb.visible=!!on; if(!on) lamp.intensity=0; },
+   orbit(on){ if(!on){ camOverride=null; return; } const c=group[0].position.clone(); camOverride={tgt:c.clone().add(new T.Vector3(0,4,0)),pos:t=>new T.Vector3(c.x+Math.cos(t*.25)*36,c.y+22,c.z+Math.sin(t*.25)*36)}; },
+   showSnake(){ const p=group[2].position; sn.position.set(p.x-4,height(p.x-4,p.z+1)+.08,p.z+1); sn.visible=true; snakeAnim=null; },
+   hideSnake(){ return new Promise(res=>{ let k=0; snakeAnim=dt=>{ k+=dt; sn.position.x-=dt*2.2; sn.position.y=height(sn.position.x,sn.position.z)+.08; if(k>2.4){ sn.visible=false; snakeAnim=null; res(); } }; }); },
+   /* the rescue: fly in, hover, winch the rescuer down, lift the injured hiker (index i), fly away */
+   async rescue(i,onPhase){ const target=group[i].position.clone(), U=hc.userData; const hover=target.clone().add(new T.Vector3(0,14,0)); const start=target.clone().add(new T.Vector3(-90,40,60));
+    hc.position.copy(start); hc.visible=true; this.orbit(true); const lerpTo=(to,sec)=>new Promise(r=>{ const from=hc.position.clone(); let k=0; heliAnim=dt=>{ k+=dt/sec; const e=Math.min(1,k), s=(1-Math.cos(e*Math.PI))/2; hc.position.lerpVectors(from,to,s); hc.lookAt(to.x,hc.position.y,to.z); hc.rotateY(-Math.PI/2); if(e>=1){ heliAnim=null; r(); } }; });
+    await lerpTo(hover,6); onPhase&&onPhase('hover');
+    U.cable.visible=true; U.rescuer.visible=true; const drop=(from,to,sec,lift)=>new Promise(r=>{ let k=0; heliAnim=dt=>{ k+=dt/sec; const e=Math.min(1,k); const L=from+(to-from)*e; U.cable.scale.y=L; U.cable.position.y=-1.3-L/2; U.rescuer.position.set(.4,-1.3-L-1.6,0); if(lift){ U.litter.visible=true; U.litter.position.set(.4,-1.3-L-.3,0);} if(e>=1){ heliAnim=null; r(); } }; });
+    await drop(.1,10.4,3.5); onPhase&&onPhase('down'); await wait(900);
+    group[i].visible=false; group[i].userData.gone=true; pose[i]=null; await drop(10.4,.4,4,true); U.cable.visible=false; U.rescuer.visible=false; onPhase&&onPhase('up');
+    await lerpTo(target.clone().add(new T.Vector3(70,36,80)),6); hc.visible=false; this.orbit(false); onPhase&&onPhase('gone'); },
+   dispose(){ running=false; ro.disconnect(); renderer.dispose(); el.innerHTML=''; }
+  };
  }
  function supported(){ try{ const c=document.createElement('canvas'); return !!(window.WebGLRenderingContext&&(c.getContext('webgl2')||c.getContext('webgl'))); }catch(e){ return false; } }
  return { mount, supported, height };
+})();
+
+/* ===== Flat fallback map (no WebGL, or « Carte simple »): same api, painted SVG trail seen from above. ===== */
+const PELEE2D=(()=>{
+ function mount(el,opts={}){
+  const P=[[820,560],[760,500],[700,420],[640,370],[600,300],[540,250],[480,210],[420,180],[360,160],[310,150]];
+  const path='M'+P.map(p=>p.join(',')).join(' L');
+  el.innerHTML=`<svg viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block" aria-hidden="true">
+   <defs><radialGradient id="pz" cx="30%" cy="20%" r="80%"><stop offset="0" stop-color="#A9A867"/><stop offset=".35" stop-color="#5E8F3E"/><stop offset=".7" stop-color="#2F6B3A"/><stop offset="1" stop-color="#255A30"/></radialGradient>
+   <linearGradient id="ps" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F8FB0"/><stop offset="1" stop-color="#0D3F6A"/></linearGradient></defs>
+   <rect width="1280" height="800" fill="url(#ps)"/><path d="M80,800 C60,520 140,200 360,90 C560,0 900,60 1080,240 C1220,380 1260,620 1220,800 Z" fill="#E8D29A"/>
+   <path d="M100,800 C84,530 160,216 366,108 C560,20 890,76 1062,250 C1196,388 1236,620 1196,800 Z" fill="url(#pz)"/>
+   ${[[310,150,60],[310,150,120],[310,150,190],[310,150,270]].map(([x,y,r],i)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#24502A" stroke-width="2" opacity="${.35-i*.06}"/>`).join('')}
+   <circle cx="310" cy="150" r="26" fill="#9A8C7C"/><path d="${path}" fill="none" stroke="#E3C98F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+   <g id="p2signs"></g><g id="p2grp"><circle r="16" fill="#F2C46D" opacity=".85"/><circle r="9" fill="#C8102E" stroke="#fff" stroke-width="3"/></g>
+   <g id="p2heli" visibility="hidden"><ellipse rx="34" ry="12" fill="#D7262E"/><rect x="-60" y="-3" width="120" height="6" fill="#2B2D42"/></g>
+   <rect id="p2fog" width="1280" height="800" fill="#B9C2C6" opacity="0"/><g id="p2rain" opacity="0">${Array.from({length:120},(_,i)=>`<path d="M${(i*97)%1280},${(i*53)%800} l-6,18" stroke="#DDE6EE" stroke-width="2"/>`).join('')}</g></svg>`;
+  const svg=el.querySelector('svg'), grp=svg.querySelector('#p2grp'), fog=svg.querySelector('#p2fog');
+  const lens=[0]; for(let i=1;i<P.length;i++) lens.push(lens[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1])); const L=lens[lens.length-1];
+  const pt=u=>{ const d=Math.max(0,Math.min(1,u))*L; let i=1; while(i<P.length-1&&lens[i]<d) i++; const k=(d-lens[i-1])/(lens[i]-lens[i-1]||1); return [P[i-1][0]+(P[i][0]-P[i-1][0])*k,P[i-1][1]+(P[i][1]-P[i-1][1])*k]; };
+  let along=opts.start||0, weather=0, pickRes=null, pickKeys=null;
+  const signsG=svg.querySelector('#p2signs');
+  (opts.signs||[]).forEach(s=>{ const [x,y]=pt(s.u); signsG.insertAdjacentHTML('beforeend',`<g class="p2s" data-k="${s.key}" transform="translate(${x+18} ${y-10})" style="cursor:pointer"><circle r="18" fill="#F2C46D" opacity="0" class="gl"/><rect x="-3" y="-6" width="6" height="28" fill="#8A5A32"/><rect x="-4" y="-18" width="34" height="14" rx="2" fill="#E9D9B0" stroke="#8A5A32"/></g>`); });
+  signsG.addEventListener('click',e=>{ const g=e.target.closest('.p2s'); if(!g||!pickRes||!pickKeys.includes(g.dataset.k)) return; const r=pickRes; pickRes=null; signsG.querySelectorAll('.gl').forEach(c=>c.setAttribute('opacity',0)); r(g.dataset.k); });
+  const place=()=>{ const [x,y]=pt(along); grp.setAttribute('transform',`translate(${x} ${y})`); }; place();
+  const ALT=[824,1397];
+  return {
+   walkTo(u){ return new Promise(res=>{ const from=along, dur=Math.max(800,Math.abs(u-from)*9000), t0=performance.now(); const step=n=>{ const k=Math.min(1,(n-t0)/dur); along=from+(u-from)*(1-Math.cos(k*Math.PI))/2; place(); k<1?requestAnimationFrame(step):res(); }; requestAnimationFrame(step); }); },
+   setAt(u){ along=u; place(); }, get u(){ return along; },
+   altitude(){ return Math.round(ALT[0]+(ALT[1]-ALT[0])*Math.pow(along,.85)); },
+   setWeather(w){ weather=w; fog.setAttribute('opacity',(w*.62).toFixed(2)); }, get weather(){ return weather; },
+   rain(on){ svg.querySelector('#p2rain').setAttribute('opacity',on?.8:0); },
+   pickSign(keys){ pickKeys=keys; signsG.querySelectorAll('.p2s').forEach(g=>{ if(keys.includes(g.dataset.k)) g.querySelector('.gl').setAttribute('opacity',.7); }); return new Promise(r=>pickRes=r); },
+   cancelPick(){ pickRes=null; signsG.querySelectorAll('.gl').forEach(c=>c.setAttribute('opacity',0)); },
+   _pick(k){ if(pickRes){ const r=pickRes; pickRes=null; r(k); } },
+   sit(){}, lamp(){}, orbit(){}, showSnake(){}, hideSnake(){ return Promise.resolve(); },
+   async rescue(i,onPhase){ const h=svg.querySelector('#p2heli'); h.setAttribute('visibility','visible'); const [x,y]=pt(along); const fly=(x0,y0,x1,y1,ms)=>new Promise(r=>{ const t0=performance.now(); const st=n=>{ const k=Math.min(1,(n-t0)/ms); h.setAttribute('transform',`translate(${x0+(x1-x0)*k} ${y0+(y1-y0)*k})`); k<1?requestAnimationFrame(st):r(); }; requestAnimationFrame(st); });
+    await fly(-100,100,x,y-40,3000); onPhase&&onPhase('hover'); await new Promise(r=>setTimeout(r,1500)); onPhase&&onPhase('down'); await new Promise(r=>setTimeout(r,1200)); onPhase&&onPhase('up'); await fly(x,y-40,1400,-100,3000); h.setAttribute('visibility','hidden'); onPhase&&onPhase('gone'); },
+   dispose(){ el.innerHTML=''; }
+  };
+ }
+ return { mount };
 })();
