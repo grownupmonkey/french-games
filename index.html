@@ -214,7 +214,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
 
 /* ===== mystery box ===== */
 .gx{text-align:center;min-height:430px;display:flex;flex-direction:column;align-items:center}
-.arena{position:relative;width:min(380px,80vw);height:300px;margin:6px auto 0}
+.arena{position:relative;width:min(380px,80vw);height:300px;margin:6px auto 0;pointer-events:none}
 .rays{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 8deg,var(--rg,#F2C14E) 10deg 20deg,transparent 22deg 40deg,var(--rg,#F2C14E) 42deg 52deg,transparent 54deg 72deg,var(--rg,#F2C14E) 74deg 84deg,transparent 86deg 104deg,var(--rg,#F2C14E) 106deg 116deg,transparent 118deg 140deg,var(--rg,#F2C14E) 142deg 152deg,transparent 154deg 180deg,var(--rg,#F2C14E) 182deg 192deg,transparent 194deg 220deg,var(--rg,#F2C14E) 222deg 232deg,transparent 234deg 260deg,var(--rg,#F2C14E) 262deg 272deg,transparent 274deg 300deg,var(--rg,#F2C14E) 302deg 312deg,transparent 314deg 340deg,var(--rg,#F2C14E) 342deg 352deg,transparent 354deg);opacity:0;-webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%);transform:scale(.3)}
 .arena.go .rays{opacity:.8;animation:spin 8s linear infinite,rayin .6s var(--ease) both}
 @keyframes spin{to{rotate:360deg}}
@@ -246,7 +246,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
 @keyframes flash{0%{opacity:.95}100%{opacity:0}}
 .gmsg{min-height:54px;margin:8px 0 6px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:clamp(18px,2.4vw,26px)}
 .gmsg small{display:block;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:15px;opacity:.85}
-.gbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.gbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;position:relative;z-index:6}
 .btn2{background:var(--gold);color:var(--ink);border:0;border-radius:999px;padding:11px 26px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:20px;cursor:pointer;box-shadow:0 5px 0 #b98a1f}
 .btn2:active{transform:translateY(4px);box-shadow:0 1px 0 #b98a1f}
 .btn2.alt{background:transparent;color:var(--cream);box-shadow:none;border:3px solid var(--cream)}
@@ -322,7 +322,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
       <button class="arrow" id="zout" aria-label="Zoom arrière">−</button>
     </div>
     <a class="pill passlink" id="passLink" href="20-3y/voyage.html">✈ Mon passeport · continuer le voyage</a>
-    <div class="flight" id="flightHud" hidden><span class="big">✈ Calgary → <span id="fto"></span></span></div>
+    <div class="flight" id="flightHud" hidden><span class="big">✈ <span id="ffrom">Calgary</span> → <span id="fto"></span></span></div>
     <button class="pill skip" id="skip" hidden>Passer le vol ⏭</button>
     <div class="landing" id="landing">
       <div class="stampfx">TAMPON<br>✓</div>
@@ -853,7 +853,8 @@ function goGlobe(){
   screen = 'globe'; $('back').hidden = false;
   showView('globe');
   swapText($('headline'), 'Choisis ta destination');
-  swapText($('sub'), 'Tourne le globe, puis clique un lieu. Ton avion décolle de Calgary !');
+  setOrigin();
+  swapText($('sub'), 'Tourne le globe, puis clique un lieu. Ton avion décolle de ' + ORIG.name + ' !');
   globeReset();
 }
 $('back').addEventListener('click', () => {
@@ -899,6 +900,22 @@ const ISLANDS = { type:'FeatureCollection', features:[ { type:'Feature', geometr
 const GRAT = d3.geoGraticule10();
 const PLANE = new Path2D('M24 0 L-16 -14 L-6 0 L-16 14 Z'), FOLD = new Path2D('M24 0 L-6 0 L-16 14 Z');
 const HOME_C = [HOME.lon, HOME.lat];
+/* The plane leaves from the last stop the player stamped in their passport (saved by the 20-3Y pages),
+   or from Calgary when there is none. */
+let ORIG = { name:HOME.name, lon:HOME.lon, lat:HOME.lat, scene:null }, ORIG_C = HOME_C;
+function setOrigin(){
+  let o = null;
+  try {
+    const v = JSON.parse(localStorage.getItem('jeuxFr20.voyage') || 'null'), done = v && v.done;
+    if (done){
+      const find = id => GAMES_20.find(g => g.scene === id && done[id]);
+      o = (v.last && find(v.last)) || null;
+      for (let i = GAMES_20.length - 1; !o && i >= 0; i--) if (done[GAMES_20[i].scene]) o = GAMES_20[i];
+    }
+  } catch(e){}
+  ORIG = o ? { name:o.place, lon:o.lon, lat:o.lat, scene:o.scene } : { name:HOME.name, lon:HOME.lon, lat:HOME.lat, scene:null };
+  ORIG_C = [ORIG.lon, ORIG.lat];
+}
 const G = { w:0, h:0, dpr:1, R0:300, cam:{ c:[-48, 33], R:300 }, anim:null, flight:null, drag:null, vel:[0,0], hot:false, active:false, last:0 };
 
 function globeResize(){
@@ -1002,7 +1019,7 @@ function drawGlobe(now){
   gx.beginPath(); gpath(BORDERS); gx.strokeStyle = 'rgba(20,28,48,.28)'; gx.lineWidth = .8; gx.stroke();
   // routes from Calgary
   gx.save(); gx.setLineDash([3, 8]); gx.lineCap = 'round'; gx.lineWidth = 2;
-  GAMES_20.forEach(d => { gx.beginPath(); gpath({ type:'LineString', coordinates:[HOME_C, [d.lon, d.lat]] }); gx.strokeStyle = d.open ? 'rgba(251,243,228,.6)' : 'rgba(251,243,228,.2)'; gx.stroke(); });
+  GAMES_20.forEach(d => { gx.beginPath(); gpath({ type:'LineString', coordinates:[ORIG_C, [d.lon, d.lat]] }); gx.strokeStyle = d.open ? 'rgba(251,243,228,.6)' : 'rgba(251,243,228,.2)'; gx.stroke(); });
   gx.restore();
   // flight trail
   const F = G.flight;
@@ -1093,16 +1110,16 @@ function globeTick(now){
   drawGlobe(now); placePins();
 }
 
-/* ---------- plane flight Calgary → destination ---------- */
+/* ---------- plane flight: last stamped stop (or Calgary) → destination ---------- */
 function startFlight(d){
   if (G.flight) return;
-  G.flight = { d, phase:'prep', it:d3.geoInterpolate(HOME_C, [d.lon, d.lat]) };
+  G.flight = { d, phase:'prep', it:d3.geoInterpolate(ORIG_C, [d.lon, d.lat]) };
   $('landing').classList.remove('show');
-  $('fto').textContent = d.place; $('flightHud').hidden = false; $('skip').hidden = false;
-  if (reduceMotion){ landFlight(); return; }
-  camTo(HOME.lon, HOME.lat, G.R0 * 1.5, 900, () => {
-    const dist = d3.geoDistance(HOME_C, [d.lon, d.lat]);
-    G.flight.phase = 'fly'; G.flight.t0 = performance.now(); G.flight.dur = clamp(2300 + dist * 1500, 2800, 5200); G.flight.e = 0; G.flight.p = 0; G.flight.pos = HOME_C;
+  $('ffrom').textContent = ORIG.name; $('fto').textContent = d.place; $('flightHud').hidden = false; $('skip').hidden = false;
+  if (reduceMotion || ORIG.scene === d.scene){ landFlight(); return; }
+  camTo(ORIG.lon, ORIG.lat, G.R0 * 1.5, 900, () => {
+    const dist = d3.geoDistance(ORIG_C, [d.lon, d.lat]);
+    G.flight.phase = 'fly'; G.flight.t0 = performance.now(); G.flight.dur = clamp(2300 + dist * 1500, 2800, 5200); G.flight.e = 0; G.flight.p = 0; G.flight.pos = ORIG_C;
   });
 }
 function landFlight(){
