@@ -1175,6 +1175,17 @@ const DOCS=[];
 function docLink(){ return document.querySelector('#log .doc')?`<p class="doclink"><button type="button" class="linkbtn" onclick="document.querySelector('#log .doc:last-of-type')?.scrollIntoView({behavior:'smooth',block:'center'})">Relire le document</button></p>`:''; }
 function deaccent(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’]/g,"'"); }
 function normTxt(s){ return deaccent(s.toLowerCase()).replace(/\s+([.,!?])/g,'$1').replace(/\s+/g,' ').trim(); }
+const PUNCT_FR={'.':'un point (.)','!':"un point d'exclamation (!)",'?':"un point d'interrogation (?)"};
+/* If the words match an accepted answer and only the final punctuation differs, return [fr, en] feedback; else null. */
+function punctMsg(txt,answers){
+ const end=s=>{ const m=normTxt(s).match(/[.!?]+$/); return m?m[0].slice(-1):''; }, core=s=>normTxt(s).replace(/[.!?]+$/,'').trim();
+ const mine=end(txt), c=core(txt), hit=answers.filter(a=>core(a)===c);
+ if(!hit.length||hit.some(a=>end(a)===mine)) return null;
+ const want=end(hit[0]);
+ if(!mine) return want?[`Tes mots sont bons, mais il manque la ponctuation à la fin de la phrase : ajoute ${PUNCT_FR[want]}.`,`Your words are right, but the sentence needs its final punctuation: add ${want==='.'?'a period':want==='!'?'an exclamation mark':'a question mark'}.`]:null;
+ if(!want) return ['Tes mots sont bons, mais cette phrase ne prend pas de ponctuation finale : enlève-la.','Your words are right, but this sentence takes no final punctuation: remove it.'];
+ return [`Tes mots sont bons, mais change la ponctuation finale : cette phrase se termine par ${PUNCT_FR[want]}.`,`Your words are right, but change the final punctuation: this sentence ends with ${want==='.'?'a period':want==='!'?'an exclamation mark':'a question mark'}.`];
+}
 function joinTiles(a){ return a.reduce((acc,t)=>acc+(acc===''||acc.endsWith("'")||/^[.,!?]/.test(t)?'':' ')+t,''); }
 function letterParts(s){ const d=new Date().toLocaleDateString('fr-CA',{day:'numeric',month:'long',year:'numeric'});
  return {place:fmt(s.place||'Calgary',P)+', le '+d, greet:fmt(s.greet,P), paras:s.sections.map(x=>(PR.letter[x.id]||'').trim()), close:fmt(s.close||'Amitiés,',P), name:P.name}; }
@@ -1284,7 +1295,11 @@ function step(){
    const txt=joinTiles(built.map(o=>o.t));
    if((s.answers||[s.answer]).map(a=>normTxt(fmt(a,P))).includes(normTxt(txt))){
     act.querySelectorAll('button').forEach(b=>b.disabled=true); meBubble(txt); if(s.bubble){ comicState().bubbles[s.bubble.join('-')]=1; save(); renderComic(); } feedback('ok',PRAISE[Math.floor(Math.random()*PRAISE.length)]); setTimeout(next,850); return; }
-   wrong(); const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
+   wrong();
+   /* right words, wrong or missing end punctuation: say so, instead of a grammar hint that does not apply */
+   const pm=punctMsg(txt,(s.answers||[s.answer]).map(a=>fmt(a,P)));
+   if(pm){ feedback('err',pm[0],pm[1]); return; }
+   const h=built.map(o=>o.t).find(t=>s.hints&&s.hints[t]);
    feedback('err',h?s.hints[h]:(built.length<(s.min||3)?'Ta phrase n\'est pas complète.':(s.why||'Pas tout à fait. Vérifie la forme du verbe et l\'ordre des mots.')),h?null:s.whyEn);
   });
  }
