@@ -91,7 +91,7 @@ const ADV=(()=>{
    setTimeout(()=>{ m.addEventListener('pointerdown',close); document.addEventListener('keydown',close,true); },120); })); return msgQ; }
 
  /* ---------- score, clock, flags ---------- */
- function score(n,key){ if(key){ if(G.scored[key]) return; G.scored[key]=1; } G.score+=n; updBar(); const b=$('#scoreTxt'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+ function score(n,key){ if(key){ if(G.scored[key]) return; G.scored[key]=1; } G.score=Math.min(CFG.maxScore||300,G.score+n); updBar(); const b=$('#scoreTxt'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
    showBar(1600); }
  const clockTxt=()=>{ const h=Math.floor(G.clock/60)%24, m=G.clock%60; return `${h} h ${String(m).padStart(2,'0')}`; };
  function tickClock(min){ G.clock+=min; updBar(); }
@@ -128,7 +128,7 @@ const ADV=(()=>{
    const t=$('#tag'); if(hoverHs && !busy){ t.hidden=false; t.textContent=T(hoverHs.name); t.style.left=(ptr.x/W*100)+'%'; t.style.top=(ptr.y/H*100)+'%';
      t.classList.toggle('flipX',ptr.x>1040); t.classList.toggle('flipY',ptr.y>740); } else t.hidden=true; }
 
- function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create','#lexique','#wheel'].some(q=>!$(q).hidden); }
+ function anyModal(){ return ['#msg','#dlg','#fail','#title','#dossier','#create','#lexique','#wheel','#cine','#endscr'].some(q=>!$(q).hidden); }
  /* ---------- hotspots ---------- */
  const hsList=()=>(room.hotspots||[]).filter(h=>!h.when||h.when(G));
  function inShape(h,p){ if(h.rect){ const [x,y,w,hh]=h.rect; return p[0]>=x&&p[0]<=x+w&&p[1]>=y&&p[1]<=y+hh; }
@@ -291,7 +291,8 @@ const ADV=(()=>{
    f.innerHTML=`<div class="fbox" role="alertdialog" aria-modal="true">${o.art?`<div class="fart"><svg viewBox="0 0 200 120">${o.art}</svg></div>`:''}<div class="win"><p>${rich(o.text)}</p>${o.lesson?`<p class="lesson">${rich(o.lesson)}</p>`:''}
    <div class="wbtn"><button class="sbtn" id="btnRetry" type="button">Réessayer</button>${(DB.get().slots||[]).some(Boolean)?'<button class="sbtn" id="btnRestore" type="button">Restaurer</button>':''}</div></div></div>`;
    f.hidden=false; setCursor(); $('#btnRetry').focus();
-   return new Promise(res=>{ $('#btnRetry').onclick=()=>{ f.hidden=true; restore(checkpoint); busy=false; setCursor(); res(); };
+   const fails=(G.fails||0)+1;
+   return new Promise(res=>{ $('#btnRetry').onclick=()=>{ f.hidden=true; restore(checkpoint); G.fails=fails; busy=false; setCursor(); res(); };
      const rb=$('#btnRestore'); if(rb) rb.onclick=()=>{ openRestore(()=>{ f.hidden=true; busy=false; setCursor(); res(); }); }; }); }
  const snap=()=>JSON.parse(JSON.stringify(Object.assign({},G,{px:player?player.x:G.px,py:player?player.y:G.py,face:player?player.face:G.face})));
  function restore(s){ Object.assign(G,JSON.parse(JSON.stringify(s))); enter(G.roomId,true); }
@@ -312,7 +313,11 @@ const ADV=(()=>{
  function menu(title,opts){ opts=opts.filter(o=>!o.when||o.when(G)); return new Promise(res=>{ hideBar();
    dialog(T(title), `<div class="mlist">${opts.map((o,i)=>`<button class="mrow" type="button" data-i="${i}">${rich(o.txt)}</button>`).join('')}</div>`, [['Rien',()=>{ closeDlg(); res(null); }]]);
    $('#dlg').querySelectorAll('.mrow').forEach(b=>b.onclick=()=>{ closeDlg(); res(opts[+b.dataset.i]); }); $('#dlg .mrow')&&$('#dlg .mrow').focus(); }); }
- const API={ G, say, score, tickClock, walkTo, fail, enter, go, menu, get player(){return player;},
+ /* full-screen cutscene: an animated SVG (1280x800) over the stage; resolves after ms */
+ function cinema(svg,ms){ return new Promise(res=>{ const c=$('#cine'); hideBar(); c.innerHTML=`<svg viewBox="0 0 1280 800" preserveAspectRatio="xMidYMid slice">${svg}</svg>`; c.hidden=false; setCursor();
+   setTimeout(()=>res(),ms); }); }
+ function endCinema(){ const c=$('#cine'); c.hidden=true; c.innerHTML=''; setCursor(); }
+ const API={ G, say, score, tickClock, walkTo, fail, enter, go, menu, cinema, endCinema, get profile(){return profile;}, get look(){return CFG.playerLook;}, get player(){return player;},
   give(id){ if(!G.inv.includes(id)) G.inv.push(id); updBar(); },
   drop(id){ G.inv=G.inv.filter(x=>x!==id); if(G.sel===id){ G.sel=null; if(G.verb==='item') G.verb='walk'; } updBar(); },
   has:id=>G.inv.includes(id), flag:(k,v)=>{ if(v===undefined) return G.flags[k]; G.flags[k]=v; },

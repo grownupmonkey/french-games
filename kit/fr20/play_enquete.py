@@ -192,6 +192,52 @@ async def main():
         await pg.screenshot(path=S+'p3_boutique.png')
         G3=await pg.evaluate('({score:ADV.G.score, clock:ADV.G.clock, act4:!!ADV.G.flags.act4, inv:ADV.G.inv})')
         auto=await pg.evaluate("!!JSON.parse(localStorage.getItem('jeuxFr20.enquete')).auto.state.flags.act4")
+        print('ACT 3 end:',G3,flush=True)
+        # ---------------- ACT 4 + FINALE ----------------
+        await hs('porte','walk'); await pg.wait_for_timeout(600); await dismiss()
+        await hs('voiture','hand'); await pg.wait_for_timeout(600)
+        await hs('p-poste','walk'); await pg.wait_for_timeout(600); await dismiss()
+        await hs('arceneaux','talk'); await dismiss()                      # jewels not logged yet
+        await hs('p-preuves','walk'); await pg.wait_for_timeout(500); await dismiss()
+        await hs('landry','item','moitie'); await dismiss()
+        await hs('p-brief','walk'); await pg.wait_for_timeout(500); await dismiss()
+        await hs('arceneaux','talk'); await dismiss(); await pg.wait_for_timeout(700); await dismiss()
+        assert await pg.evaluate('ADV._room()')=='interro'
+        async def ask(q,ev):
+            await hs('cedric','talk'); await dismiss(1); await pg.wait_for_timeout(300); await choose(q); await choose(ev); await dismiss()
+        await hs('cedric','talk'); await dismiss(1); await pg.wait_for_timeout(300); await choose('vous lui avez prise'); await choose('vous l\'avez prise'); await choose('foulard'); await dismiss()  # wrong pronoun, wrong evidence
+        s_wrong=await pg.evaluate('ADV.G.score')
+        await ask('vous l\'avez prise','Ti-Paul')
+        await ask('vous les avez encore','Ti-Paul')
+        await ask('vous les portiez','bottes de Cédric')
+        await pg.screenshot(path=S+'p4_interro.png')
+        await ask('vous l\'avez vue','texto de'); await dismiss()
+        await hs('porte','walk'); await pg.wait_for_timeout(600)
+        await hs('p-bureau','walk'); await pg.wait_for_timeout(600)
+        print('pre-report:',await pg.evaluate('({f:ADV.G.flags.interroDone, i:ADV.G.interro, busy:ADV._busy()})'),flush=True)
+        await hs('bureau','hand'); await pg.wait_for_timeout(400)
+        bad={'faits':"Il a pris la parure. Il a allé au musée.",'ecarte':"Le gardien a pas ouvert la vitrine.",'coupables':"Cédric est coupable.",'reco':"Je recommande à arrêter Mme Gagnon."}
+        good={'faits':"D'abord, la conservatrice a téléphoné au gardien vers 22 h 15. Ensuite, le gardien est monté au deuxième étage. Pendant la pause du groupe, Cédric Thériot est venu au musée avec la camionnette rouge. À 22 h 18, il a ouvert la porte de service avec le badge de Mme Gagnon. Puis, il a déplacé la planche et il a pris la parure. Enfin, il est retourné sur scène à 22 h 50.",
+              'ecarte':"Le gardien n'a pas ouvert la vitrine : sa clé n'est jamais sortie. Le collectionneur n'a pas quitté l'hôtel : nous n'avons rien trouvé contre lui.",
+              'coupables':"C'est Cédric Thériot qui a volé la parure. C'est Geneviève Gagnon qui a organisé le vol. C'est la femme que le réceptionniste a vue avec le voleur. Son badge et son appel le prouvent.",
+              'reco':"Je vous recommande de délivrer un mandat contre Mme Gagnon avant minuit."}
+        async def write(src):
+            ta=pg.locator('#dossier textarea')
+            for i in range(await ta.count()):
+                await ta.nth(i).fill(src[['faits','ecarte','coupables','reco'][i]])
+            await pg.click('#dossier .check'); await pg.wait_for_timeout(400)
+        await write(bad); errs_bad=await pg.locator('#dossier .lerr').all_inner_texts()
+        await pg.screenshot(path=S+'p4_report_bad.png')
+        await write(good); await pg.wait_for_timeout(300)
+        await pg.screenshot(path=S+'p4_report_ok.png')
+        await pg.click('#dossier .cont'); await pg.wait_for_timeout(300); await cont(); await dismiss(2); await pg.wait_for_timeout(300)
+        await dismiss(1); await pg.wait_for_timeout(3000); await pg.screenshot(path=S+'p4_chase.png'); await pg.wait_for_timeout(7800)
+        await dismiss(1); await pg.wait_for_timeout(600); await pg.screenshot(path=S+'p4_dock.png'); await dismiss(6)
+        await pg.wait_for_timeout(600); await pg.screenshot(path=S+'p4_end.png',full_page=True)
+        endshown=await vis('#endscr'); FIN=await pg.evaluate('({score:ADV.G.score, final:ADV.API.finalScore(), rank:ADV.API.rank(), won:!!ADV.G.flags.won, bonus:ADV.G.bonus, fails:ADV.G.fails||0})')
+        P=await pg.evaluate("JSON.parse(localStorage.getItem('jeuxFr20.voyage')).done"); J=await pg.evaluate("JSON.parse(localStorage.getItem('gv.v1')||'{}').played")
+        print('report errors on the bad draft:',errs_bad); print('score after wrong evidence:',s_wrong)
+        print('END:',endshown,FIN,'| passport:',P,'| jetons:',J)
         print('imperative hints:',fb4,'|',fb5); print('qui/que hint:',fb6); print('rights failure shown:',f2)
         print('qc hint:',fb3)
         print('cafe hint:',fb1); print('reco hint:',fb2); print('clock after bad reco',c_bad,'mismatch accepted?',mism)

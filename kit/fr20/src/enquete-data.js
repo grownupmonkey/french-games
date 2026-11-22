@@ -71,6 +71,7 @@ const FAIL_ART={
 
 /* ---------- help from the team: the next useful thing to do (costs points) ---------- */
 function HINT(G){ const b='Agente Broussard', t='Agent Thibodeaux', r=G.roomId;
+ if(G.flags.act4) return HINT4(G);
  if(G.flags.act3) return HINT3(G);
  if(G.flags.act2) return HINT2(G);
  if(!G.flags.tools) return {who:b,text:'Ton matériel est dans le tiroir de ton bureau. Utilise la main sur le tiroir.'};
@@ -98,7 +99,10 @@ const GLOSSARY={
  'perle':['pearl'], 'preuve':['evidence, proof'], 'sachet à preuves':['evidence bag'], 'empreintes':['fingerprints'],
  'boue':['mud'], 'pointure':['shoe size'], 'trace':['track, mark'], 'cavalier':['evidence marker (here)','also: rider'],
  'greffier':['evidence clerk','in court: court clerk'], 'gardien':['guard'], 'conservatrice':['curator (woman)'],
- 'collectionneur':['collector'], 'accordéoniste':['accordion player'], 'prêteur sur gages':['pawnbroker'],
+ 'collectionneur':['collector'], 'accordéoniste':['accordion player'], 'interrogatoire':['interrogation'], 'miroir sans tain':['one-way mirror'], 'aveux':['confession'], 'complice':['accomplice'], 'procureure':['prosecutor (woman)'],
+ 'hydroglisseur':['airboat'], 'cyprès':['cypress tree'], 'héron':['heron'], 'banc de sable':['sandbar'], 'camp de pêche':['fishing camp'], 'état d\'arrestation':['under arrest'],
+ 'respectueusement':['respectfully'], 'écarter':['to rule out'], 'diplôme':['diploma'], 'tampon':['stamp'], 'passeport':['passport'], 'bassin':['basin'],
+ 'prêteur sur gages':['pawnbroker'],
  'quai de chargement':['loading dock'], 'camionnette':['van'], 'pneu':['tire'], 'témoin':['witness'],
  'mandat':['warrant'], 'procureure':['prosecutor (woman)'], 'rapport d\'enquête':['police report'],
  'enquêteur':['investigator (man)'], 'enquêtrice':['investigator (woman)'], 'agent':['officer (man)'], 'agente':['officer (woman)'],
@@ -115,6 +119,9 @@ const GLOSSARY={
  'sonnette':['bell'], 'étagère':['shelf'], 'boîte à clés':['key box'], 'clé maîtresse':['master key'], 'crochet':['hook'], 'déclaration':['statement'],
  'étiquettes':['labels'], 'cuillères':['spoons'], 'théière':['teapot'], 'bol':['bowl'], 'billet':['ticket'], 'veillée':['evening gathering with music'],
  'galerie':['porch (Acadian / Cajun)'], 'robe de chambre':['bathrobe'], 'tutoyer':['to say « tu » to someone'], 'livraisons':['deliveries'], 'cadenassé':['padlocked'],
+ 'interrogatoire':['interrogation'], 'miroir sans tain':['one-way mirror'], 'aveux':['confession'], 'complice':['accomplice'], 'procureure':['prosecutor (woman)'],
+ 'hydroglisseur':['airboat'], 'cyprès':['cypress tree'], 'héron':['heron'], 'banc de sable':['sandbar'], 'camp de pêche':['fishing camp'], 'état d\'arrestation':['under arrest'],
+ 'respectueusement':['respectfully'], 'écarter':['to rule out'], 'diplôme':['diploma'], 'tampon':['stamp'], 'passeport':['passport'], 'bassin':['basin'],
  'prêteur sur gages':['pawnbroker'], 'boutique':['shop'], 'vitrine (de magasin)':['shop window'], 'alligator empaillé':['stuffed alligator'],
  'planque':['stakeout'], 'voiture banalisée':['unmarked car'], 'bloquer':['to block'], 'laisser partir':['to let go'], 'droits':['rights (legal)'],
  'garder le silence':['to remain silent'], 'avocat':['lawyer'], 'utilisé contre vous':['used against you'], 'texto':['text message'], 'moitié':['half'],

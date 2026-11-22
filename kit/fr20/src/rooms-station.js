@@ -244,13 +244,13 @@ ROOMS.preuves={
         const r=await A.task(PROCEDURE,{title:'La règle de M. Landry',kind:'Dossier · Procédure',intro:'Rappel de Bretagne : **il faut** + infinitif.'});
         A.flag('procedure',true); A.score(Math.max(2,5-r.mistakes),'procedure');
         return A.say('Bien. Le capitaine vous attend au briefing. Et n\'oubliez pas : une preuve que je n\'ai pas vue n\'existe pas.',{who:w}); }
-      const pend=['perle','peinture'].filter(id=>A.has(id));
+      const pend=['perle','peinture','moitie'].filter(id=>A.has(id));
       if(pend.length) return A.say('Vous avez des preuves pour moi? Donnez-les-moi. Choisissez le sachet dans votre inventaire, puis cliquez sur moi.',{who:w});
       return A.say('Rien à déclarer? Alors, rien à faire ici. Sauf admirer mes étagères.',{who:w}); },
-    use:{ perle:A=>LOG(A,'perle'), peinture:A=>LOG(A,'peinture'), '*':'M. Landry regarde l\'objet. « Ce n\'est pas une preuve, ça. C\'est un objet. Je ne prends que les preuves. »' } },
+    use:{ perle:A=>LOG(A,'perle'), peinture:A=>LOG(A,'peinture'), moitie:A=>LOG(A,'moitie'), '*':'M. Landry regarde l\'objet. « Ce n\'est pas une preuve, ça. C\'est un objet. Je ne prends que les preuves. »' } },
   { id:'p-brief', name:'La porte du briefing', rect:[70,206,110,232], walkTo:[124,516], face:'back', exit:['briefing','fromPreuves'] }
  ]
 };
 async function LOG(A,id){ const w=who('landry'); A.drop(id); A.flag('logged_'+id,true); A.score(2,'log_'+id);
- await A.say(`M. Landry prend le sachet, vérifie l'étiquette, écrit dans le registre. « ${id==='perle'?'Pièce n° 1. Une perle.':'Pièce n° 2. De la peinture rouge.'} Merci. » Il sourit presque.`,{who:w});
- if(A.G.flags.logged_perle&&A.G.flags.logged_peinture) await A.say('Toutes les preuves sont enregistrées. Le capitaine attend votre rapport au briefing. Enfin, il attend surtout le café.',{who:w}); }
+ await A.say(`M. Landry prend le sachet, vérifie l'étiquette, écrit dans le registre. « ${({perle:'Pièce n° 1. Une perle.',peinture:'Pièce n° 2. De la peinture rouge.',moitie:'Pièce n° 3. La moitié de la parure.'})[id]} Merci. » Il sourit presque.`,{who:w});
+ if(id!=='moitie'&&A.G.flags.logged_perle&&A.G.flags.logged_peinture) await A.say('Toutes les preuves sont enregistrées. Le capitaine attend votre rapport au briefing. Enfin, il attend surtout le café.',{who:w}); }

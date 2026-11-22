@@ -229,8 +229,7 @@ async function ACT3_END(A){ const w=who('arceneaux'); if(A.G.flags.act4) return 
  A.G.flags.act4=true; A.tickClock(30); A.autosave();
  await A.say('Le capitaine, à la radio : « Un mandat pour la conservatrice? Il me faut votre rapport d\'abord. Écrit. En français. Avec des verbes. »',{who:w});
  await A.say('« Et ramenez Cédric. On va avoir une petite conversation. Moi, je parle. Vous, vous montrez les preuves. »',{who:w});
- await A.say('Fin de l\'acte 3. (Brouillon : l\'acte 4 arrive bientôt. Votre partie est sauvegardée.)'); }
-async function ACT4(A){ return A.say('L\'interrogatoire et le rapport arrivent bientôt. (Brouillon.)',{who:who('arceneaux')}); }
+ await A.say('Fin de l\'acte 3. Retournez au poste avec la pièce n° 3. Votre partie est sauvegardée.'); }
 function HINT3(G){ const b='Agente Broussard';
  if(!G.flags.morning) return {who:b,text:'Parle au capitaine au briefing : les rapports du matin sont arrivés.'};
  if(G.roomId!=='rue'&&G.roomId!=='boutique'&&!G.flags.bust) return {who:b,text:'Va à Breaux Bridge : prends la voiture au parking, puis choisis Breaux Bridge sur la carte.'};
