@@ -102,7 +102,7 @@ function render(){
   pass.innerHTML=`<div class="main"><div class="bar"><span>Carte d'embarquement</span><span>Escale ${idx+1} / ${JOURNEY.length}</span></div>
    <div class="route"><div><span class="code">${from.code}</span><small>${from.place}</small></div><div class="plane">${planeIcon}</div><div style="text-align:right"><span class="code">${nx.code}</span><small>${nx.place}</small></div></div>
    <div class="fields"><div><small>Passag${agree(p)==='f'?'ère':'er'}</small><b>${esc(p.name)}</b></div><div><small>Mission</small><b>${nx.sub}</b></div><div><small>Siège</small><b>${seat}</b></div><div><small>Porte</small><b>${String.fromCharCode(65+idx)}${idx+2}</b></div></div>
-   ${nx.ready?`<a class="btn accent" href="${nx.file}">Embarquer</a>`:`<button class="btn" disabled>Bientôt disponible</button>`}</div>
+   ${nx.ready?`<a class="btn accent" href="${nx.file}">Embarquer pour ${nx.place} →</a>`:`<button class="btn" disabled>Bientôt disponible</button>`}</div>
    <div class="stub"><small style="font-weight:700;letter-spacing:.1em;color:var(--muted)">DESTINATION</small><span class="code">${nx.code}</span><div class="barcode"></div></div>`;
  }
  const pp=document.getElementById('passport');

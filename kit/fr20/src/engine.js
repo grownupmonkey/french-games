@@ -383,8 +383,8 @@ function endScreen(){
   <p>${esc(fmt(GAME.endText,P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
-  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
-  <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
+  <div class="endbtns">${nx&&nx.ready?`<a class="btn accent" id="nextLeg" href="${nx.file}">Embarquer pour ${esc(nx.place)} →</a>`:''}<a class="btn${nx&&nx.ready?'':' accent'}" id="toPassport" href="voyage.html">Retour au passeport</a><button class="btn" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <p class="hint">Ton tampon est ta preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
  $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
  $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
  $('#printStamp').addEventListener('click',()=>printStamp(me,avg));

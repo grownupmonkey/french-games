@@ -169,6 +169,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
 .flight .big{display:inline-block;background:rgba(20,28,48,.85);border:3px solid var(--gold);border-radius:999px;padding:8px 22px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:clamp(18px,2.4vw,28px);color:var(--cream)}
 .flight .big span{color:var(--gold)}
 .skip{position:absolute;right:16px;bottom:16px;z-index:12}
+.passlink{position:absolute;left:16px;top:14px;z-index:12;text-decoration:none;display:inline-block}
 .landing{position:absolute;left:50%;bottom:22px;transform:translate(-50%,140%);z-index:14;width:min(520px,92vw);background:var(--cream);color:var(--ink);border:5px solid var(--ink);border-radius:28px;box-shadow:0 14px 0 rgba(0,0,0,.3);padding:16px 18px 18px;display:flex;gap:14px;align-items:center;transition:transform .7s var(--ease)}
 .landing.show{transform:translate(-50%,0)}
 .landing .pic{flex:0 0 112px;height:112px;border-radius:16px;overflow:hidden;border:4px solid var(--ink);position:relative}
@@ -320,6 +321,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
       <button class="arrow" id="zin" aria-label="Zoom avant">+</button>
       <button class="arrow" id="zout" aria-label="Zoom arrière">−</button>
     </div>
+    <a class="pill passlink" id="passLink" href="20-3y/voyage.html">✈ Mon passeport · continuer le voyage</a>
     <div class="flight" id="flightHud" hidden><span class="big">✈ Calgary → <span id="fto"></span></span></div>
     <button class="pill skip" id="skip" hidden>Passer le vol ⏭</button>
     <div class="landing" id="landing">
@@ -391,7 +393,7 @@ const GRADES = [
     blurb:'Équipe ta mascotte, ton fond d’écran et tes monuments préférés.' }
 ];
 
-// 20-3Y: the eight travel games. Games 1–5 are built; 6–8 are not yet. href:null shows "Lien à venir".
+// 20-3Y: the eight travel games. Games 1–6 are built; 7–8 are not yet. href:null shows "Lien à venir".
 const GAMES_20 = [
   { id:'q', mark:'1', place:'Québec', lon:-71.2082, lat:46.8139, title:'La ceinture fléchée', chip:'partitifs · passé composé', color:'#E88B9C', scene:'quebec', open:true, href:GAME_DIR + '01-quebec.html',
     quest:'Retrouve la ceinture fléchée perdue avant le défilé du Carnaval.', culture:'Carnaval, terrasse Dufferin, ceinture fléchée' },

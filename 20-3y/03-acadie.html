@@ -579,7 +579,7 @@ const JOURNEY=[
  {id:'bretagne',   place:'Bretagne',   sub:'Le lycée',             code:'RNS', file:'05-bretagne.html',   ready:true , color:'#1F5F7A'},
  {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:true , color:'#7A5B1F'},
  {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:false, color:'#2E7A55'},
- {id:'louisiane',  place:'Louisiane',  sub:'Le concours d\'histoires', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
+ {id:'louisiane',  place:'Louisiane',  sub:'L\'enquête', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
 ];
 function stampIcon(id,c){
  const s=`fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"`;
@@ -1411,8 +1411,8 @@ function endScreen(){
   <p>${esc(fmt(GAME.endText,P))}</p>
   <div class="bigstars" aria-label="${avg} étoiles sur 3">${'★'.repeat(avg)}${'☆'.repeat(3-avg)}</div>
   <p>Prochaine escale : <b>${nx?nx.place+' — '+nx.sub:'retour à Calgary'}</b>${nx&&!nx.ready?' (bientôt disponible)':''}</p>
-  <div class="endbtns"><button class="btn accent" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
-  <p class="hint">Ton tampon est ton preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
+  <div class="endbtns">${nx&&nx.ready?`<a class="btn accent" id="nextLeg" href="${nx.file}">Embarquer pour ${esc(nx.place)} →</a>`:''}<a class="btn${nx&&nx.ready?'':' accent'}" id="toPassport" href="voyage.html">Retour au passeport</a><button class="btn" type="button" id="dlStamp">Télécharger mon tampon (PNG)</button><button class="btn" type="button" id="printStamp">Imprimer mon tampon</button>${GAME.endDownload?`<button class="btn" type="button" id="dlExtra">${esc(GAME.endDownload.label)}</button>`:''}<button class="btn" type="button" id="replay">Rejouer l'escale</button></div>
+  <p class="hint">Ton tampon est ta preuve de réussite : enregistre-le et téléverse-le dans Teams, ou imprime-le.</p></div></div>`;
  $('#replay').addEventListener('click',()=>{ PR={i:0,stars:{},clues:[],qc:PR.qc,cur:0}; save(); runStop(0); });
  $('#dlStamp').addEventListener('click',()=>downloadStamp(me,avg));
  $('#printStamp').addEventListener('click',()=>printStamp(me,avg));
