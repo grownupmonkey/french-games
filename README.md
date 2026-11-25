@@ -35,3 +35,5 @@ Les élèves créent leur voyageur (prénom, genre, teint) dans `voyage.html`. L
 | 4 | Dakar : La teranga | `20-3y/04-dakar.html` | https://grownupmonkey.github.io/french-games/20-3y/04-dakar.html |
 | 5 | Bretagne : La semaine bretonne | `20-3y/05-bretagne.html` | https://grownupmonkey.github.io/french-games/20-3y/05-bretagne.html |
 | 6 | Bruxelles : La BD de l'été | `20-3y/06-bruxelles.html` | https://grownupmonkey.github.io/french-games/20-3y/06-bruxelles.html |
+| 7 | Martinique : La montagne Pelée | `20-3y/07-martinique.html` | https://grownupmonkey.github.io/french-games/20-3y/07-martinique.html |
+| 8 | Louisiane : L'enquête | `20-3y/08-enquete.html` | https://grownupmonkey.github.io/french-games/20-3y/08-enquete.html |

@@ -6,8 +6,8 @@ const JOURNEY=[
  {id:'dakar',      place:'Dakar',      sub:'La famille d\'accueil',code:'DSS', file:'04-dakar.html',      ready:true , color:'#B36A1F'},
  {id:'bretagne',   place:'Bretagne',   sub:'Le lycée',             code:'RNS', file:'05-bretagne.html',   ready:true , color:'#1F5F7A'},
  {id:'bruxelles',  place:'Bruxelles',  sub:'Le job d\'été',        code:'BRU', file:'06-bruxelles.html',  ready:true , color:'#7A5B1F'},
- {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:false, color:'#2E7A55'},
- {id:'louisiane',  place:'Louisiane',  sub:'L\'enquête', code:'LFT', file:'08-louisiane.html', ready:false, color:'#6E3F7A'}
+ {id:'martinique', place:'Martinique', sub:'La montagne Pelée',    code:'FDF', file:'07-martinique.html', ready:true , color:'#2E7A55'},
+ {id:'louisiane',  place:'Louisiane',  sub:'L\'enquête', code:'LFT', file:'08-enquete.html', ready:true , color:'#6E3F7A'}
 ];
 function stampIcon(id,c){
  const s=`fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"`;
