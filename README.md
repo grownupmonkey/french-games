@@ -40,6 +40,7 @@ Les élèves créent leur voyageur (prénom, genre, teint) dans `voyage.html`. L
 | 7 | Martinique : La montagne Pelée | `20-3y/07-martinique.html` | https://grownupmonkey.github.io/french-games/20-3y/07-martinique.html |
 | 8 | Louisiane : L'enquête | `20-3y/08-enquete.html` | https://grownupmonkey.github.io/french-games/20-3y/08-enquete.html |
 | 30-1 | La colocation : Ma semaine | `30-3y/01-ma-semaine.html` | https://grownupmonkey.github.io/french-games/30-3y/01-ma-semaine.html |
+| 30-2 | La colocation : Le marché | `30-3y/02-le-marche.html` | https://grownupmonkey.github.io/french-games/30-3y/02-le-marche.html |
 
 ## Crédits (30-3Y)
 
