@@ -8,6 +8,7 @@ Jeux interactifs de français pour les classes d'Alberta. Chaque jeu est un seul
 - `20-3y/` : Français 20-3Y, « Le grand voyage » (un voyage en 8 escales dans la francophonie). `voyage.html` est le passeport ; chaque escale est un fichier.
 - `30-3y/` : Français 30-3Y, « La colocation » (en cours). Premier jeu : `01-ma-semaine.html` (planificateur de semaine).
 - `kit/fr20/` : le code source des jeux 20-3Y (`python3 build.py` reconstruit les pages).
+- `kit/fr30/` : le code source des jeux 30-3Y (`python3 build.py` assemble les pages dans `out/30-3y/`).
 - `index.html` : la page d'accueil qui relie tous les jeux.
 
 ## Jeux
