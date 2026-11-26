@@ -31,7 +31,14 @@ button:focus-visible,.rcard:focus-visible,.tile:focus-visible,.pin:focus-visible
 #world.cosmos::before{background:radial-gradient(40% 30% at 20% 70%,rgba(255,120,200,.28),transparent 70%),radial-gradient(40% 30% at 85% 60%,rgba(80,160,255,.28),transparent 70%);animation:aur 12s ease-in-out infinite alternate}
 #world.gold::before{background:linear-gradient(115deg,transparent 35%,rgba(255,240,170,.45) 48%,transparent 60%);background-size:260% 100%;animation:sweep 5s linear infinite}
 @keyframes sweep{from{background-position:130% 0}to{background-position:-130% 0}}
+#world.neon::before{background:radial-gradient(40% 30% at 25% 65%,rgba(255,60,170,.32),transparent 70%),radial-gradient(40% 30% at 78% 55%,rgba(40,220,255,.3),transparent 70%);animation:aur 10s ease-in-out infinite alternate}
 #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#colo{position:absolute;left:0;right:0;bottom:0;height:42vh;pointer-events:none;opacity:0;transform:translateY(30px);transition:opacity .9s,transform .9s var(--ease)}
+body.l30 #colo{opacity:1;transform:none}
+#colo svg{width:100%;height:100%;display:block}
+#colo .lw{animation:lw 5s ease-in-out infinite alternate}
+@keyframes lw{0%,70%{opacity:1}100%{opacity:.55}}
+body.l30 .headline{color:#ffd9a0}
 .route{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .route path{fill:none;stroke:rgba(251,243,228,.25);stroke-width:2;stroke-dasharray:3 11;stroke-linecap:round}
 .plane{position:absolute;left:0;top:0;width:40px;height:40px;pointer-events:none;offset-path:path('M -60 520 C 300 120, 900 700, 1500 160');offset-rotate:auto;animation:fly 18s linear infinite}
@@ -280,6 +287,7 @@ header{position:relative;z-index:30;display:flex;align-items:center;justify-cont
 
 <div id="world">
   <canvas id="fx"></canvas>
+  <div id="colo" aria-hidden="true"></div>
   <svg class="route" viewBox="0 0 1440 800" preserveAspectRatio="none" aria-hidden="true"><path d="M -60 520 C 300 120, 900 700, 1500 160"/></svg>
   <div class="plane" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M3 22 45 4 33 44 23 28 3 22Z" fill="#FBF3E4" stroke="#1F2A44" stroke-width="2.5" stroke-linejoin="round"/><path d="M23 28 45 4 18 25Z" fill="#E88B9C" stroke="#1F2A44" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
 </div>
@@ -387,10 +395,21 @@ const GRADES = [
     blurb:'Six jeux pour bien commencer, de la première rencontre au premier jour au lycée.' },
   { id:'g20', kind:'grade', grade:'20', mark:'20', place:'Niveau 20', title:'French 20-3Y', chip:'8 jeux · Le grand voyage', color:'#F2C14E', scene:'globe', cta:'Choisir →',
     blurb:'Pars de Calgary et voyage dans huit lieux francophones. Collectionne les tampons de ton passeport.' },
+  { id:'g30', kind:'grade', grade:'30', mark:'30', place:'Niveau 30', title:'French 30-3Y', chip:'La colocation', color:'#E88B9C', scene:'colo', cta:'Choisir →',
+    blurb:'Installe-toi dans une colocation à Montréal et apprends à te débrouiller en français : horaires, courses, budget.' },
   { id:'box', kind:'gacha', mark:'?', place:'Prix', title:'Boîte mystère', chip:'3 jetons', color:'#E88B9C', scene:'case', cta:'Ouvrir →',
     blurb:'Gagne des fonds, des mascottes et des monuments. Certains sont rares, d’autres brillent.' },
   { id:'col', kind:'collection', mark:'★', place:'Album', title:'Ma collection', chip:'', color:'#FBF3E4', scene:'album', cta:'Voir →',
     blurb:'Équipe ta mascotte, ton fond d’écran et tes monuments préférés.' }
+];
+
+// 30-3Y: La colocation. Game 1 is built (30-3y/); the others show "Bientôt".
+const GAMES_30 = [
+  { id:'s1', kind:'game', mark:'1', place:'Jeu 1', title:'Ma semaine', chip:'horaires · obligations', color:'#E88B9C', scene:'p_semaine', open:true, href:'30-3y/01-ma-semaine.html', cta:'Jouer →', blurb:'Organise ta semaine de colocataire sans rater un rendez-vous.' },
+  { id:'s2', kind:'game', mark:'2', place:'Jeu 2', title:'Le marché', chip:'', color:'#5B8DB8', scene:'p_marche', open:false, href:null, cta:'Bientôt', blurb:'Faire les courses et gérer ton budget.' },
+  { id:'s3', kind:'game', mark:'3', place:'Jeu 3', title:'Mon style', chip:'', color:'#F2C14E', scene:'p_style', open:false, href:null, cta:'Bientôt', blurb:'Décrire, comparer et choisir.' },
+  { id:'s4', kind:'game', mark:'4', place:'Jeu 4', title:'Le salon des métiers', chip:'', color:'#E88B9C', scene:'p_metiers', open:false, href:null, cta:'Bientôt', blurb:'Parler de ton avenir.' },
+  { id:'s5', kind:'game', mark:'5', place:'Jeu 5', title:'Photos d’enfance', chip:'', color:'#5B8DB8', scene:'p_photos', open:false, href:null, cta:'Bientôt', blurb:'Raconter le passé.' }
 ];
 
 // 20-3Y: the eight travel games. Games 1–6 are built; 7–8 are not yet. href:null shows "Lien à venir".
@@ -449,6 +468,12 @@ const SCENES = {
   p_mamie: id => sky('#cfe1ee','#fbf3e4',id) + cloud(40,22,.8) + `<g fill="#5d6a86" stroke="${INK}" stroke-width="3"><path d="M110 92l14-22h40l14 22Z"/><rect x="130" y="56" width="8" height="16"/><rect x="152" y="58" width="8" height="14"/></g>` + eiffel(186,94,.45) + ground('#9ab07a','#7f9663') + `<path d="M8 40q62 18 124 0" fill="none" stroke="${INK}" stroke-width="2.5"/><g class="bob" style="animation-duration:5s"><path d="M28 44l18 4-2 22H24Z" fill="#E88B9C" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M58 50h22v8l-4 18H62l-4-18Z" fill="#5B8DB8" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M92 50l20-4 2 20-12 2-2-10-8 2Z" fill="#F2C14E" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><g fill="#fbf3e4" stroke="${INK}" stroke-width="2"><rect x="33" y="40" width="4" height="8"/><rect x="66" y="45" width="4" height="8"/><rect x="100" y="43" width="4" height="8"/></g></g><g class="bob" style="animation-duration:6.5s"><path d="M36 124l26-46" stroke="#8a5a3c" stroke-width="5" stroke-linecap="round"/><path d="M28 116l16 12-8 6-16-10Z" fill="#F2C14E" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M78 96h34l-4 28H82Z" fill="#7fb0d8" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M80 96q15-18 30 0" fill="none" stroke="${INK}" stroke-width="3"/><ellipse cx="95" cy="98" rx="13" ry="3" fill="#cfe7f7"/><circle cx="118" cy="86" r="4" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cx="125" cy="78" r="3" fill="#fff" stroke="${INK}" stroke-width="2"/></g>`,
   p_valise: id => sky('#a9d6f0','#fbf3e4',id) + `<circle cx="34" cy="32" r="12" fill="#F2C14E" stroke="${INK}" stroke-width="3"/>` + cloud(54,36,.9) + eiffel(168,112,.85) + ground('#c9a27e','#b0855f') + `<g class="bob" style="animation-duration:6s"><path d="M24 92l10-30h96l10 30" fill="#b4513c" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M38 66h88l6 20H32Z" fill="#fbf3e4" stroke="${INK}" stroke-width="3"/><path d="M48 70h24v14H48Z" fill="#5B8DB8" stroke="${INK}" stroke-width="3"/><path d="M78 72q10-6 22 0l-2 12H80Z" fill="#E88B9C" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M104 70h20l2 14h-22Z" fill="#F2C14E" stroke="${INK}" stroke-width="3"/><rect x="20" y="90" width="124" height="30" rx="8" fill="#c96a50" stroke="${INK}" stroke-width="4"/><path d="M20 102h124" stroke="${INK}" stroke-width="3"/><rect x="74" y="98" width="16" height="9" rx="2" fill="#F2C14E" stroke="${INK}" stroke-width="2.5"/></g><g class="bob" style="animation-duration:4.4s"><path d="M134 60q16-20 32 0Z" fill="#E88B9C" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M150 60v28q0 6-6 6" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/></g>`,
   p_lycee: id => sky('#bcd6ee','#fbf3e4',id) + cloud(160,26,.8) + eiffel(186,100,.5) + ground('#a9a2a0','#8f8886') + `<g class="bob" style="animation-duration:7s"><rect x="26" y="50" width="124" height="70" fill="#f3dfc0" stroke="${INK}" stroke-width="4"/><path d="M20 50l68-26 68 26Z" fill="#5d6a86" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><rect x="58" y="54" width="60" height="13" rx="3" fill="#1F2A44" stroke="${INK}" stroke-width="3"/><text x="88" y="64" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="10" fill="#F2C14E">LYCÉE</text><g fill="#9cc3e2" stroke="${INK}" stroke-width="3"><rect x="36" y="74" width="16" height="16" rx="2"/><rect x="124" y="74" width="16" height="16" rx="2"/><rect x="36" y="96" width="16" height="16" rx="2"/><rect x="124" y="96" width="16" height="16" rx="2"/></g><path d="M74 120V92a14 14 0 0 1 28 0v28Z" fill="#E88B9C" stroke="${INK}" stroke-width="4"/><path d="M88 24V6" stroke="${INK}" stroke-width="3"/><g class="drift" style="animation-duration:5s"><rect x="88" y="6" width="7" height="12" fill="#2f5aa8"/><rect x="95" y="6" width="7" height="12" fill="#fff"/><rect x="102" y="6" width="7" height="12" fill="#d23c4a"/><rect x="88" y="6" width="21" height="12" fill="none" stroke="${INK}" stroke-width="2.5"/></g></g><g class="bob" style="animation-duration:4s"><rect x="156" y="98" width="28" height="26" rx="8" fill="#F2C14E" stroke="${INK}" stroke-width="4"/><path d="M162 98v-4a8 8 0 0 1 16 0v4" fill="none" stroke="${INK}" stroke-width="4"/><rect x="162" y="108" width="16" height="10" rx="3" fill="#E88B9C" stroke="${INK}" stroke-width="3"/></g>`,
+  colo: id => sky('#5a4a86','#f4b48c',id) + `<circle cx="164" cy="30" r="10" fill="#fbf3e4" opacity=".9"/><g class="bob" style="animation-duration:7s"><rect x="42" y="40" width="116" height="84" fill="#b4513c" stroke="${INK}" stroke-width="4"/><path d="M38 40h124l-8-12H46Z" fill="#7a3a2c" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><g fill="#F2C14E" stroke="${INK}" stroke-width="3"><rect x="56" y="50" width="20" height="18"/><rect x="124" y="50" width="20" height="18"/><rect x="56" y="78" width="20" height="18" fill="#cfe7f7"/><rect x="124" y="78" width="20" height="18"/></g><rect x="88" y="94" width="24" height="30" rx="2" fill="#3b2418" stroke="${INK}" stroke-width="3"/><path d="M80 90q-14 4-20 16t-4 18M80 90q-14 4-20 16" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/><path d="M148 70q14 6 14 22t-12 32" fill="none" stroke="#fbf3e4" stroke-width="4" stroke-linecap="round"/></g>` + ground('#6d7f6a','#566854') + `<g stroke="${INK}" stroke-width="3"><circle cx="24" cy="108" r="12" fill="#4e9c5f"/><rect x="22" y="118" width="4" height="12" fill="#6b4a2f"/></g>`,
+  p_semaine: id => sky('#fbe3b0','#fbf3e4',id) + `<g class="bob" style="animation-duration:6s"><rect x="34" y="28" width="132" height="98" rx="10" fill="#fff" stroke="${INK}" stroke-width="4"/><rect x="34" y="28" width="132" height="24" rx="10" fill="#E88B9C" stroke="${INK}" stroke-width="4"/><g fill="${INK}"><circle cx="64" cy="26" r="4"/><circle cx="136" cy="26" r="4"/></g><g stroke="${INK}" stroke-width="2.5" fill="none"><path d="M60 52v74M86 52v74M112 52v74M138 52v74"/></g><rect x="40" y="58" width="18" height="26" fill="#5B8DB8" stroke="${INK}" stroke-width="2.5"/><rect x="66" y="70" width="18" height="30" fill="#F2C14E" stroke="${INK}" stroke-width="2.5"/><rect x="92" y="58" width="18" height="40" fill="#7fc08a" stroke="${INK}" stroke-width="2.5"/><rect x="118" y="86" width="18" height="26" fill="#E88B9C" stroke="${INK}" stroke-width="2.5"/></g><g class="bob" style="animation-duration:4s"><circle cx="160" cy="112" r="18" fill="#fbf3e4" stroke="${INK}" stroke-width="4"/><path d="M160 112V100M160 112l8 4" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/></g>`,
+  p_marche: id => sky('#cfe8f4','#fbf3e4',id) + ground('#c9a27e','#b0855f') + `<g class="bob" style="animation-duration:6s"><path d="M24 44h152l-10 26H34Z" fill="#E88B9C" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M60 44l-6 26M96 44l-2 26M132 44l2 26M168 44l-6 26" stroke="#fbf3e4" stroke-width="7"/><path d="M34 70h132" stroke="${INK}" stroke-width="4"/><path d="M36 70v54M164 70v54" stroke="${INK}" stroke-width="5"/><rect x="40" y="98" width="120" height="26" rx="4" fill="#a8683a" stroke="${INK}" stroke-width="4"/><g stroke="${INK}" stroke-width="2.5"><circle cx="62" cy="94" r="9" fill="#d23c4a"/><circle cx="82" cy="94" r="9" fill="#F2C14E"/><circle cx="102" cy="94" r="9" fill="#7fc08a"/><circle cx="122" cy="94" r="9" fill="#e8873a"/><circle cx="142" cy="94" r="9" fill="#d23c4a"/></g></g>`,
+  p_style: id => sky('#f6d3dc','#fbf3e4',id) + ground('#d9b88e','#c49f74') + `<g class="bob" style="animation-duration:6s"><path d="M100 30v14M100 44 52 66h96Z" fill="none" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M62 70 52 66l-22 12 6 12 14-6V122h44V96l14 6 6-12-22-12-6 4q-4 8-14 8t-14-8Z" transform="translate(20 -6)" fill="#5B8DB8" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M132 120h30l4-10-8-26h-22l-8 26Z" fill="#F2C14E" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/></g>`,
+  p_metiers: id => sky('#c7dcf2','#fbf3e4',id) + ground('#9ab07a','#7f9663') + `<g class="bob" style="animation-duration:6s"><path d="M80 62v-10a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v10" fill="none" stroke="${INK}" stroke-width="5"/><rect x="42" y="62" width="116" height="62" rx="10" fill="#8a5a34" stroke="${INK}" stroke-width="4"/><rect x="42" y="84" width="116" height="8" fill="#F2C14E" stroke="${INK}" stroke-width="3"/><rect x="92" y="80" width="16" height="16" rx="3" fill="#fbf3e4" stroke="${INK}" stroke-width="3"/></g><g class="bob" style="animation-duration:4.5s"><rect x="132" y="28" width="40" height="26" rx="4" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="144" cy="38" r="5" fill="#E88B9C"/><path d="M152 36h14M152 44h14" stroke="${INK}" stroke-width="3" stroke-linecap="round"/></g>`,
+  p_photos: id => sky('#f7d6a3','#fbf3e4',id) + ground('#c9a27e','#b0855f') + `<g class="bob" style="animation-duration:6s"><rect x="30" y="36" width="64" height="76" rx="4" transform="rotate(-6 62 74)" fill="#fff" stroke="${INK}" stroke-width="4"/><rect x="38" y="44" width="48" height="46" transform="rotate(-6 62 74)" fill="#bcd6ee" stroke="${INK}" stroke-width="3"/><circle cx="60" cy="62" r="8" fill="#f6d2ac" stroke="${INK}" stroke-width="3" transform="rotate(-6 62 74)"/><rect x="104" y="48" width="64" height="76" rx="4" transform="rotate(5 136 86)" fill="#fff" stroke="${INK}" stroke-width="4"/><rect x="112" y="56" width="48" height="46" transform="rotate(5 136 86)" fill="#f2c14e" stroke="${INK}" stroke-width="3"/><path d="M116 98l14-18 10 12 8-8 12 14Z" transform="rotate(5 136 86)" fill="#7fc08a" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/></g>`,
   hello: id => sky('#fbe3b0','#fbf3e4',id) + `<g class="bob"><path d="M30 40h92a10 10 0 0 1 10 10v36a10 10 0 0 1-10 10H80l-24 18V96H30a10 10 0 0 1-10-10V50a10 10 0 0 1 10-10Z" fill="#fff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><circle cx="52" cy="68" r="6" fill="${INK}"/><circle cx="76" cy="68" r="6" fill="${INK}"/><circle cx="100" cy="68" r="6" fill="${INK}"/></g><path d="M150 52l7 14 15 2-11 11 3 15-14-7-14 7 3-15-11-11 15-2Z" fill="#F2C14E" stroke="${INK}" stroke-width="3" stroke-linejoin="round" class="bob"/>`
 };
 const renderScene = (key, id) => SCENES[key](id) + '</g>';
@@ -480,6 +505,11 @@ const BGS = [
   { id:'automne',  n:'Érables d’automne',      r:'saisonnier', s:'automne',   fx:'leaves', grad:'linear-gradient(180deg,#5a2a2a,#c8602b 62%,#f0b050)' },
   { id:'aurore',   n:'Aurores boréales',       r:'holo',       fx:'stars',     cls:'aurora', grad:'linear-gradient(180deg,#06121f,#0d3a46 70%,#0b2433)' },
   { id:'cosmos',   n:'Voyage dans les étoiles',r:'holo',       fx:'sparks',    cls:'cosmos', grad:'radial-gradient(800px 500px at 70% 20%,#5a2a8c,transparent 70%),#0d0a24' },
+  { id:'colo',     n:'Soirée en colocation',   r:'commun',     fx:'stars',     grad:'linear-gradient(180deg,#3b2a55,#b8587a 62%,#f2a65a)' },
+  { id:'toits',    n:'Toits de Montréal',      r:'commun',     fx:'none',      grad:'linear-gradient(180deg,#14283f,#2c5a78 60%,#e6a36a)' },
+  { id:'jeantalon',n:'Marché Jean-Talon',      r:'commun',     fx:'petals',    grad:'linear-gradient(180deg,#8ec3d8,#f4e2b4 58%,#e08a4a)' },
+  { id:'neon',     n:'Néons du Plateau',       r:'holo',       fx:'sparks',    cls:'neon',   grad:'linear-gradient(180deg,#120a2a,#2a1450 70%,#0c1a3a)' },
+  { id:'penthouse',n:'Penthouse doré',         r:'or',         fx:'goldsparks',cls:'gold',   grad:'linear-gradient(180deg,#2a1f08,#7a5a18 55%,#d9a93e)' },
   { id:'dore',     n:'Palais doré',            r:'or',         fx:'goldsparks',cls:'gold',   grad:'linear-gradient(180deg,#3a2a08,#8a6416 60%,#e0b04a)' }
 ];
 
@@ -496,6 +526,10 @@ function mascotSVG(v, uid){
     erable:`<ellipse cx="68" cy="27" rx="34" ry="13" fill="#d9692a" stroke="${INK}" stroke-width="3" transform="rotate(-8 68 27)"/><rect x="64" y="10" width="8" height="9" rx="3" fill="#d9692a" stroke="${INK}" stroke-width="3"/><path d="M68 18l3 6 6-2-2 6 6 2-6 3 2 5-6-2-3 4-3-4-6 2 2-5-6-3 6-2-2-6 6 2Z" fill="#c4302b" stroke="${INK}" stroke-width="1.5"/>`,
     astro:`<circle cx="70" cy="52" r="39" fill="rgba(190,225,255,.28)" stroke="#fff" stroke-width="5"/><path d="M48 34q12-14 30-12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/><rect x="62" y="8" width="16" height="9" rx="4" fill="#d6dbe6" stroke="${INK}" stroke-width="3"/>`,
     pilote:`<path d="M40 40c-4-30 56-34 60 0l-8 2c-4-12-44-12-44 0Z" fill="#8a5a34" stroke="${INK}" stroke-width="3"/><g fill="#9ad0e8" stroke="${INK}" stroke-width="3"><circle cx="56" cy="32" r="8"/><circle cx="84" cy="32" r="8"/></g><rect x="62" y="30" width="16" height="4" fill="${INK}"/>`,
+    casque:`<path d="M40 52c-6-34 66-34 60 0" fill="none" stroke="#2a2a3a" stroke-width="7" stroke-linecap="round"/><g fill="#E88B9C" stroke="${INK}" stroke-width="3"><rect x="30" y="44" width="13" height="22" rx="6"/><rect x="97" y="44" width="13" height="22" rx="6"/></g>`,
+    bonnet:`<path d="M38 36c0-30 50-34 64-6l24 18-20-2-6 8c-8-12-62-4-62-18Z" fill="#7a8bd9" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><circle cx="126" cy="48" r="7" fill="#fff" stroke="${INK}" stroke-width="3"/><rect x="36" y="30" width="68" height="8" rx="4" fill="#fff" stroke="${INK}" stroke-width="3"/>`,
+    mortier:`<path d="M70 4 24 22l46 16 46-16Z" fill="#1F2A44" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M46 32v10c14 8 34 8 48 0V32" fill="#2c3a63" stroke="${INK}" stroke-width="3"/><path d="M116 22v22" stroke="#F2C14E" stroke-width="3"/><circle cx="116" cy="46" r="4" fill="#F2C14E" stroke="${INK}" stroke-width="2"/>`,
+    haut:`<ellipse cx="70" cy="30" rx="40" ry="8" fill="#F2C14E" stroke="${INK}" stroke-width="3"/><rect x="44" y="-6" width="52" height="36" rx="4" fill="#F2C14E" stroke="${INK}" stroke-width="3"/><rect x="44" y="18" width="52" height="8" fill="#c4302b" stroke="${INK}" stroke-width="3"/>`,
     roi:`<path d="M42 34 46 8l14 14 10-18 10 18 14-14 4 26Z" fill="#F2C14E" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#E88B9C" stroke="${INK}" stroke-width="2"/><circle cx="70" cy="4" r="4" fill="#5B8DB8" stroke="${INK}" stroke-width="2"/><circle cx="94" cy="8" r="4" fill="#E88B9C" stroke="${INK}" stroke-width="2"/>`
   }[v.hat];
   const scarf = v.scarf ? `<path d="M44 78q26 14 52 0l2 12q-28 14-56 0Z" fill="${v.scarf}" stroke="${INK}" stroke-width="3"/>` : '';
@@ -534,6 +568,10 @@ const MASCOTS = [
   { id:'erable',  n:'Béret d’érable',     r:'saisonnier', s:'automne',   v:{ hat:'erable', shirt:['#fbf3e4','#c8602b'], scarf:'#d9692a' } },
   { id:'astro',   n:'L’Astronaute',       r:'holo',       v:{ hat:'astro', shirt:['#e8edf5','#5B8DB8'] } },
   { id:'pilote',  n:'Le Pilote',          r:'holo',       v:{ hat:'pilote', shirt:['#fbf3e4','#8a5a34'], scarf:'#fff' } },
+  { id:'dj',      n:'Le DJ du salon',     r:'commun',     v:{ hat:'casque', shirt:['#2a2a3a','#E88B9C'] } },
+  { id:'pyjama',  n:'Pyjama du dimanche', r:'commun',     v:{ hat:'bonnet', shirt:['#cfd8f5','#7a8bd9'] } },
+  { id:'diplome', n:'L’Étudiant diplômé', r:'holo',       v:{ hat:'mortier', shirt:['#1F2A44','#5B8DB8'] } },
+  { id:'maitre',  n:'Le Maître de maison',r:'or',         v:{ hat:'haut', shirt:['#F2C14E','#c9981f'], scarf:'#c4302b' } },
   { id:'roi',     n:'Le Roi du voyage',   r:'or',         v:{ hat:'roi', shirt:['#F2C14E','#c9981f'] } }
 ];
 
@@ -552,7 +590,12 @@ const LANDMARKS = [
   { id:'arbre',   n:'L’Érable rouge',      r:'saisonnier', s:'automne', art:FIG(`<path d="M44 90c1-14 0-24-2-34h16c-2 10-3 20-2 34Z" fill="#6b4a2f" ${SK}/><circle cx="50" cy="36" r="26" fill="#c4302b" ${SK}/><circle cx="36" cy="44" r="14" fill="#d9692a" ${SK}/><circle cx="64" cy="44" r="14" fill="#d9692a" ${SK}/><path d="M80 52l3 6 6-1-4 5 1 6-6-3-5 3 2-6-4-5 6 0Z" fill="#F2C14E"/>`) },
   { id:'atomium', n:'L’Atomium',           r:'holo', art:FIG(`<path d="M50 20V76M22 40 50 76 78 40M22 40H78M22 40 50 20 78 40" fill="none" stroke="${INK}" stroke-width="4"/><g fill="#d6dbe6" ${SK}><circle cx="50" cy="20" r="10"/><circle cx="22" cy="40" r="10"/><circle cx="78" cy="40" r="10"/><circle cx="50" cy="56" r="10"/><circle cx="50" cy="78" r="10"/></g>`) },
   { id:'volcan',  n:'Le Volcan',           r:'holo', art:FIG(`<path d="M10 90 38 34h24l28 56Z" fill="#4e9c5f" ${SK}/><path d="M38 34h24l4 10-10-4-6 6-6-6-10 4Z" fill="#c4302b"/><g fill="#fff" opacity=".85"><circle cx="50" cy="22" r="8"/><circle cx="62" cy="14" r="6"/><circle cx="42" cy="10" r="5"/></g>`) },
-  { id:'eiffel',  n:'La Tour dorée',       r:'or', art:FIG(`<path d="M50 6 64 90H56L50 50 44 90H36Z" fill="#F2C14E" ${SK}/><path d="M42 62h16M46 36h8M38 80h24" stroke="${INK}" stroke-width="3"/><path d="M50 50 44 90M50 50 56 90" stroke="${INK}" stroke-width="2"/><path d="M30 50l3 6 6 1-5 4 1 6-5-3-5 3 1-6-5-4 6-1Z" transform="translate(30 -30) scale(.7)" fill="#fff" opacity=".9"/>`) }
+  { id:'eiffel',  n:'La Tour dorée',       r:'or', art:FIG(`<path d="M50 6 64 90H56L50 50 44 90H36Z" fill="#F2C14E" ${SK}/><path d="M42 62h16M46 36h8M38 80h24" stroke="${INK}" stroke-width="3"/><path d="M50 50 44 90M50 50 56 90" stroke="${INK}" stroke-width="2"/><path d="M30 50l3 6 6 1-5 4 1 6-5-3-5 3 1-6-5-4 6-1Z" transform="translate(30 -30) scale(.7)" fill="#fff" opacity=".9"/>`) },
+  { id:'triplex', n:'Le Triplex',          r:'commun', art:FIG(`<rect x="22" y="28" width="56" height="62" fill="#b4513c" ${SK}/><path d="M18 28h64l-6-10H24Z" fill="#7a3a2c" ${SK}/><g fill="#F2C14E" stroke="${INK}" stroke-width="2.5"><rect x="30" y="36" width="12" height="12"/><rect x="58" y="36" width="12" height="12"/><rect x="30" y="58" width="12" height="12"/><rect x="58" y="58" width="12" height="12"/></g><rect x="43" y="72" width="14" height="18" fill="#3b2418" ${SK}/><path d="M80 44q10 8 8 24t-8 22" fill="none" stroke="${INK}" stroke-width="3"/>`) },
+  { id:'plante',  n:'La Plante verte',     r:'commun', art:FIG(`<path d="M34 64h32l-4 26H38Z" fill="#c96a50" ${SK}/><path d="M50 64C40 50 30 44 24 30c12 0 24 8 26 34ZM50 64c0-22 4-36 14-48 6 18-2 36-14 48ZM50 64c8-10 20-14 30-12-4 12-16 16-30 12Z" fill="#4e9c5f" ${SK}/>`) },
+  { id:'chat',    n:'Le Chat de la coloc', r:'commun', art:FIG(`<ellipse cx="50" cy="72" rx="26" ry="18" fill="#e8873a" ${SK}/><circle cx="50" cy="44" r="18" fill="#e8873a" ${SK}/><path d="M34 34 32 18l12 8ZM66 34l2-16-12 8Z" fill="#e8873a" ${SK}/><g fill="${INK}"><circle cx="43" cy="44" r="2.6"/><circle cx="57" cy="44" r="2.6"/></g><path d="M46 52q4 3 8 0" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/><path d="M74 78q16-4 10-22" fill="none" stroke="#e8873a" stroke-width="7" stroke-linecap="round"/>`) },
+  { id:'escalier',n:'L’Escalier en colimaçon', r:'holo', art:FIG(`<path d="M40 90V20" stroke="${INK}" stroke-width="5"/><g fill="#d6dbe6" ${SK}><path d="M42 84h28l4 6H42Z"/><path d="M30 70h28l-4 6H30Z" /><path d="M42 56h28l4 6H42Z"/><path d="M30 42h28l-4 6H30Z"/><path d="M42 28h28l4 6H42Z"/></g><path d="M74 90v-62M26 76V42" stroke="${INK}" stroke-width="2.5"/>`) },
+  { id:'cle',     n:'La Clé dorée',        r:'or', art:FIG(`<circle cx="34" cy="38" r="20" fill="#F2C14E" ${SK}/><circle cx="34" cy="38" r="8" fill="#fbf3e4" ${SK}/><path d="M50 50 82 82l-8 8-6-6-6 6-6-6 6-6-16-16Z" fill="#F2C14E" ${SK}/>`) },
 ];
 
 const PRIZES = [
@@ -676,7 +719,7 @@ function swapText(el, text){
 /* ================= 3D RING ================= */
 const stage = $('stage'), ringEl = $('ring'), plat = $('platform');
 const RG = { items:[], cards:[], N:0, step:0, R:0, cw:0, ang:0, tgt:0, drag:false, sel:-1, px:null, py:null, view:'home' };
-const STAMP = { g20:'PASSEPORT', g10:'6 JEUX', box:'SURPRISE', col:'ALBUM', rnd:'HASARD' };
+const STAMP = { g20:'PASSEPORT', g10:'6 JEUX', g30:'COLOCATION', box:'SURPRISE', col:'ALBUM', rnd:'HASARD' };
 const prizeTotal = PRIZES.length;
 
 function homeItems(){
@@ -824,6 +867,7 @@ stage.addEventListener('keydown', e => {
 /* ---------- views and transitions ---------- */
 let screen = 'home';
 function showView(v){
+  document.body.classList.remove('l30');
   $('ringView').style.display = v === 'ring' ? 'flex' : 'none';
   $('globeView').classList.toggle('on', v === 'globe');
   G.active = v === 'globe';
@@ -837,6 +881,26 @@ function burst(color, mid){
   document.body.appendChild(b); void b.offsetWidth; b.classList.add('go');
   setTimeout(() => { mid(); b.classList.add('out'); setTimeout(() => b.remove(), 560); }, reduceMotion ? 10 : 700);
 }
+/* ---------- 30-3Y skyline (shown behind the ring on the 30 page, over the equipped background) ---------- */
+(function buildColo(){
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  let o = '<svg viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">';
+  const cols = ['rgba(20,28,48,.80)','rgba(36,34,64,.80)','rgba(58,34,50,.78)'];
+  for (let x = -30, i = 0; x < 1470; x += 138 + Math.floor(rnd()*30), i++){
+    const w = 126, h = 150 + Math.floor(rnd()*80), y = 300 - h, c = cols[i % 3];
+    o += `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/><path d="M${x-6} ${y}h${w+12}l-8-14H${x+2}Z" fill="${c}"/>`;
+    if (rnd() > .5) o += `<rect x="${x+w-34}" y="${y-30}" width="12" height="22" fill="${c}"/>`;
+    for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++){
+      const wx = x + 22 + k * 56, wy = y + 20 + r * 48;
+      if (wy + 30 > 300) continue;
+      const lit = rnd() > .38;
+      o += `<rect class="${lit ? 'lw' : ''}" x="${wx}" y="${wy}" width="30" height="30" rx="3" fill="${lit ? '#F2C14E' : 'rgba(251,243,228,.12)'}" ${lit ? `style="animation-delay:${(-rnd()*5).toFixed(1)}s"` : ''}/>`;
+    }
+    o += `<path d="M${x+8} ${300} q-10 -40 6 -70 q10 -22 -4 -40" fill="none" stroke="rgba(251,243,228,.28)" stroke-width="4" stroke-linecap="round"/></g>`;
+  }
+  $('colo').innerHTML = o + '</svg>';
+})();
+
 function goHome(){
   screen = 'home';
   $('back').hidden = true; $('landing').classList.remove('show');
@@ -848,6 +912,12 @@ function goRing10(){
   screen = 'ring10'; $('back').hidden = false;
   showView('ring'); ringBuild(GAMES_10, 'g10');
   $('hint').textContent = 'Fais tourner le carrousel et choisis ta scène.';
+}
+function goRing30(){
+  screen = 'ring30'; $('back').hidden = false;
+  showView('ring'); ringBuild(GAMES_30, 'g30');
+  document.body.classList.add('l30');
+  $('hint').textContent = 'Fais tourner le carrousel et choisis ton jeu.';
 }
 function goGlobe(){
   screen = 'globe'; $('back').hidden = false;
@@ -880,7 +950,7 @@ addEventListener('keydown', e => {
 function activate(it){
   if (!it) return;
   if (it.kind === 'grade'){
-    burst(it.color, () => { it.grade === '20' ? goGlobe() : goRing10(); });
+    burst(it.color, () => { it.grade === '20' ? goGlobe() : it.grade === '30' ? goRing30() : goRing10(); });
   } else if (it.kind === 'gacha'){ openGacha(); }
   else if (it.kind === 'collection'){ openCollection(); }
   else if (it.kind === 'random'){

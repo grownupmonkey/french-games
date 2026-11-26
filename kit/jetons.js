@@ -7,7 +7,7 @@ window.GVJetons = (function () {
   var KEY = 'gv.v1', BASE = 2, RANGE = 3, FIRST = 5, DAILY_FULL = 2, last = 0;
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
   function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
-  function home() { return location.pathname.replace(/\/(10|20)-3y\/[^\/]*$/, '/') || '../'; }
+  function home() { return location.pathname.replace(/\/(10|20|30)-3y\/[^\/]*$/, '/') || '../'; }
   function badge(n, first) {
     var d = document.createElement('div');
     d.setAttribute('role', 'status');
