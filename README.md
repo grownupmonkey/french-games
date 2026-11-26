@@ -6,6 +6,7 @@ Jeux interactifs de français pour les classes d'Alberta. Chaque jeu est un seul
 
 - `10-3y/` : les jeux de français 10-3Y, un fichier par jeu.
 - `20-3y/` : Français 20-3Y, « Le grand voyage » (un voyage en 8 escales dans la francophonie). `voyage.html` est le passeport ; chaque escale est un fichier.
+- `30-3y/` : Français 30-3Y, « La colocation » (en cours). Premier jeu : `01-ma-semaine.html` (planificateur de semaine).
 - `kit/fr20/` : le code source des jeux 20-3Y (`python3 build.py` reconstruit les pages).
 - `index.html` : la page d'accueil qui relie tous les jeux.
 
@@ -37,3 +38,8 @@ Les élèves créent leur voyageur (prénom, genre, teint) dans `voyage.html`. L
 | 6 | Bruxelles : La BD de l'été | `20-3y/06-bruxelles.html` | https://grownupmonkey.github.io/french-games/20-3y/06-bruxelles.html |
 | 7 | Martinique : La montagne Pelée | `20-3y/07-martinique.html` | https://grownupmonkey.github.io/french-games/20-3y/07-martinique.html |
 | 8 | Louisiane : L'enquête | `20-3y/08-enquete.html` | https://grownupmonkey.github.io/french-games/20-3y/08-enquete.html |
+| 30-1 | La colocation : Ma semaine | `30-3y/01-ma-semaine.html` | https://grownupmonkey.github.io/french-games/30-3y/01-ma-semaine.html |
+
+## Crédits (30-3Y)
+
+Art pixel : « Modern Interiors » de LimeZu (https://limezu.itch.io/moderninteriors), licence achetée ; les fichiers de l'ensemble ne sont pas dans ce dépôt, seulement les pages de jeu construites. Personnages : Character Generator (0a3r). Police : Jersey 15 (SIL OFL).
